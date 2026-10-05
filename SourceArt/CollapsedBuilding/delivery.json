@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-05",
+  "style": "Realistic disaster-damaged modern office tower interior, first playable scene",
+  "unity_scene": "Assets/Scenes/CollapsedBuilding_Interior.unity",
+  "blender_source": "SourceArt/CollapsedBuilding/CollapsedBuilding.blend",
+  "architecture_fbx": "Assets/Environment/CollapsedBuilding/Models/CollapsedBuilding.fbx",
+  "architecture_prefab": "Assets/Environment/CollapsedBuilding/Prefabs/CollapsedBuildingArchitecture.prefab",
+  "playable_floors": 2,
+  "footprint_metres": [36, 28],
+  "spaces": ["entrance", "reception", "double-height atrium", "offices", "west staircase", "upper ring gallery"],
+  "meshy": [
+    {
+      "asset": "RebarConcreteDebris",
+      "model": "meshy-6",
+      "job_id": "87cf6b3af9124400b3e1cdb51022d814",
+      "preview_task_id": "01a10a26-0e93-72d9-9b8e-9fc3b07643cd",
+      "textured_task_id": "01a10a27-64a2-75ed-b677-4c4c8894e00d",
+      "instances": 4,
+      "texture_resolution": "2k",
+      "status": "done"
+    },
+    {
+      "asset": "DamagedOfficeDesk",
+      "model": "meshy-6",
+      "job_id": "e1a3247e05bd4bf998418604f35ff615",
+      "preview_task_id": "01a10a26-1129-7207-b53a-4fe86357d6f8",
+      "textured_task_id": "01a10a27-3e6b-7129-aa75-6e46ecff7e9b",
+      "instances": 3,
+      "texture_resolution": "2k",
+      "status": "done"
+    }
+  ],
+  "texture_source": {
+    "url": "https://polyhaven.com/a/concrete_wall_008",
+    "authors": "Charlotte Baglioni, Dario Barresi",
+    "license": "CC0"
+  },
+  "validation": {
+    "unity_version": "6000.6.4f1",
+    "navmesh_routes": "5/5 complete",
+    "character_controller_routes_in_play_mode": "5/5 reached sampled NavMesh destinations",
+    "missing_scripts": 0,
+    "console_errors_and_warnings_at_delivery": 0,
+    "scene_report": "Captures/SceneValidation.txt",
+    "runtime_report": "Captures/RuntimeTraversal.txt",
+    "standalone_build": "not performed"
+  },
+  "controls": {
+    "start": "Press Play, then click Game view",
+    "move": "WASD",
+    "look": "Mouse",
+    "run": "Shift",
+    "jump": "Space",
+    "flashlight": "F",
+    "return_to_entrance": "R",
+    "release_cursor": "Escape"
+  },
+  "rebuild": "Tools > Loongdum > Build Collapsed Building Scene (replaces the generated scene; save manual scene edits separately before rebuilding)",
+  "scope": "Architecture, set dressing, URP materials and lights, static collision, saved NavMesh and an exploration controller. No combat or objectives implemented."
+}

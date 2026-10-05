@@ -1,0 +1,211 @@
+{
+  "dimensions_m": [
+    36,
+    28,
+    16.2
+  ],
+  "playable_storeys": 2,
+  "storey_height_m": 4.2,
+  "main_clear_width_m": 3.0,
+  "source": "SourceArt/CollapsedBuilding/CollapsedBuilding.blend",
+  "texture": {
+    "id": "concrete_wall_008",
+    "source": "https://polyhaven.com/a/concrete_wall_008",
+    "license": "CC0",
+    "authors": "Charlotte Baglioni, Dario Barresi"
+  },
+  "meshes": [
+    {
+      "name": "COL_Ground",
+      "vertices": 8,
+      "triangles": 12,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_UpperFloor",
+      "vertices": 56,
+      "triangles": 84,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_Slabs",
+      "vertices": 44,
+      "triangles": 80,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_Roof",
+      "vertices": 64,
+      "triangles": 104,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_Facade",
+      "vertices": 608,
+      "triangles": 932,
+      "source": "Blender"
+    },
+    {
+      "name": "DEC_WindowFrames",
+      "vertices": 336,
+      "triangles": 504,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_Columns",
+      "vertices": 256,
+      "triangles": 448,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_Beams",
+      "vertices": 72,
+      "triangles": 108,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_LowerPartitions",
+      "vertices": 136,
+      "triangles": 204,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_UpperPartitions",
+      "vertices": 112,
+      "triangles": 168,
+      "source": "Blender"
+    },
+    {
+      "name": "DEC_Trim",
+      "vertices": 16,
+      "triangles": 24,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_Stairs",
+      "vertices": 192,
+      "triangles": 288,
+      "source": "Blender"
+    },
+    {
+      "name": "DEC_Rails",
+      "vertices": 168,
+      "triangles": 280,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_Guardrails",
+      "vertices": 792,
+      "triangles": 1320,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_Collapse",
+      "vertices": 40,
+      "triangles": 60,
+      "source": "Blender"
+    },
+    {
+      "name": "DEC_Rebar",
+      "vertices": 960,
+      "triangles": 1600,
+      "source": "Blender"
+    },
+    {
+      "name": "DEC_Rubble",
+      "vertices": 5436,
+      "triangles": 9060,
+      "source": "Blender"
+    },
+    {
+      "name": "DEC_Bricks",
+      "vertices": 576,
+      "triangles": 864,
+      "source": "Blender"
+    },
+    {
+      "name": "DEC_TileJoints",
+      "vertices": 328,
+      "triangles": 492,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_Furniture",
+      "vertices": 296,
+      "triangles": 452,
+      "source": "Blender"
+    },
+    {
+      "name": "DEC_Office",
+      "vertices": 616,
+      "triangles": 924,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_Ducts",
+      "vertices": 24,
+      "triangles": 36,
+      "source": "Blender"
+    },
+    {
+      "name": "DEC_Services",
+      "vertices": 1116,
+      "triangles": 1800,
+      "source": "Blender"
+    },
+    {
+      "name": "DEC_Signs",
+      "vertices": 4284,
+      "triangles": 4244,
+      "source": "Blender"
+    },
+    {
+      "name": "COL_UpperRuins",
+      "vertices": 72,
+      "triangles": 108,
+      "source": "Blender"
+    },
+    {
+      "name": "RebarConcreteDebris_1",
+      "vertices": 6067,
+      "triangles": 12162,
+      "source": "Meshy"
+    },
+    {
+      "name": "RebarConcreteDebris_2",
+      "vertices": 6067,
+      "triangles": 12162,
+      "source": "Meshy"
+    },
+    {
+      "name": "RebarConcreteDebris_3",
+      "vertices": 6067,
+      "triangles": 12162,
+      "source": "Meshy"
+    },
+    {
+      "name": "RebarConcreteDebris_4",
+      "vertices": 6067,
+      "triangles": 12162,
+      "source": "Meshy"
+    },
+    {
+      "name": "DamagedOfficeDesk_1",
+      "vertices": 5689,
+      "triangles": 11366,
+      "source": "Meshy"
+    },
+    {
+      "name": "DamagedOfficeDesk_2",
+      "vertices": 5689,
+      "triangles": 11366,
+      "source": "Meshy"
+    },
+    {
+      "name": "DamagedOfficeDesk_3",
+      "vertices": 5689,
+      "triangles": 11366,
+      "source": "Meshy"
+    }
+  ]
+}

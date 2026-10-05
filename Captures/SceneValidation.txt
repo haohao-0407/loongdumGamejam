@@ -1,0 +1,10 @@
+Scene: Assets/Scenes/CollapsedBuilding_Interior.unity
+Unity: 6000.6.4f1
+Route 1: PASS corners=2
+Route 2: PASS corners=4
+Route 3: PASS corners=2
+Route 4: PASS corners=7
+Route 5: PASS corners=4
+Connected routes: 5/5
+Missing scripts: 0
+Mesh colliders: 22
