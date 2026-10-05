@@ -1,0 +1,31 @@
+EDITOR ISSUE (outside gameplay): Unity 6000.6 SearchDatabase startup indexing threw ArgumentOutOfRangeException.
+INPUT 1 N => (1, 8), moves=1, lever=False
+INPUT 2 N => (1, 7), moves=2, lever=False
+INPUT 3 N => (1, 6), moves=3, lever=False
+INPUT 4 N => (1, 5), moves=4, lever=False
+INPUT 5 N => (1, 4), moves=5, lever=False
+INPUT 6 N => (1, 3), moves=6, lever=False
+INPUT 7 N => (1, 2), moves=7, lever=False
+INPUT 8 N => (1, 1), moves=8, lever=False
+INPUT 9 D => (2, 1), moves=9, lever=False
+INPUT 10 D => (3, 1), moves=10, lever=False
+INPUT 11 D => (4, 1), moves=11, lever=False
+INPUT 12 D => (5, 1), moves=12, lever=False
+INPUT 13 E => (5, 1), moves=12, lever=True
+INPUT 14 D => (6, 1), moves=13, lever=True
+INPUT 15 D => (7, 1), moves=14, lever=True
+INPUT 16 S => (7, 2), moves=15, lever=True
+INPUT 17 S => (7, 3), moves=16, lever=True
+PASS: Keyboard reaches pressure plate and reveals the portal route.
+INPUT 18 W => (6, 3), moves=17, lever=True
+INPUT 19 W => (5, 3), moves=18, lever=True
+INPUT 20 W => (4, 3), moves=19, lever=True
+INPUT 21 W => (3, 3), moves=20, lever=True
+INPUT 22 S => (3, 4), moves=21, lever=True
+INPUT 23 S => (3, 5), moves=22, lever=True
+INPUT 24 D => (4, 5), moves=23, lever=True
+INPUT 25 D => (5, 5), moves=24, lever=True
+PASS: Keyboard input completed the level in 24 moves plus E.
+PASS: R resets after completion.
+PASS: F1 toggles the editor design view.
+LEVEL02_PLAY_PASS
