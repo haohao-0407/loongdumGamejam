@@ -1,0 +1,94 @@
+{
+  "date": "2026-10-06",
+  "scene": "Assets/Scenes/Level03_LightGates.unity",
+  "structuralAudit": {
+    "initialReachesTile": true,
+    "initialCannotReachVault": true,
+    "firstSwapCannotExitWithoutD": true,
+    "corridorCannotReturnWithoutZ": true,
+    "finalCanReunite": true,
+    "samples": 306,
+    "failures": [],
+    "missing": 0,
+    "tileCount": 2,
+    "portalCount": 6,
+    "movement": "Continuous WASD; key dependency order is unique, walking paths are not."
+  },
+  "resourceAudit": {
+    "scene": "Assets/Scenes/Level03_LightGates.unity",
+    "dirty": false,
+    "playing": false,
+    "extraDependencies": [],
+    "materials": [
+      "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Sprite-Unlit-Default.mat",
+      "Packages/com.unity.render-pipelines.universal/Runtime/Materials/Lit.mat",
+      "Assets/VFX/AmbientDust/Materials/M_AmbientDust.mat",
+      "Assets/Materials/Glass.mat",
+      "Assets/Materials/VisionPortalEntry.mat",
+      "Library/unity default resources",
+      "Assets/Materials/VisionPortalExit.mat"
+    ],
+    "missing": 0
+  },
+  "keyboardWalk": {
+    "success": true,
+    "syntheticKeyboard": true,
+    "teleports": false,
+    "visited": 51,
+    "frames": 1910,
+    "seconds": 24.981775500000367,
+    "AOpened": true,
+    "COpened": true,
+    "BObserved": true,
+    "BOpened": true,
+    "Completed": true,
+    "Stage": 5,
+    "player": "(16.74, 1.08, -3.95)",
+    "upper": "(17.52, 0.25, -4.36)",
+    "movementStopped": true
+  },
+  "negativeChecks": {
+    "offTileRejected": true,
+    "upperOnlyTileRejected": true,
+    "airborneRejected": true,
+    "occupiedDestinationRejected": true,
+    "CBeforeARejected": true,
+    "BWithoutObservationRejected": true,
+    "resetClearsAllFlags": true
+  },
+  "collisionChecks": {
+    "glassBlocked": true,
+    "glassZ": 8.9800005,
+    "boundaryBlocked": true,
+    "collisionSmokeInstances": 4
+  },
+  "portalPlacementSweep": {
+    "positions": 81,
+    "visibleWithShutterOpenFailures": 0,
+    "visibleWithShutterClosedFailures": 0,
+    "method": "Refresh actual VisionSource visibility at 9x9 standing positions inside second tile."
+  },
+  "resetViaSyntheticR": true,
+  "firstTileCornerFeedback": true,
+  "playerBuild": false,
+  "limits": [
+    "Synthetic keyboard is not human keyboard/play-feel acceptance.",
+    "Walking paths are not unique; key puzzle dependency order is fixed.",
+    "No claim based on withdrawn level or original diagram's discrete 38-step solver."
+  ],
+  "protectedSha256": {
+    "Assets/Scenes/Whitebox1.unity": "68B2DFBADAFEA0C6AC26373F6C2274992EE9EB35AFB95CD74D1E5555E956FFE1",
+    "ProjectSettings/Packages/com.unity.probuilder/Settings.json": "51C6C472C4E81496394E3E01AFF40F27335DDE77E52C2E6CD2BAD564E1BA4B6A"
+  },
+  "finalRuntimeConsole": {
+    "errors": 0,
+    "warnings": 0,
+    "scope": "Fresh Play Mode keyboard walkthrough without screenshot-tool calls."
+  },
+  "screenshotToolIssue": {
+    "message": "PlayerLoop recursive call from Unity MCP composited screenshot",
+    "stack": "ScreenshotUtility.cs:197",
+    "dependencyModified": false
+  },
+  "hudContrastReviewed": true
+}
