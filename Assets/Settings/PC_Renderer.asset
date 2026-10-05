@@ -414,8 +414,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ComicInkRendererFeature
   m_Active: 1
   m_Shader: {fileID: 4800000, guid: 0b2e74f25620f81469c1c7de3b55abb8, type: 3}
-  m_PaperColor: {r: 0.97, g: 0.97, b: 0.96, a: 1}
-  m_InkColor: {r: 0.025, g: 0.025, b: 0.025, a: 1}
+  m_PaperColor: {r: 1, g: 1, b: 1, a: 1}
+  m_InkColor: {r: 0, g: 0, b: 0, a: 1}
   m_BackgroundColor: {r: 0.23, g: 0.23, b: 0.23, a: 1}
   m_PaperGrain: 0.018
   m_OutlineWidth: 1.6
