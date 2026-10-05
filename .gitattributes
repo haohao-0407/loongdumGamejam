@@ -36,6 +36,7 @@
 "Assets/New Terrain.asset" binary !eol !linguist-language !unity-yaml
 "Assets/Scenes/SampleScene/NavMesh-Map.asset" binary !eol !linguist-language !unity-yaml
 "Assets/Environment/CollapsedBuilding/CollapsedBuildingNavMesh.asset" binary !eol !linguist-language !unity-yaml
+"Assets/TerrainData/WhiteBoxTerrain.asset" binary !eol !linguist-language !unity-yaml
 *.brush                 unity-yaml
 *.controller            unity-yaml
 *.flare                 unity-yaml
