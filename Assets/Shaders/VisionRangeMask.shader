@@ -25,6 +25,11 @@ Shader "Hidden/Loongdum/VisionRangeMask"
             float4 _VisionSourcePositionRadius;
             float _VisionEdgeSoftness;
             float _VisionMaskEnabled;
+            TEXTURE2D(_VisionObstacleDistances);
+            SAMPLER(sampler_VisionObstacleDistances);
+            float _VisionOcclusionEnabled;
+            float _VisionRayCount;
+            float _VisionSurfacePadding;
 
             half4 Frag(Varyings input) : SV_Target
             {
@@ -51,6 +56,17 @@ Shader "Hidden/Loongdum/VisionRangeMask"
                 float mask = softness > 0.0001
                     ? smoothstep(radius - softness, radius, distanceFromSource)
                     : step(radius, distanceFromSource);
+
+                if (_VisionOcclusionEnabled > 0.5)
+                {
+                    float2 direction = worldPosition.xz - _VisionSourcePositionRadius.xz;
+                    float angle = atan2(direction.y, direction.x) / TWO_PI;
+                    float2 lookupUV = float2(frac(angle + 0.5 / _VisionRayCount), 0.5);
+                    float visibleDistance = SAMPLE_TEXTURE2D_LOD(_VisionObstacleDistances,
+                        sampler_VisionObstacleDistances, lookupUV, 0).r * radius;
+                    float occlusionMask = step(visibleDistance + _VisionSurfacePadding, distanceFromSource);
+                    mask = max(mask, occlusionMask);
+                }
 
                 return half4(0, 0, 0, mask);
             }

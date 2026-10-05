@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Ruin_SlabPile_T2",
+    "label": "倾斜楼板废墟",
+    "job_id": "d5d35280c5e74898937414ab02088ecf",
+    "reference_path": "Assets/Generated/ChibiCityRuins/Reference/Ruin_SlabPile_T2_reference.png",
+    "targetWidth": 3.2,
+    "requested_triangles": 12000
+  },
+  {
+    "name": "Ruin_WallCorner_T2",
+    "label": "断裂残墙",
+    "job_id": "cb8c3c037130413cba8fecbb11b0b031",
+    "reference_path": "Assets/Generated/ChibiCityRuins/Reference/Ruin_WallCorner_T2_reference.png",
+    "targetWidth": 2.6,
+    "requested_triangles": 10000
+  },
+  {
+    "name": "Ruin_BrokenColumn_T2",
+    "label": "倒塌梁柱",
+    "job_id": "1cdc628c830540e8a625c1a22dcbc695",
+    "reference_path": "Assets/Generated/ChibiCityRuins/Reference/Ruin_BrokenColumn_T2_reference.png",
+    "targetWidth": 2.8,
+    "requested_triangles": 10000
+  },
+  {
+    "name": "Ruin_RubbleMound_T2",
+    "label": "碎石瓦砾堆",
+    "job_id": "a506e2bd45a24eb0817824b7bd63f687",
+    "reference_path": "Assets/Generated/ChibiCityRuins/Reference/Ruin_RubbleMound_T2_reference.png",
+    "targetWidth": 2.2,
+    "requested_triangles": 8000
+  }
+]

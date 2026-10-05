@@ -1,0 +1,259 @@
+{
+  "date": "2026-10-05",
+  "style": "Q-version/chibi Japanese anime city ruins, adapted from user supplied manga background",
+  "provider": "meshy",
+  "model": "meshy-t2",
+  "mode": "image",
+  "model_type": "smart-topology",
+  "format": "glb",
+  "reference_generation": "Built-in image_gen; saved prompts in generation_manifest.json",
+  "original_gameplay_scene": "Assets/Scenes/Whitebox1.unity",
+  "preview_scene": "Assets/Generated/ChibiCityRuins/Scenes/ChibiCityRuins_Preview.unity",
+  "screenshot": "Captures/ChibiCityRuins/ChibiCityRuins_Final.png",
+  "use": "Drag the Prefabs into the gameplay scene. Root scale is 1; pivot is centered on the ground. Static obstacles, no Rigidbody.",
+  "assets": [
+    {
+      "name": "Ruin_SlabPile_T2",
+      "modelPath": "Assets/Generated/ChibiCityRuins/Models/Ruin_SlabPile_T2.glb",
+      "prefabPath": "Assets/Generated/ChibiCityRuins/Prefabs/Ruin_SlabPile_T2.prefab",
+      "rawSize": [
+        0.72532,
+        0.598642,
+        1
+      ],
+      "geometryScale": 3.2,
+      "sizeMetres": [
+        2.321024,
+        1.91565442,
+        3.2
+      ],
+      "boundsMin": [
+        -1.160512,
+        0,
+        -1.6
+      ],
+      "rootScale": [
+        1,
+        1,
+        1
+      ],
+      "triangles": 11861,
+      "meshCount": 1,
+      "materialCount": 1,
+      "colliderCount": 1,
+      "missingMaterials": 0,
+      "shaders": [
+        "Shader Graphs/glTF-pbrMetallicRoughness"
+      ],
+      "textures": [
+        {
+          "name": "image_0",
+          "width": 4096,
+          "height": 4096
+        },
+        {
+          "name": "image_1",
+          "width": 2048,
+          "height": 2048
+        },
+        {
+          "name": "image_2",
+          "width": 4096,
+          "height": 4096
+        }
+      ],
+      "collisionRayHit": true,
+      "collision": "Static non-convex MeshCollider; no Rigidbody",
+      "label": "倾斜楼板废墟",
+      "job_id": "d5d35280c5e74898937414ab02088ecf",
+      "provider_task_id": "01a10a92-3ae5-75a0-bb0c-f633c42ebdc0",
+      "state": "done",
+      "reference_path": "Assets/Generated/ChibiCityRuins/Reference/Ruin_SlabPile_T2_reference.png"
+    },
+    {
+      "name": "Ruin_WallCorner_T2",
+      "modelPath": "Assets/Generated/ChibiCityRuins/Models/Ruin_WallCorner_T2.glb",
+      "prefabPath": "Assets/Generated/ChibiCityRuins/Prefabs/Ruin_WallCorner_T2.prefab",
+      "rawSize": [
+        0.924213052,
+        0.999919,
+        0.877077
+      ],
+      "geometryScale": 2.813204,
+      "sizeMetres": [
+        2.6,
+        2.81297612,
+        2.4673965
+      ],
+      "boundsMin": [
+        -1.3,
+        0,
+        -1.23369825
+      ],
+      "rootScale": [
+        1,
+        1,
+        1
+      ],
+      "triangles": 8537,
+      "meshCount": 1,
+      "materialCount": 1,
+      "colliderCount": 1,
+      "missingMaterials": 0,
+      "shaders": [
+        "Shader Graphs/glTF-pbrMetallicRoughness"
+      ],
+      "textures": [
+        {
+          "name": "image_0",
+          "width": 4096,
+          "height": 4096
+        },
+        {
+          "name": "image_1",
+          "width": 2048,
+          "height": 2048
+        },
+        {
+          "name": "image_2",
+          "width": 4096,
+          "height": 4096
+        }
+      ],
+      "collisionRayHit": true,
+      "collision": "Static non-convex MeshCollider; no Rigidbody",
+      "label": "断裂残墙",
+      "job_id": "cb8c3c037130413cba8fecbb11b0b031",
+      "provider_task_id": "01a10a92-41ef-766f-919b-3dfb620447b7",
+      "state": "done",
+      "reference_path": "Assets/Generated/ChibiCityRuins/Reference/Ruin_WallCorner_T2_reference.png"
+    },
+    {
+      "name": "Ruin_BrokenColumn_T2",
+      "modelPath": "Assets/Generated/ChibiCityRuins/Models/Ruin_BrokenColumn_T2.glb",
+      "prefabPath": "Assets/Generated/ChibiCityRuins/Prefabs/Ruin_BrokenColumn_T2.prefab",
+      "rawSize": [
+        1,
+        0.872997,
+        1
+      ],
+      "geometryScale": 2.8,
+      "sizeMetres": [
+        2.8,
+        2.44439149,
+        2.8
+      ],
+      "boundsMin": [
+        -1.4,
+        0,
+        -1.4
+      ],
+      "rootScale": [
+        1,
+        1,
+        1
+      ],
+      "triangles": 10105,
+      "meshCount": 1,
+      "materialCount": 1,
+      "colliderCount": 1,
+      "missingMaterials": 0,
+      "shaders": [
+        "Shader Graphs/glTF-pbrMetallicRoughness"
+      ],
+      "textures": [
+        {
+          "name": "image_0",
+          "width": 4096,
+          "height": 4096
+        },
+        {
+          "name": "image_1",
+          "width": 2048,
+          "height": 2048
+        },
+        {
+          "name": "image_2",
+          "width": 4096,
+          "height": 4096
+        }
+      ],
+      "collisionRayHit": true,
+      "collision": "Static non-convex MeshCollider; no Rigidbody",
+      "label": "倒塌梁柱",
+      "job_id": "1cdc628c830540e8a625c1a22dcbc695",
+      "provider_task_id": "01a10a92-5189-737d-8453-e012c914b047",
+      "state": "done",
+      "reference_path": "Assets/Generated/ChibiCityRuins/Reference/Ruin_BrokenColumn_T2_reference.png"
+    },
+    {
+      "name": "Ruin_RubbleMound_T2",
+      "modelPath": "Assets/Generated/ChibiCityRuins/Models/Ruin_RubbleMound_T2.glb",
+      "prefabPath": "Assets/Generated/ChibiCityRuins/Prefabs/Ruin_RubbleMound_T2.prefab",
+      "rawSize": [
+        1,
+        0.432751,
+        0.654512048
+      ],
+      "geometryScale": 2.2,
+      "sizeMetres": [
+        2.2,
+        0.952052236,
+        1.43992651
+      ],
+      "boundsMin": [
+        -1.1,
+        0,
+        -0.719963253
+      ],
+      "rootScale": [
+        1,
+        1,
+        1
+      ],
+      "triangles": 8711,
+      "meshCount": 1,
+      "materialCount": 1,
+      "colliderCount": 1,
+      "missingMaterials": 0,
+      "shaders": [
+        "Shader Graphs/glTF-pbrMetallicRoughness"
+      ],
+      "textures": [
+        {
+          "name": "image_0",
+          "width": 4096,
+          "height": 4096
+        },
+        {
+          "name": "image_1",
+          "width": 2048,
+          "height": 2048
+        },
+        {
+          "name": "image_2",
+          "width": 4096,
+          "height": 4096
+        }
+      ],
+      "collisionRayHit": true,
+      "collision": "Static non-convex MeshCollider; no Rigidbody",
+      "label": "碎石瓦砾堆",
+      "job_id": "a506e2bd45a24eb0817824b7bd63f687",
+      "provider_task_id": "01a10a92-5c08-763b-997f-6740a80180df",
+      "state": "done",
+      "reference_path": "Assets/Generated/ChibiCityRuins/Reference/Ruin_RubbleMound_T2_reference.png"
+    }
+  ],
+  "validation": {
+    "console_errors": 0,
+    "imported_meshes": 4,
+    "missing_materials": 0,
+    "collision_raycast_hits": 4,
+    "actual_bounds_measured": true,
+    "unity_rendered_preview_inspected": true,
+    "play_mode_traversal": "not performed",
+    "standalone_build": "not performed",
+    "transport_warning": "One existing MCP WebSocket initialization warning; model import and inspection completed."
+  }
+}

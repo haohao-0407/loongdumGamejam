@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -5,13 +7,50 @@ using UnityEngine.Rendering;
 [DisallowMultipleComponent]
 public sealed class VisionSource : MonoBehaviour
 {
+    public enum ObstacleFilter
+    {
+        Layer,
+        Tag,
+        LayerOrTag
+    }
+
+    [Header("Vision Range")]
     [SerializeField, Min(0.01f)] private float visionRadius = 5f;
     [SerializeField, Min(0f)] private float edgeSoftness = 0.2f;
     [SerializeField] private Camera targetCamera;
 
+    [Header("Line of Sight")]
+    [SerializeField] private bool obstacleOcclusion = true;
+    [Tooltip("LayerOrTag: 满足 Layer 或 Tag 任意一个条件就会阻挡视线。")]
+    [SerializeField] private ObstacleFilter obstacleFilter = ObstacleFilter.LayerOrTag;
+    [SerializeField] private LayerMask obstacleLayers;
+    [SerializeField] private string[] obstacleTags = { "VisionObstacle" };
+    [Tooltip("检查碰撞体及其父对象，支持在模型根对象上设置 Tag/Layer。")]
+    [SerializeField] private bool checkParents = true;
+    [Tooltip("水平视线相对于视野源位置的高度。低于射线的障碍不会挡住视线。")]
+    [SerializeField] private float sightHeight = 1f;
+    [Tooltip("射线数量越高，遮挡边缘越精细；同时增加物理查询开销。")]
+    [SerializeField, Range(64, 2048)] private int rayCount = 512;
+    [Tooltip("把遮挡起点延伸至碰撞体包围盒后缘，让障碍本体可见。关闭后从射线命中处遮挡。")]
+    [SerializeField] private bool keepObstacleVisible = true;
+    [Tooltip("保留障碍表面附近的一小段可见区域，避免表面闪烁。")]
+    [SerializeField, Min(0f)] private float surfacePadding = 0.05f;
+
     private static readonly int PositionRadiusId = Shader.PropertyToID("_VisionSourcePositionRadius");
     private static readonly int SoftnessId = Shader.PropertyToID("_VisionEdgeSoftness");
     private static readonly int EnabledId = Shader.PropertyToID("_VisionMaskEnabled");
+    private static readonly int OcclusionEnabledId = Shader.PropertyToID("_VisionOcclusionEnabled");
+    private static readonly int DistancesId = Shader.PropertyToID("_VisionObstacleDistances");
+    private static readonly int RayCountId = Shader.PropertyToID("_VisionRayCount");
+    private static readonly int SurfacePaddingId = Shader.PropertyToID("_VisionSurfacePadding");
+
+    private readonly Dictionary<Collider, bool> obstacleCache = new Dictionary<Collider, bool>();
+    private RaycastHit[] raycastHits = new RaycastHit[16];
+    private Texture2D visibilityTexture;
+    private float[] visibilityDistances;
+    private Vector3[] rayDirections;
+    private Vector3 lastRayOrigin;
+    private float lastRayRadius;
 
     private void Reset()
     {
@@ -27,6 +66,9 @@ public sealed class VisionSource : MonoBehaviour
     {
         RenderPipelineManager.beginCameraRendering -= UpdateVisionShader;
         Shader.SetGlobalFloat(EnabledId, 0f);
+        Shader.SetGlobalFloat(OcclusionEnabledId, 0f);
+        Shader.SetGlobalTexture(DistancesId, Texture2D.whiteTexture);
+        ReleaseVisibilityTexture();
     }
 
     private void UpdateVisionShader(ScriptableRenderContext context, Camera camera)
@@ -41,12 +83,146 @@ public sealed class VisionSource : MonoBehaviour
         Shader.SetGlobalVector(PositionRadiusId,
             new Vector4(position.x, position.y, position.z, Mathf.Max(0.01f, visionRadius)));
         Shader.SetGlobalFloat(SoftnessId, Mathf.Max(0f, edgeSoftness));
+        Shader.SetGlobalFloat(OcclusionEnabledId, obstacleOcclusion ? 1f : 0f);
+        if (obstacleOcclusion)
+        {
+            RefreshVisibilityTexture();
+            Shader.SetGlobalTexture(DistancesId, visibilityTexture);
+            Shader.SetGlobalFloat(RayCountId, rayDirections.Length);
+            Shader.SetGlobalFloat(SurfacePaddingId, Mathf.Max(0f, surfacePadding));
+        }
+    }
+
+    private void RefreshVisibilityTexture()
+    {
+        int count = Mathf.Clamp(rayCount, 64, 2048);
+        if (visibilityTexture == null || visibilityTexture.width != count)
+        {
+            ReleaseVisibilityTexture();
+            visibilityTexture = new Texture2D(count, 1, TextureFormat.RFloat, false, true)
+            {
+                name = "Vision Obstacle Distances",
+                hideFlags = HideFlags.HideAndDontSave,
+                filterMode = FilterMode.Point,
+                wrapMode = TextureWrapMode.Repeat
+            };
+            visibilityDistances = new float[count];
+            rayDirections = new Vector3[count];
+            for (int i = 0; i < count; i++)
+            {
+                float angle = i * (2f * Mathf.PI / count);
+                rayDirections[i] = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
+            }
+        }
+
+        Physics.SyncTransforms();
+        obstacleCache.Clear();
+        lastRayOrigin = transform.position + Vector3.up * sightHeight;
+        lastRayRadius = Mathf.Max(0.01f, visionRadius);
+        // Query all layers so a parent's Layer can also classify a child collider.
+        int queryLayers = obstacleFilter == ObstacleFilter.Layer && !checkParents
+            ? obstacleLayers.value : Physics.AllLayers;
+
+        for (int i = 0; i < count; i++)
+        {
+            int hitCount = Physics.RaycastNonAlloc(lastRayOrigin, rayDirections[i], raycastHits,
+                lastRayRadius, queryLayers, QueryTriggerInteraction.Ignore);
+            // NonAlloc results are unsorted. A full buffer may omit a nearer blocker.
+            while (hitCount == raycastHits.Length)
+            {
+                Array.Resize(ref raycastHits, raycastHits.Length * 2);
+                hitCount = Physics.RaycastNonAlloc(lastRayOrigin, rayDirections[i], raycastHits,
+                    lastRayRadius, queryLayers, QueryTriggerInteraction.Ignore);
+            }
+
+            float visibleDistance = lastRayRadius;
+            Collider nearestObstacle = null;
+            for (int h = 0; h < hitCount; h++)
+            {
+                RaycastHit hit = raycastHits[h];
+                if (hit.distance < visibleDistance && IsObstacle(hit.collider))
+                {
+                    visibleDistance = hit.distance;
+                    nearestObstacle = hit.collider;
+                }
+            }
+            if (keepObstacleVisible && nearestObstacle != null)
+            {
+                // Reveal the blocking collider's footprint; its shadow begins at the far edge.
+                Bounds bounds = nearestObstacle.bounds;
+                Vector3 direction = rayDirections[i];
+                float exitX = Mathf.Abs(direction.x) > 0.00001f
+                    ? ((direction.x > 0f ? bounds.max.x : bounds.min.x) - lastRayOrigin.x) / direction.x
+                    : float.PositiveInfinity;
+                float exitZ = Mathf.Abs(direction.z) > 0.00001f
+                    ? ((direction.z > 0f ? bounds.max.z : bounds.min.z) - lastRayOrigin.z) / direction.z
+                    : float.PositiveInfinity;
+                visibleDistance = Mathf.Min(lastRayRadius, Mathf.Min(exitX, exitZ));
+            }
+            visibilityDistances[i] = visibleDistance / lastRayRadius;
+        }
+        visibilityTexture.SetPixelData(visibilityDistances, 0);
+        visibilityTexture.Apply(false, false);
+    }
+
+    private bool IsObstacle(Collider collider)
+    {
+        if (obstacleCache.TryGetValue(collider, out bool cached))
+            return cached;
+
+        bool blocks = false;
+        if (!collider.transform.IsChildOf(transform))
+        {
+            for (Transform candidate = collider.transform; candidate != null;
+                candidate = checkParents ? candidate.parent : null)
+            {
+                bool layerMatches = (obstacleLayers.value & (1 << candidate.gameObject.layer)) != 0;
+                if (obstacleFilter != ObstacleFilter.Tag && layerMatches)
+                {
+                    blocks = true;
+                    break;
+                }
+
+                if (obstacleFilter != ObstacleFilter.Layer && obstacleTags != null)
+                {
+                    foreach (string obstacleTag in obstacleTags)
+                    {
+                        // String comparison also tolerates tags that have not been created yet.
+                        if (!string.IsNullOrEmpty(obstacleTag)
+                            && string.Equals(candidate.tag, obstacleTag, StringComparison.Ordinal))
+                        {
+                            blocks = true;
+                            break;
+                        }
+                    }
+                }
+                if (blocks)
+                    break;
+            }
+        }
+        obstacleCache[collider] = blocks;
+        return blocks;
+    }
+
+    private void ReleaseVisibilityTexture()
+    {
+        if (visibilityTexture == null)
+            return;
+        if (Application.isPlaying)
+            Destroy(visibilityTexture);
+        else
+            DestroyImmediate(visibilityTexture);
+        visibilityTexture = null;
+        visibilityDistances = null;
+        rayDirections = null;
     }
 
     private void OnValidate()
     {
         visionRadius = Mathf.Max(0.01f, visionRadius);
         edgeSoftness = Mathf.Clamp(edgeSoftness, 0f, visionRadius);
+        rayCount = Mathf.Clamp(rayCount, 64, 2048);
+        surfacePadding = Mathf.Max(0f, surfacePadding);
     }
 
     private void OnDrawGizmosSelected()
@@ -61,6 +237,17 @@ public sealed class VisionSource : MonoBehaviour
             Vector3 next = center + new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle)) * visionRadius;
             Gizmos.DrawLine(previous, next);
             previous = next;
+        }
+
+        if (obstacleOcclusion && visibilityDistances != null)
+        {
+            Gizmos.color = Color.cyan;
+            for (int i = 0; i < visibilityDistances.Length; i++)
+            {
+                int next = (i + 1) % visibilityDistances.Length;
+                Gizmos.DrawLine(lastRayOrigin + rayDirections[i] * (visibilityDistances[i] * lastRayRadius),
+                    lastRayOrigin + rayDirections[next] * (visibilityDistances[next] * lastRayRadius));
+            }
         }
     }
 }

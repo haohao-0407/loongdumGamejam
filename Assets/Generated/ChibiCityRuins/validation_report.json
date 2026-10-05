@@ -1,0 +1,220 @@
+{
+  "originalScene": "Assets/Scenes/Whitebox1.unity",
+  "previewScene": "Assets/Generated/ChibiCityRuins/Scenes/ChibiCityRuins_Preview.unity",
+  "model": "meshy-t2",
+  "generatedFormat": "glb",
+  "assets": [
+    {
+      "name": "Ruin_SlabPile_T2",
+      "modelPath": "Assets/Generated/ChibiCityRuins/Models/Ruin_SlabPile_T2.glb",
+      "prefabPath": "Assets/Generated/ChibiCityRuins/Prefabs/Ruin_SlabPile_T2.prefab",
+      "rawSize": [
+        0.72532,
+        0.598642,
+        1.0
+      ],
+      "geometryScale": 3.2,
+      "sizeMetres": [
+        2.321024,
+        1.91565442,
+        3.2
+      ],
+      "boundsMin": [
+        -1.160512,
+        0.0,
+        -1.6
+      ],
+      "rootScale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 11861,
+      "meshCount": 1,
+      "materialCount": 1,
+      "colliderCount": 1,
+      "missingMaterials": 0,
+      "shaders": [
+        "Shader Graphs/glTF-pbrMetallicRoughness"
+      ],
+      "textures": [
+        {
+          "name": "image_0",
+          "width": 4096,
+          "height": 4096
+        },
+        {
+          "name": "image_1",
+          "width": 2048,
+          "height": 2048
+        },
+        {
+          "name": "image_2",
+          "width": 4096,
+          "height": 4096
+        }
+      ],
+      "collisionRayHit": true,
+      "collision": "Static non-convex MeshCollider; no Rigidbody"
+    },
+    {
+      "name": "Ruin_WallCorner_T2",
+      "modelPath": "Assets/Generated/ChibiCityRuins/Models/Ruin_WallCorner_T2.glb",
+      "prefabPath": "Assets/Generated/ChibiCityRuins/Prefabs/Ruin_WallCorner_T2.prefab",
+      "rawSize": [
+        0.924213052,
+        0.999919,
+        0.877077
+      ],
+      "geometryScale": 2.813204,
+      "sizeMetres": [
+        2.6,
+        2.81297612,
+        2.4673965
+      ],
+      "boundsMin": [
+        -1.3,
+        0.0,
+        -1.23369825
+      ],
+      "rootScale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 8537,
+      "meshCount": 1,
+      "materialCount": 1,
+      "colliderCount": 1,
+      "missingMaterials": 0,
+      "shaders": [
+        "Shader Graphs/glTF-pbrMetallicRoughness"
+      ],
+      "textures": [
+        {
+          "name": "image_0",
+          "width": 4096,
+          "height": 4096
+        },
+        {
+          "name": "image_1",
+          "width": 2048,
+          "height": 2048
+        },
+        {
+          "name": "image_2",
+          "width": 4096,
+          "height": 4096
+        }
+      ],
+      "collisionRayHit": true,
+      "collision": "Static non-convex MeshCollider; no Rigidbody"
+    },
+    {
+      "name": "Ruin_BrokenColumn_T2",
+      "modelPath": "Assets/Generated/ChibiCityRuins/Models/Ruin_BrokenColumn_T2.glb",
+      "prefabPath": "Assets/Generated/ChibiCityRuins/Prefabs/Ruin_BrokenColumn_T2.prefab",
+      "rawSize": [
+        1.0,
+        0.872997,
+        1.0
+      ],
+      "geometryScale": 2.8,
+      "sizeMetres": [
+        2.8,
+        2.44439149,
+        2.8
+      ],
+      "boundsMin": [
+        -1.4,
+        0.0,
+        -1.4
+      ],
+      "rootScale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 10105,
+      "meshCount": 1,
+      "materialCount": 1,
+      "colliderCount": 1,
+      "missingMaterials": 0,
+      "shaders": [
+        "Shader Graphs/glTF-pbrMetallicRoughness"
+      ],
+      "textures": [
+        {
+          "name": "image_0",
+          "width": 4096,
+          "height": 4096
+        },
+        {
+          "name": "image_1",
+          "width": 2048,
+          "height": 2048
+        },
+        {
+          "name": "image_2",
+          "width": 4096,
+          "height": 4096
+        }
+      ],
+      "collisionRayHit": true,
+      "collision": "Static non-convex MeshCollider; no Rigidbody"
+    },
+    {
+      "name": "Ruin_RubbleMound_T2",
+      "modelPath": "Assets/Generated/ChibiCityRuins/Models/Ruin_RubbleMound_T2.glb",
+      "prefabPath": "Assets/Generated/ChibiCityRuins/Prefabs/Ruin_RubbleMound_T2.prefab",
+      "rawSize": [
+        1.0,
+        0.432751,
+        0.654512048
+      ],
+      "geometryScale": 2.2,
+      "sizeMetres": [
+        2.2,
+        0.952052236,
+        1.43992651
+      ],
+      "boundsMin": [
+        -1.1,
+        0.0,
+        -0.719963253
+      ],
+      "rootScale": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "triangles": 8711,
+      "meshCount": 1,
+      "materialCount": 1,
+      "colliderCount": 1,
+      "missingMaterials": 0,
+      "shaders": [
+        "Shader Graphs/glTF-pbrMetallicRoughness"
+      ],
+      "textures": [
+        {
+          "name": "image_0",
+          "width": 4096,
+          "height": 4096
+        },
+        {
+          "name": "image_1",
+          "width": 2048,
+          "height": 2048
+        },
+        {
+          "name": "image_2",
+          "width": 4096,
+          "height": 4096
+        }
+      ],
+      "collisionRayHit": true,
+      "collision": "Static non-convex MeshCollider; no Rigidbody"
+    }
+  ]
+}
