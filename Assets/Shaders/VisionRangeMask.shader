@@ -30,6 +30,11 @@ Shader "Hidden/Loongdum/VisionRangeMask"
             float _VisionOcclusionEnabled;
             float _VisionRayCount;
             float _VisionSurfacePadding;
+            #define MAX_PORTAL_VIEWS 8
+            float _VisionPortalCount;
+            float4 _VisionPortalOrigins[MAX_PORTAL_VIEWS];
+            TEXTURE2D(_VisionPortalDistances);
+            SAMPLER(sampler_VisionPortalDistances);
 
             half4 Frag(Varyings input) : SV_Target
             {
@@ -68,6 +73,26 @@ Shader "Hidden/Loongdum/VisionRangeMask"
                     mask = max(mask, occlusionMask);
                 }
 
+                // Union each exit's aperture-clipped visibility with the direct view.
+                [loop]
+                for (int portal = 0; portal < (int)_VisionPortalCount; portal++)
+                {
+                    float4 origin = _VisionPortalOrigins[portal];
+                    float2 delta = worldPosition.xz - origin.xz;
+                    float portalDistance = length(delta);
+                    float angle = atan2(delta.y, delta.x) / TWO_PI;
+                    float2 lookup = float2(frac(angle + 0.5 / _VisionRayCount),
+                        (portal + 0.5) / MAX_PORTAL_VIEWS);
+                    float2 limits = SAMPLE_TEXTURE2D_LOD(_VisionPortalDistances,
+                        sampler_VisionPortalDistances, lookup, 0).rg * origin.w;
+                    float visible = step(limits.x, portalDistance)
+                        * (1.0 - step(limits.y + _VisionSurfacePadding, portalDistance));
+                    float portalSoftness = min(_VisionEdgeSoftness, origin.w);
+                    float rangeMask = portalSoftness > 0.0001
+                        ? smoothstep(origin.w - portalSoftness, origin.w, portalDistance)
+                        : step(origin.w, portalDistance);
+                    mask = min(mask, 1.0 - visible * (1.0 - rangeMask));
+                }
                 return half4(0, 0, 0, mask);
             }
             ENDHLSL

@@ -36,6 +36,36 @@ public sealed class VisionSource : MonoBehaviour
     [Tooltip("保留障碍表面附近的一小段可见区域，避免表面闪烁。")]
     [SerializeField, Min(0f)] private float surfacePadding = 0.05f;
 
+    [Header("Vision Portals")]
+    [SerializeField] private bool portalVision = true;
+    [Tooltip("允许视线连续穿过的门数量。每个视野源最多生成 8 个出口视野。")]
+    [SerializeField, Range(1, 4)] private int maxPortalHops = 1;
+
+    private const int MaxPortalViews = 8;
+    private const float PortalOffset = 0.002f;
+    private static readonly int PortalCountId = Shader.PropertyToID("_VisionPortalCount");
+    private static readonly int PortalOriginsId = Shader.PropertyToID("_VisionPortalOrigins");
+    private static readonly int PortalDistancesId = Shader.PropertyToID("_VisionPortalDistances");
+
+    private sealed class VisibilityView
+    {
+        public Vector3 origin;
+        public int parent;
+        public int depth;
+        public VisionPortal entry;
+        public VisionPortal gate;
+        public float[] minimum;
+        public float[] maximum;
+        public readonly List<VisionPortal> reachedPortals = new List<VisionPortal>();
+    }
+
+    private VisibilityView[] views;
+    private Texture2D portalTexture;
+    private Vector2[] portalRanges;
+    private readonly Vector4[] portalOrigins = new Vector4[MaxPortalViews];
+    private int portalViewCount;
+    public int PortalViewCount => portalViewCount;
+
     private static readonly int PositionRadiusId = Shader.PropertyToID("_VisionSourcePositionRadius");
     private static readonly int SoftnessId = Shader.PropertyToID("_VisionEdgeSoftness");
     private static readonly int EnabledId = Shader.PropertyToID("_VisionMaskEnabled");
@@ -67,6 +97,7 @@ public sealed class VisionSource : MonoBehaviour
         RenderPipelineManager.beginCameraRendering -= UpdateVisionShader;
         Shader.SetGlobalFloat(EnabledId, 0f);
         Shader.SetGlobalFloat(OcclusionEnabledId, 0f);
+        Shader.SetGlobalFloat(PortalCountId, 0f);
         Shader.SetGlobalTexture(DistancesId, Texture2D.whiteTexture);
         ReleaseVisibilityTexture();
     }
@@ -83,13 +114,17 @@ public sealed class VisionSource : MonoBehaviour
         Shader.SetGlobalVector(PositionRadiusId,
             new Vector4(position.x, position.y, position.z, Mathf.Max(0.01f, visionRadius)));
         Shader.SetGlobalFloat(SoftnessId, Mathf.Max(0f, edgeSoftness));
-        Shader.SetGlobalFloat(OcclusionEnabledId, obstacleOcclusion ? 1f : 0f);
-        if (obstacleOcclusion)
+        RefreshVisibilityTexture();
+        Shader.SetGlobalFloat(OcclusionEnabledId,
+            obstacleOcclusion || (portalVision && VisionPortal.Active.Count > 0) ? 1f : 0f);
+        Shader.SetGlobalTexture(DistancesId, visibilityTexture);
+        Shader.SetGlobalFloat(RayCountId, rayDirections.Length);
+        Shader.SetGlobalFloat(SurfacePaddingId, Mathf.Max(0f, surfacePadding));
+        Shader.SetGlobalFloat(PortalCountId, portalViewCount);
+        if (portalViewCount > 0)
         {
-            RefreshVisibilityTexture();
-            Shader.SetGlobalTexture(DistancesId, visibilityTexture);
-            Shader.SetGlobalFloat(RayCountId, rayDirections.Length);
-            Shader.SetGlobalFloat(SurfacePaddingId, Mathf.Max(0f, surfacePadding));
+            Shader.SetGlobalVectorArray(PortalOriginsId, portalOrigins);
+            Shader.SetGlobalTexture(PortalDistancesId, portalTexture);
         }
     }
 
@@ -108,6 +143,10 @@ public sealed class VisionSource : MonoBehaviour
             };
             visibilityDistances = new float[count];
             rayDirections = new Vector3[count];
+            views = new VisibilityView[MaxPortalViews + 1];
+            for (int v = 0; v < views.Length; v++)
+                views[v] = new VisibilityView { minimum = new float[count], maximum = new float[count] };
+            portalRanges = new Vector2[count * MaxPortalViews];
             for (int i = 0; i < count; i++)
             {
                 float angle = i * (2f * Mathf.PI / count);
@@ -119,50 +158,149 @@ public sealed class VisionSource : MonoBehaviour
         obstacleCache.Clear();
         lastRayOrigin = transform.position + Vector3.up * sightHeight;
         lastRayRadius = Mathf.Max(0.01f, visionRadius);
+        portalViewCount = 0;
+        BuildView(0, lastRayOrigin, -1, null);
+        for (int parent = 0; parent <= portalViewCount && portalVision; parent++)
+        {
+            VisibilityView view = views[parent];
+            if (view.depth >= Mathf.Clamp(maxPortalHops, 1, 4)) continue;
+            foreach (VisionPortal entry in view.reachedPortals)
+            {
+                if (portalViewCount >= MaxPortalViews) break;
+                // Do not revisit a pair within the same path.
+                bool visited = false;
+                for (int ancestor = parent; ancestor > 0; ancestor = views[ancestor].parent)
+                    if (views[ancestor].entry == entry || views[ancestor].gate == entry
+                        || views[ancestor].entry == entry.LinkedPortal)
+                    { visited = true; break; }
+                if (!visited && BuildView(portalViewCount + 1,
+                    entry.MapPointToExit(view.origin), parent, entry)) portalViewCount++;
+            }
+        }
+        for (int i = 0; i < count; i++)
+            visibilityDistances[i] = views[0].maximum[i] / lastRayRadius;
+        visibilityTexture.SetPixelData(visibilityDistances, 0);
+        visibilityTexture.Apply(false, false);
+        if (portalViewCount == 0) return;
+        if (portalTexture == null)
+            portalTexture = new Texture2D(count, MaxPortalViews, TextureFormat.RGFloat, false, true)
+            {
+                name = "Vision Portal Distances", hideFlags = HideFlags.HideAndDontSave,
+                filterMode = FilterMode.Point, wrapMode = TextureWrapMode.Repeat
+            };
+        for (int v = 0; v < portalViewCount; v++)
+        {
+            VisibilityView view = views[v + 1];
+            portalOrigins[v] = new Vector4(view.origin.x, view.origin.y, view.origin.z, lastRayRadius);
+            for (int i = 0; i < count; i++)
+                portalRanges[v * count + i] = new Vector2(view.minimum[i], view.maximum[i]) / lastRayRadius;
+        }
+        portalTexture.SetPixelData(portalRanges, 0);
+        portalTexture.Apply(false, false);
+    }
+
+    private bool BuildView(int index, Vector3 origin, int parent, VisionPortal entry)
+    {
+        VisibilityView view = views[index];
+        view.origin = origin;
+        view.parent = parent;
+        view.depth = parent < 0 ? 0 : views[parent].depth + 1;
+        view.entry = entry;
+        view.gate = entry == null ? null : entry.LinkedPortal;
+        view.reachedPortals.Clear();
+        bool hasVisibleRay = false;
         // Query all layers so a parent's Layer can also classify a child collider.
         int queryLayers = obstacleFilter == ObstacleFilter.Layer && !checkParents
             ? obstacleLayers.value : Physics.AllLayers;
 
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < rayDirections.Length; i++)
         {
-            int hitCount = Physics.RaycastNonAlloc(lastRayOrigin, rayDirections[i], raycastHits,
-                lastRayRadius, queryLayers, QueryTriggerInteraction.Ignore);
-            // NonAlloc results are unsorted. A full buffer may omit a nearer blocker.
-            while (hitCount == raycastHits.Length)
+            Vector3 direction = rayDirections[i];
+            float minimum = 0f;
+            if (entry != null && (!view.gate.TryIntersect(origin, direction, lastRayRadius,
+                out minimum, true, Mathf.Min(entry.HalfWidth, view.gate.HalfWidth))
+                || !ContainsPoint(views[parent], entry.MapPointFromExit(origin + direction * minimum))))
             {
-                Array.Resize(ref raycastHits, raycastHits.Length * 2);
-                hitCount = Physics.RaycastNonAlloc(lastRayOrigin, rayDirections[i], raycastHits,
-                    lastRayRadius, queryLayers, QueryTriggerInteraction.Ignore);
+                view.minimum[i] = lastRayRadius + 1f;
+                view.maximum[i] = 0f;
+                continue;
             }
-
+            float start = entry == null ? 0f : minimum + PortalOffset;
+            Vector3 rayOrigin = origin + direction * start;
+            int hitCount = 0;
+            if (obstacleOcclusion && start < lastRayRadius)
+            {
+                hitCount = Physics.RaycastNonAlloc(rayOrigin, direction, raycastHits,
+                    lastRayRadius - start, queryLayers, QueryTriggerInteraction.Ignore);
+                while (hitCount == raycastHits.Length)
+                {
+                    Array.Resize(ref raycastHits, raycastHits.Length * 2);
+                    hitCount = Physics.RaycastNonAlloc(rayOrigin, direction, raycastHits,
+                        lastRayRadius - start, queryLayers, QueryTriggerInteraction.Ignore);
+                }
+            }
             float visibleDistance = lastRayRadius;
             Collider nearestObstacle = null;
             for (int h = 0; h < hitCount; h++)
             {
                 RaycastHit hit = raycastHits[h];
-                if (hit.distance < visibleDistance && IsObstacle(hit.collider))
+                if (start + hit.distance < visibleDistance && IsObstacle(hit.collider))
                 {
-                    visibleDistance = hit.distance;
+                    visibleDistance = start + hit.distance;
                     nearestObstacle = hit.collider;
                 }
             }
+            float blockingDistance = visibleDistance;
             if (keepObstacleVisible && nearestObstacle != null)
             {
                 // Reveal the blocking collider's footprint; its shadow begins at the far edge.
                 Bounds bounds = nearestObstacle.bounds;
-                Vector3 direction = rayDirections[i];
                 float exitX = Mathf.Abs(direction.x) > 0.00001f
-                    ? ((direction.x > 0f ? bounds.max.x : bounds.min.x) - lastRayOrigin.x) / direction.x
+                    ? ((direction.x > 0f ? bounds.max.x : bounds.min.x) - origin.x) / direction.x
                     : float.PositiveInfinity;
                 float exitZ = Mathf.Abs(direction.z) > 0.00001f
-                    ? ((direction.z > 0f ? bounds.max.z : bounds.min.z) - lastRayOrigin.z) / direction.z
+                    ? ((direction.z > 0f ? bounds.max.z : bounds.min.z) - origin.z) / direction.z
                     : float.PositiveInfinity;
                 visibleDistance = Mathf.Min(lastRayRadius, Mathf.Min(exitX, exitZ));
             }
-            visibilityDistances[i] = visibleDistance / lastRayRadius;
+            VisionPortal nearestPortal = null;
+            float portalDistance = blockingDistance;
+            if (portalVision)
+                foreach (VisionPortal portal in VisionPortal.Active)
+                    if (portal != null && portal != view.gate && portal.CanTransmit
+                        && portal.TryIntersect(origin, direction, portalDistance, out float distance,
+                            false, Mathf.Min(portal.HalfWidth, portal.LinkedPortal.HalfWidth))
+                        && distance >= start)
+                    { nearestPortal = portal; portalDistance = distance; }
+            if (nearestPortal != null)
+            {
+                visibleDistance = portalDistance;
+                if (!view.reachedPortals.Contains(nearestPortal)) view.reachedPortals.Add(nearestPortal);
+            }
+            view.minimum[i] = minimum;
+            view.maximum[i] = visibleDistance;
+            hasVisibleRay |= visibleDistance >= minimum;
         }
-        visibilityTexture.SetPixelData(visibilityDistances, 0);
-        visibilityTexture.Apply(false, false);
+        return hasVisibleRay;
+    }
+
+    private bool ContainsPoint(VisibilityView view, Vector3 point)
+    {
+        Vector3 offset = point - view.origin;
+        float distance = new Vector2(offset.x, offset.z).magnitude;
+        int index = Mathf.RoundToInt(Mathf.Atan2(offset.z, offset.x) * rayDirections.Length / (2f * Mathf.PI));
+        index = (index % rayDirections.Length + rayDirections.Length) % rayDirections.Length;
+        return distance >= view.minimum[index] - PortalOffset
+            && distance <= view.maximum[index] + surfacePadding && distance <= lastRayRadius;
+    }
+
+    /// <summary>Queries the latest horizontal visibility, including portal exits.</summary>
+    public bool IsPointVisible(Vector3 point)
+    {
+        if (views == null) return false;
+        for (int v = 0; v <= portalViewCount; v++)
+            if (ContainsPoint(views[v], point)) return true;
+        return false;
     }
 
     private bool IsObstacle(Collider collider)
@@ -213,6 +351,15 @@ public sealed class VisionSource : MonoBehaviour
         else
             DestroyImmediate(visibilityTexture);
         visibilityTexture = null;
+        if (portalTexture != null)
+        {
+            if (Application.isPlaying) Destroy(portalTexture);
+            else DestroyImmediate(portalTexture);
+        }
+        portalTexture = null;
+        views = null;
+        portalRanges = null;
+        portalViewCount = 0;
         visibilityDistances = null;
         rayDirections = null;
     }
@@ -223,6 +370,7 @@ public sealed class VisionSource : MonoBehaviour
         edgeSoftness = Mathf.Clamp(edgeSoftness, 0f, visionRadius);
         rayCount = Mathf.Clamp(rayCount, 64, 2048);
         surfacePadding = Mathf.Max(0f, surfacePadding);
+        maxPortalHops = Mathf.Clamp(maxPortalHops, 1, 4);
     }
 
     private void OnDrawGizmosSelected()
