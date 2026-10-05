@@ -1,7 +1,8 @@
 # 手绘漫画渲染
 
 当前 `PC_Renderer` 的 `Hand Drawn Comic Ink` 已开启，`PixelArtRendererFeature` 已关闭。
-在 Game 和 Scene 视图中均可预览漫画效果。
+Game 视图保持漫画效果，Scene 视图默认关闭漫画预览。
+需要在 Scene 中预览时，在 `Hand Drawn Comic Ink` 的 `Cameras` 下勾选 `Apply To Scene View`。
 
 ## 画面构成
 
@@ -28,7 +29,7 @@
 | Black Point / White Point | 适配场景光照与材质明暗；较小的 White Point 会增加留白 |
 | Paper Color / Ink Color / Background Color | 纸、墨、视野外底色 |
 | Paper Grain | 纸纹强度 |
-| Apply To Scene View | Scene 视图预览开关 |
+| Apply To Scene View | Scene 视图预览开关，默认关闭；不影响 Game 视图 |
 | Vision Mask Feature | 当前视野遮罩组件引用；跟随该组件的开关 |
 
 线宽、网点和排线以 720 像素画面高度为参考，按实际渲染分辨率缩放。

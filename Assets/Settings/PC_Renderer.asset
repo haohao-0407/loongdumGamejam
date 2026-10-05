@@ -431,5 +431,5 @@ MonoBehaviour:
   m_BlackPoint: 0.025
   m_WhitePoint: 0.62
   m_ToneSteps: 4
-  m_ApplyToSceneView: 1
+  m_ApplyToSceneView: 0
   m_VisionMaskFeature: {fileID: 7738769623000111814}

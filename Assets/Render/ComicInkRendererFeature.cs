@@ -34,7 +34,8 @@ public sealed class ComicInkRendererFeature : ScriptableRendererFeature
     [SerializeField, Range(2, 8)] private int m_ToneSteps = 4;
 
     [Header("Cameras")]
-    [SerializeField] private bool m_ApplyToSceneView = true;
+    [Tooltip("在 Scene 视图中预览漫画效果。关闭后只跳过 Scene 视图，Game 视图仍使用漫画渲染。")]
+    [SerializeField] private bool m_ApplyToSceneView = false;
     [Tooltip("The vision mask this finish follows. Its enabled toggle controls the gray hidden area.")]
     [SerializeField] private FullScreenPassRendererFeature m_VisionMaskFeature;
 
