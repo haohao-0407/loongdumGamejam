@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-05",
+  "scene": "Assets/Scenes/TestLevel.unity",
+  "structural": {
+    "segments": 7,
+    "blocked": [],
+    "visible": 147,
+    "count": 147,
+    "portalViews": 3,
+    "sourceCount": 1,
+    "playerCount": 1
+  },
+  "play": {
+    "success": true,
+    "keyboardMovement": true,
+    "glassBlocked": true,
+    "smokeObserved": true,
+    "waypoints": 6,
+    "milestones": 3,
+    "completed": true,
+    "time": 10.5559378,
+    "position": "(8.92, 0.98, 1.28)",
+    "victory": true,
+    "movementStopped": true
+  },
+  "restart": {
+    "uiPointerClickRestart": true,
+    "rKeyEdge": true,
+    "rKeyRestart": true,
+    "milestones": 0,
+    "timer": 0,
+    "movementEnabled": true,
+    "position": "(-9.00, 0.87, -4.40)",
+    "method": "UI PointerClick handler; queued R event processed by InputSystem.Update"
+  },
+  "sceneValidation": {
+    "missingScripts": 0,
+    "brokenPrefabs": 0,
+    "issues": 0
+  }
+}
