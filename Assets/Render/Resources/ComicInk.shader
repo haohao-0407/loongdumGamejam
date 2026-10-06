@@ -1,4 +1,4 @@
-Shader "Hidden/Loongdum/ComicInk"
+﻿Shader "Hidden/Loongdum/ComicInk"
 {
     SubShader
     {
@@ -121,6 +121,11 @@ Shader "Hidden/Loongdum/ComicInk"
                 float2 uv = input.texcoord;
                 float4 source = SAMPLE_TEXTURE2D_X_LOD(_BlitTexture, sampler_LinearClamp, uv, 0);
                 float luminance = dot(DisplayColor(source.rgb), float3(0.2126, 0.7152, 0.0722));
+                
+                //额，第一个值越小，越多亮的东西不受漫画化影响；第二个值越大，保护越亮的东西
+                float preserveVFX = smoothstep(0.08, 0.90, luminance);
+                preserveVFX = pow(preserveVFX, 0.50);
+                
                 float rawDepth = SampleSceneDepth(uv);
                 float mask = _ComicUseVisionMask > 0.5 ? EvaluateVisionMask(uv, rawDepth) : 0.0;
                 float visibility = 1.0 - mask;
@@ -155,7 +160,9 @@ Shader "Hidden/Loongdum/ComicInk"
                         abs(LuminanceAt(uv - float2(widthUV.x, 0)) - luminance)),
                     max(abs(LuminanceAt(uv + float2(0, widthUV.y)) - luminance),
                         abs(LuminanceAt(uv - float2(0, widthUV.y)) - luminance)));
-                outline = max(outline, smoothstep(0.12, 0.3, colorEdge) * _ComicContour.w * surface);
+                //outline = max(outline, smoothstep(0.12, 0.3, colorEdge) * _ComicContour.w * surface);
+                outline = max(outline,smoothstep(0.12, 0.3, colorEdge) * _ComicContour.w * surface * (1.0 - preserveVFX));
+
                 outline = max(outline, saturate(fwidth(visibility) * 1.5) * visibility);
 
                 float tone = saturate((luminance - _ComicTone.x) / max(_ComicTone.y - _ComicTone.x, 0.01));
@@ -173,9 +180,19 @@ Shader "Hidden/Loongdum/ComicInk"
                 printedInk = max(printedInk, smoothstep(0.86, 1.0, darkness) * 0.86);
                 float paperNoise = (Hash21(floor(paper * 1.6)) - 0.5) * _ComicDrawing.w;
                 float3 paperColor = _ComicPaperColor.rgb * (1.0 - darkness * 0.1) + paperNoise;
-                float3 drawing = lerp(paperColor, _ComicInkColor.rgb, max(outline, printedInk));
+                //float3 drawing = lerp(paperColor, _ComicInkColor.rgb, max(outline, printedInk));
+                //float3 background = _ComicBackgroundColor.rgb + paperNoise * 0.25;
+                //float3 result = lerp(background, drawing, surface);
+
+                float3 drawing = lerp(paperColor,_ComicInkColor.rgb,max(outline, printedInk));
                 float3 background = _ComicBackgroundColor.rgb + paperNoise * 0.25;
                 float3 result = lerp(background, drawing, surface);
+                result = lerp(result,DisplayColor(source.rgb),preserveVFX);
+
+                float gray = dot(result,float3(0.2126,0.7152,0.0722));
+                result = gray.xxx;
+
+
                 return half4(CameraColor(result), source.a);
             }
             ENDHLSL
