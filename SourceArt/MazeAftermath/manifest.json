@@ -1,0 +1,261 @@
+{
+  "sourceMaze": "Assets/Scenes/Maze.unity",
+  "sourceHash": "ad87ab6da852548abc6f63b8ddc596150d0dfbb276ed30cfbd063bb47472b521",
+  "localOrigin": [
+    2.31,
+    0.1,
+    -13.28
+  ],
+  "rootTransform": {
+    "go": 383370359,
+    "parent": 0,
+    "position": [
+      -11.8,
+      0.17130995,
+      42.66
+    ],
+    "scale": [
+      3.7529378,
+      1.085338,
+      3.4704547
+    ],
+    "rotation": [
+      -0.0,
+      -0.058348317,
+      -0.0,
+      0.9982963
+    ]
+  },
+  "glbUnityCorrectionEuler": [
+    0,
+    180,
+    0
+  ],
+  "mazeCells": [
+    5,
+    5
+  ],
+  "cellSize": [
+    3.7529378,
+    3.4704547
+  ],
+  "wallCount": 35,
+  "props": [
+    {
+      "asset": "BurnedJeep_T2",
+      "x": 12.8,
+      "y": -5.3,
+      "size": 3.8,
+      "angle": -24
+    },
+    {
+      "asset": "BurnedJeep_T2",
+      "x": -13.0,
+      "y": -9.5,
+      "size": 3.6,
+      "angle": 143
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": 7.505875599999999,
+      "y": -8.196136749999999,
+      "size": 0.83,
+      "angle": -12.86724932559273
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": -7.505875825176269,
+      "y": -8.196136749999999,
+      "size": 0.83,
+      "angle": 19.376933653379723
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": 5.1494067,
+      "y": -6.9409094,
+      "size": 0.83,
+      "angle": 113.31237649957819
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": -2.3564689000000003,
+      "y": 3.4704547,
+      "size": 0.83,
+      "angle": 87.48520258732464
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": 8.902344499999998,
+      "y": 2.9391523179536474e-17,
+      "size": 0.83,
+      "angle": 76.45432609738002
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": -7.505875825176269,
+      "y": 9.15613675,
+      "size": 0.83,
+      "angle": -15.162206832115254
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": 3.7529378,
+      "y": 5.6856820500000005,
+      "size": 0.83,
+      "angle": 8.4813165434579
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": 5.1494067,
+      "y": 2.9391523179536474e-17,
+      "size": 0.83,
+      "angle": 109.69014354832349
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": -3.7529378,
+      "y": -8.196136749999999,
+      "size": 0.83,
+      "angle": 17.953093281296816
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": -3.7529378,
+      "y": -1.25522735,
+      "size": 0.83,
+      "angle": -14.321722183941812
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": 0.0,
+      "y": -1.25522735,
+      "size": 0.83,
+      "angle": -1.9941178127938528
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": 0.0,
+      "y": 9.15613675,
+      "size": 0.83,
+      "angle": -21.36307562115269
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": -11.7,
+      "y": 7,
+      "size": 2.2,
+      "angle": 342.02772769500444
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": 11.8,
+      "y": 6,
+      "size": 2.0,
+      "angle": 165.84971512314155
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": -5,
+      "y": 10.1,
+      "size": 2.3,
+      "angle": 325.41617077857103
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": 5,
+      "y": 10.3,
+      "size": 1.8,
+      "angle": 76.80657713667519
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": -6,
+      "y": -11.4,
+      "size": 1.3,
+      "angle": 317.74986039944065
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "x": 5.6,
+      "y": -10.4,
+      "size": 1.4,
+      "angle": 254.79035997671528
+    }
+  ],
+  "fireSites": [
+    [
+      -12.5,
+      -8.9
+    ],
+    [
+      12.8,
+      -4.7
+    ],
+    [
+      -12,
+      7
+    ],
+    [
+      7.7,
+      11
+    ]
+  ],
+  "materials": "imagegen SpalledWall_BaseColor and BattleConcrete_BaseColor; concrete_wall_008 CC0 normal; original painted overlay hidden in Blender",
+  "meshes": [
+    {
+      "name": "Aftermath_Walls",
+      "vertices": 910,
+      "triangles": 1680
+    },
+    {
+      "name": "Aftermath_Steel",
+      "vertices": 4044,
+      "triangles": 6740
+    },
+    {
+      "name": "Aftermath_Rubble",
+      "vertices": 6024,
+      "triangles": 8032
+    },
+    {
+      "name": "Aftermath_Entrance",
+      "vertices": 96,
+      "triangles": 168
+    },
+    {
+      "name": "Aftermath_Foundation",
+      "vertices": 8,
+      "triangles": 12
+    },
+    {
+      "name": "Aftermath_Paving",
+      "vertices": 1920,
+      "triangles": 2880
+    },
+    {
+      "name": "Aftermath_GroundScars",
+      "vertices": 120,
+      "triangles": 80
+    },
+    {
+      "name": "Aftermath_Surround",
+      "vertices": 280,
+      "triangles": 420
+    },
+    {
+      "name": "Aftermath_Backdrop",
+      "vertices": 960,
+      "triangles": 1728
+    },
+    {
+      "name": "Aftermath_StreetDebris",
+      "vertices": 288,
+      "triangles": 480
+    },
+    {
+      "name": "Aftermath_Embers",
+      "vertices": 528,
+      "triangles": 704
+    }
+  ]
+}

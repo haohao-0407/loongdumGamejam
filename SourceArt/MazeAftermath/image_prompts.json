@@ -1,0 +1,25 @@
+{
+  "generator": "Built-in image_gen.imagegen",
+  "images": [
+    {
+      "file": "Assets/Environment/MazeAftermath/Reference/BurnedJeep.png",
+      "usage": "Inspected reference submitted to Meshy T2 image-to-3D",
+      "prompt": "Use case: photorealistic-natural. Asset type: single isolated game environment prop reference for Meshy T2 image-to-3D. A burned-out compact military utility jeep wreck after a battle, unarmed, no people, no symbols or logos. One cohesive vehicle only: battered olive drab and scorched charcoal bodywork, missing windshield glass, bent hood exposing dark engine cavity, torn canvas roof frame, four attached damaged wheels, rusty scraped metal, pale concrete dust. Entire vehicle clearly visible from a slightly elevated front three-quarter view, centered with generous border on seamless neutral light gray background, soft even studio lighting with only soft contact shadow. Realistic physically based material detail, strong clean silhouette and understandable geometry. Do not add environment, loose scattered objects, ground platform, flames, smoke, text, watermark, multiple views or collage. Landscape composition."
+    },
+    {
+      "file": "Assets/Environment/MazeAftermath/Reference/RebarRubble.png",
+      "usage": "Inspected reference submitted to Meshy T2 image-to-3D",
+      "prompt": "Use case: photorealistic-natural. Asset type: one isolated environment prop for Meshy T2 image-to-3D. Single cohesive pile of battle-damaged reinforced concrete rubble, roughly 1.8 meters wide and 0.7 meters tall, angular large shattered dusty pale concrete slabs packed together into one stable mound with small broken red brick inclusions and a few short bent rusty reinforcement bars emerging from cracks. Realistic game prop with chipped aggregate surfaces, soot-darkened edges, physically plausible heavy slabs. Full object entirely visible, centered, slightly elevated three-quarter camera, seamless light gray studio background, neutral even light. Strong unobstructed silhouette. No environment, no buildings, no people, no ground plane pedestal, no floating pieces, no flames or smoke, no text, no collage."
+    },
+    {
+      "file": "Assets/Environment/MazeAftermath/Textures/BattleConcrete_BaseColor.png",
+      "usage": "Paving and asphalt base color",
+      "prompt": "Use case: photorealistic-natural. Asset type: seamless square PBR base-color texture, top-down orthographic scan of old war-damaged concrete courtyard pavement surface, 3 meters by 3 meters. Flat rough weathered medium warm gray concrete with embedded small aggregate, irregular fine branching cracks, small worn chipped areas, subtle soot and dusty brown stains. Continuous natural concrete, no regular tiles or grid, no large objects, no props, no perspective, no light direction or shadows, no ambient occlusion shading, no text. Moderate contrast with readable realistic fine surface detail, roughly consistent illumination, fills the entire square edge to edge. Tileable edges."
+    },
+    {
+      "file": "Assets/Environment/MazeAftermath/Textures/SpalledWall_BaseColor.png",
+      "usage": "Architecture concrete base color",
+      "prompt": "Use case: photorealistic-natural. Asset type: square seamless PBR albedo surface texture for game environment battle-damaged concrete walls. Flat front-on orthographic surface scan of pale cool gray old reinforced concrete and chalky plaster, with extensive irregular spalling exposing coarse rough dark aggregate, scattered small ballistic impact chips with fractured light rims, fine jagged cracks, gray-black smoke stains and dusty streaks. Damage integrated into the material surface, dramatic but plausible, rough wartorn abandoned concrete. Medium light gray base with darker mottling, no colored paint, no repeated pattern or regular grid, no brick courses, no panels, no edges of a wall, no objects, no perspective, no lighting gradients or shadows, no text. The material fills entire image, neutral diffuse lighting, detailed physically realistic aggregate and dust. Tileable edges."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "provider": "meshy",
+  "model": "meshy-t2",
+  "mode": "image",
+  "texture_resolution": "4k",
+  "jobs": [
+    {
+      "asset": "BurnedJeep_T2",
+      "job_id": "2d7b1653b1fa41babce205f3b806d95f",
+      "reference": "Assets/Environment/MazeAftermath/Reference/BurnedJeep.png",
+      "requested_polycount": 15000,
+      "state": "done",
+      "asset_path": "Assets/Environment/MazeAftermath/Meshy/BurnedJeep_T2.glb",
+      "provider_task_id": "01a1118d-c7f6-767c-92f0-e5ffdb4ac38b"
+    },
+    {
+      "asset": "RebarRubble_T2",
+      "job_id": "e256b0c5240b4c268e7f5c722c31c8a9",
+      "reference": "Assets/Environment/MazeAftermath/Reference/RebarRubble.png",
+      "requested_polycount": 14000,
+      "state": "done",
+      "asset_path": "Assets/Environment/MazeAftermath/Meshy/RebarRubble_T2.glb",
+      "provider_task_id": "01a1118d-dd56-7259-b39f-8eec6fddc471"
+    }
+  ]
+}
