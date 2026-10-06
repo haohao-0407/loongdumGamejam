@@ -1,0 +1,28 @@
+{
+  "pipeline": "Assets/Settings/PC_RPAsset.asset",
+  "renderer": "Assets/Environment/MazeAftermath/Aftermath_Renderer.asset",
+  "rendererIndex": 1,
+  "originalDefaultIndex": 0,
+  "features": [
+    {
+      "name": "ScreenSpaceAmbientOcclusion",
+      "isActive": true
+    },
+    {
+      "name": "Vision Range Mask",
+      "isActive": true
+    },
+    {
+      "name": "Global Visible Smoke",
+      "isActive": true
+    },
+    {
+      "name": "PixelArtRendererFeature",
+      "isActive": false
+    },
+    {
+      "name": "Hand Drawn Comic Ink",
+      "isActive": false
+    }
+  ]
+}

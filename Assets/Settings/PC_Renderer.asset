@@ -417,19 +417,19 @@ MonoBehaviour:
   m_PaperColor: {r: 1, g: 1, b: 1, a: 1}
   m_InkColor: {r: 0, g: 0, b: 0, a: 1}
   m_BackgroundColor: {r: 0.23, g: 0.23, b: 0.23, a: 1}
-  m_PaperGrain: 0.0084
-  m_OutlineWidth: 0.57
-  m_DepthThreshold: 0.0053
-  m_NormalThreshold: 0.303
-  m_TextureEdgeStrength: 0.226
-  m_LineWobble: 0.309
-  m_SketchStrength: 0.23
-  m_HalftoneSpacing: 1.5
-  m_HalftoneStrength: 0.235
-  m_HatchingStrength: 0.741
-  m_CurvedSurfaceInk: 0.351
-  m_BlackPoint: 0.036
-  m_WhitePoint: 0.453
-  m_ToneSteps: 6
+  m_PaperGrain: 0.021
+  m_OutlineWidth: 1.6
+  m_DepthThreshold: 0.008
+  m_NormalThreshold: 0.22
+  m_TextureEdgeStrength: 0.15
+  m_LineWobble: 0.8
+  m_SketchStrength: 0.6
+  m_HalftoneSpacing: 2.8
+  m_HalftoneStrength: 1
+  m_HatchingStrength: 0.35
+  m_CurvedSurfaceInk: 0.95
+  m_BlackPoint: 0.025
+  m_WhitePoint: 0.62
+  m_ToneSteps: 4
   m_ApplyToSceneView: 0
   m_VisionMaskFeature: {fileID: 7738769623000111814}

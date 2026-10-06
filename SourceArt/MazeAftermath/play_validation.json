@@ -1,0 +1,28 @@
+{
+  "success": true,
+  "error": null,
+  "syntheticKeyboard": true,
+  "actorTeleports": false,
+  "groundedAtStart": true,
+  "route": [
+    2,
+    7,
+    6,
+    5,
+    10,
+    15,
+    20,
+    21,
+    16,
+    11,
+    12
+  ],
+  "waypointsReached": 12,
+  "totalWaypoints": 12,
+  "frames": 1855,
+  "seconds": 8.9679912999999942,
+  "swapAttempted": true,
+  "headSwapDistance": 0.0,
+  "playerSwapHorizontalDistance": 0.0,
+  "gameOver": false
+}
