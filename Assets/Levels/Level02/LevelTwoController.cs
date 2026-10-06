@@ -26,6 +26,7 @@ namespace Loongdum.Levels
         [SerializeField] private Material litFloor;
         [SerializeField] private Material feltFloor;
         [SerializeField] private Camera levelCamera;
+        [SerializeField] private VisionSource upperVision;
         private LevelTwoModel model;
         private Font font;
         private GUIStyle heading, text, small, centered;
@@ -36,12 +37,13 @@ namespace Loongdum.Levels
         public CellVisual[] Cells => cells;
         public Transform LowerBody => lowerBody;
         public Camera LevelCamera => levelCamera;
+        public VisionSource UpperVision => upperVision;
 
         public static Vector3 CellPosition(Vector2Int cell) =>
             new Vector3((cell.x - 5) * CellSize, 0f, (5 - cell.y) * CellSize);
 
         public void Configure(TextAsset data, CellVisual[] visuals, Transform lower,
-            Material dark, Material light, Material felt, Camera camera)
+            Material dark, Material light, Material felt, Camera camera, VisionSource vision = null)
         {
             layout = data;
             cells = visuals;
@@ -50,6 +52,7 @@ namespace Loongdum.Levels
             litFloor = light;
             feltFloor = felt;
             levelCamera = camera;
+            upperVision = vision;
         }
 
         private void OnEnable()
@@ -125,15 +128,18 @@ namespace Loongdum.Levels
 
         public void RefreshPresentation()
         {
+            bool continuousVision = upperVision != null;
+            if (continuousVision) upperVision.enabled = !designerView;
             for (int r = 0; r < model.Height; r++)
                 for (int c = 0; c < model.Width; c++)
                 {
                     Vector2Int cell = new Vector2Int(c, r);
                     CellVisual visual = cells[r * model.Width + c];
                     char tile = model.Tile(cell);
-                    bool visible = designerView || model.IsVisible(cell);
+                    bool visible = continuousVision || designerView || model.IsVisible(cell);
                     foreach (Renderer renderer in visual.renderers) renderer.enabled = visible;
-                    visual.floor.sharedMaterial = model.IsLit(cell) ? litFloor
+                    visual.floor.sharedMaterial = continuousVision ? litFloor
+                        : model.IsLit(cell) ? litFloor
                         : model.IsFelt(cell) || cell == model.Lower ? feltFloor : darkFloor;
                     if (visual.barrier != null) visual.barrier.SetActive(!model.IsOpen(tile));
                     if (visual.collider != null) visual.collider.enabled = model.BlocksMovement(cell);

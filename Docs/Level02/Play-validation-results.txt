@@ -1,4 +1,4 @@
-EDITOR ISSUE (outside gameplay): Unity 6000.6 SearchDatabase startup indexing threw ArgumentOutOfRangeException.
+PASS: Rendered player camera uses the radius-10 vision mask.
 INPUT 1 N => (1, 8), moves=1, lever=False
 INPUT 2 N => (1, 7), moves=2, lever=False
 INPUT 3 N => (1, 6), moves=3, lever=False

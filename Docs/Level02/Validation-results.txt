@@ -26,15 +26,17 @@ PASS: Restart clears all puzzle state.
 PASS: No solution exists without the lever.
 PASS: Exhaustive state search confirms the shortest solution.
 PASS: Scene contains all 121 cells and its controller.
-PASS: Tile meshes and mechanism labels follow the current visibility mask.
+PASS: The upper body uses a fixed radius-10 world-space vision source.
+PASS: Walls, lever, and doors occlude vision; glass and mirrors transmit it.
+PASS: Tile meshes remain available for the continuous vision mask.
 PASS: Colliders match movement blocking, including hidden obstacles.
 PASS: Lower-body transform matches its grid position.
-PASS: Tile meshes and mechanism labels follow the current visibility mask.
+PASS: Tile meshes remain available for the continuous vision mask.
 PASS: Colliders match movement blocking, including hidden obstacles.
 PASS: Lower-body transform matches its grid position.
 PASS: Pressure opens both the visible shutter and its collision.
 PASS: Release restores shutter rendering and collision.
-PASS: Tile meshes and mechanism labels follow the current visibility mask.
+PASS: Tile meshes remain available for the continuous vision mask.
 PASS: Colliders match movement blocking, including hidden obstacles.
 PASS: Lower-body transform matches its grid position.
 PASS: Second-level scene registered in the build list.

@@ -88,6 +88,15 @@ namespace Loongdum.Levels.Editor
                 EditorSceneManager.OpenScene(LevelTwoSceneBuilder.ScenePath);
             var controller = UnityEngine.Object.FindFirstObjectByType<LevelTwoController>();
             Check(controller != null && controller.Cells.Length == 121, "Scene contains all 121 cells and its controller.");
+            Check(controller.UpperVision != null
+                && new SerializedObject(controller.UpperVision).FindProperty("visionRadius").floatValue == 10f
+                && controller.UpperVision.transform.position == LevelTwoController.CellPosition(model.Upper) + Vector3.up * .5f,
+                "The upper body uses a fixed radius-10 world-space vision source.");
+            int obstacleLayer = LayerMask.NameToLayer("VisionObstacle");
+            Check(obstacleLayer >= 0 && Enumerable.Range(0, 121).All(index =>
+                controller.Cells[index].root.layer == ("#AaXY".IndexOf(model.Tile(
+                    new Vector2Int(index % 11, index / 11))) >= 0 ? obstacleLayer : 0)),
+                "Walls, lever, and doors occlude vision; glass and mirrors transmit it.");
             controller.Initialize();
             CheckScenePresentation(controller);
             foreach (char command in "NNNNNNNNDDDDEDDSS")
@@ -115,11 +124,12 @@ namespace Loongdum.Levels.Editor
                 {
                     var cell = new Vector2Int(c, r);
                     var visual = controller.Cells[r * 11 + c];
-                    visibilityMatches &= visual.renderers.All(renderer => renderer.enabled == controller.Model.IsVisible(cell));
+                    visibilityMatches &= visual.renderers.All(renderer => renderer.enabled
+                        == (controller.UpperVision != null || controller.Model.IsVisible(cell)));
                     if (visual.collider != null)
                         collisionMatches &= visual.collider.enabled == controller.Model.BlocksMovement(cell);
                 }
-            Check(visibilityMatches, "Tile meshes and mechanism labels follow the current visibility mask.");
+            Check(visibilityMatches, "Tile meshes remain available for the continuous vision mask.");
             Check(collisionMatches, "Colliders match movement blocking, including hidden obstacles.");
             Check(controller.LowerBody.position == LevelTwoController.CellPosition(controller.Model.Lower),
                 "Lower-body transform matches its grid position.");
@@ -217,6 +227,10 @@ namespace Loongdum.Levels.Editor
                 {
                     LevelTwoValidation.CheckScenePresentation(controller);
                     Capture("01-start");
+                    if (Mathf.Abs(Shader.GetGlobalVector("_VisionSourcePositionRadius").w - 10f) > .001f
+                        || Shader.GetGlobalFloat("_VisionMaskEnabled") < .5f)
+                        throw new Exception("The rendered player view is not using the radius-10 vision mask.");
+                    results.Add("PASS: Rendered player camera uses the radius-10 vision mask.");
                     stage = 1;
                     return;
                 }

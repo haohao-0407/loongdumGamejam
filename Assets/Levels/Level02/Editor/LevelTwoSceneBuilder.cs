@@ -27,6 +27,11 @@ namespace Loongdum.Levels.Editor
         {
             if (EditorApplication.isPlaying) throw new InvalidOperationException("Stop Play mode before rebuilding.");
             if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            // Keep the second level's fixed upper body on the first level's vision settings.
+            EditorSceneManager.OpenScene("Assets/Scenes/Whitebox1.unity");
+            var firstLevelVision = UnityEngine.Object.FindFirstObjectByType<VisionSource>();
+            if (firstLevelVision == null) throw new InvalidOperationException("The first-level vision source is missing.");
+            string visionSettings = EditorJsonUtility.ToJson(firstLevelVision);
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             Directory.CreateDirectory(Root + "/Materials");
             AssetDatabase.Refresh();
@@ -70,7 +75,7 @@ namespace Loongdum.Levels.Editor
             var light = lightObject.AddComponent<Light>();
             light.type = LightType.Directional;
             light.intensity = 1.35f;
-            // No shadow may expose a hidden tile outside the grid visibility mask.
+            // Keep the first-level vision mask as the sole visibility boundary.
             light.shadows = LightShadows.None;
 
             var root = new GameObject("Level 02 - Unreachable Lever");
@@ -144,6 +149,8 @@ namespace Loongdum.Levels.Editor
                         collider.size = new Vector3(LevelTwoController.CellSize, 1f, LevelTwoController.CellSize);
                         visual.collider = collider;
                     }
+                    if ("#AaXY".IndexOf(tile) >= 0)
+                        cell.layer = LayerMask.NameToLayer("VisionObstacle");
                     visual.renderers = cell.GetComponentsInChildren<Renderer>(true);
                     cells[r * model.Width + c] = visual;
                 }
@@ -151,9 +158,22 @@ namespace Loongdum.Levels.Editor
             lowerObject.SetParent(root.transform, false);
             for (int side = -1; side <= 1; side += 2)
                 Shape("Leg", PrimitiveType.Capsule, lowerObject, new Vector3(side * .19f, .38f, 0), new Vector3(.24f, .35f, .28f), lower);
-            controller.Configure(layout, cells, lowerObject, dark, lit, felt, camera);
+            var visionObject = new GameObject("Upper body vision - Whitebox1 settings");
+            visionObject.transform.SetParent(root.transform, false);
+            visionObject.transform.position = LevelTwoController.CellPosition(model.Upper) + Vector3.up * .5f;
+            var vision = visionObject.AddComponent<VisionSource>();
+            EditorJsonUtility.FromJsonOverwrite(visionSettings, vision);
+            var visionProperties = new SerializedObject(vision);
+            visionProperties.FindProperty("visionRadius").floatValue = 10f;
+            visionProperties.FindProperty("targetCamera").objectReferenceValue = camera;
+            visionProperties.ApplyModifiedPropertiesWithoutUndo();
+            var entry = Portal("p - vision entrance", model.PortalEntry, 0, root.transform);
+            var exit = Portal("P - vision exit", model.PortalExit, 180, root.transform);
+            entry.LinkedPortal = exit;
+            exit.LinkedPortal = entry;
+            controller.Configure(layout, cells, lowerObject, dark, lit, felt, camera, vision);
             controller.Initialize();
-            // The saved Scene view is the designer's full map; Awake applies player visibility.
+            // Keep the saved Scene view complete; the Play camera applies the vision mask.
             foreach (var visual in cells)
                 foreach (var renderer in visual.renderers) renderer.enabled = true;
             EditorSceneManager.SaveScene(scene, ScenePath);
@@ -168,6 +188,22 @@ namespace Loongdum.Levels.Editor
         {
             Build();
             LevelTwoValidation.Run();
+        }
+
+        private static VisionPortal Portal(string name, Vector2Int cell, float yaw, Transform parent)
+        {
+            var item = new GameObject(name);
+            item.transform.SetParent(parent, false);
+            item.transform.position = LevelTwoController.CellPosition(cell) + Vector3.up * .5f;
+            item.transform.rotation = Quaternion.Euler(0, yaw, 0);
+            item.transform.position += item.transform.forward * .09f;
+            var portal = item.AddComponent<VisionPortal>();
+            var properties = new SerializedObject(portal);
+            properties.FindProperty("width").floatValue = 1.05f;
+            properties.FindProperty("height").floatValue = 1.25f;
+            properties.FindProperty("twoSided").boolValue = false;
+            properties.ApplyModifiedPropertiesWithoutUndo();
+            return portal;
         }
 
         private static Material Material(string name, Color color)
