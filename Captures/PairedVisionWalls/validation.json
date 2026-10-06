@@ -1,0 +1,32 @@
+{
+  "success": true,
+  "count": 25,
+  "checks": [
+    "Front wall activates exactly one relay",
+    "A front relays to B back",
+    "The transmitting wall itself stays visible",
+    "Paired wall remains visible even with Whitebox1's obstacle visibility setting",
+    "A continues to block its own local shadow",
+    "B front does not receive a new omnidirectional light",
+    "Input and output path share the original ten-metre distance budget",
+    "Wall remains a solid physics obstacle",
+    "Occluded entrance does not relay",
+    "Partial input occlusion crops the corresponding exit rays",
+    "Output obstacles still block sight",
+    "Rotating B maps sight to its rotated back face",
+    "B front symmetrically relays to A back",
+    "Looking at A from its back does not activate its front",
+    "Entrance outside source radius stays inactive",
+    "Disabling relay leaves both solid walls in place",
+    "Re-enabling rebuilds relay endpoints",
+    "Disabled wall stops both directions",
+    "Mismatched apertures fail closed",
+    "Tilted wall fails closed for horizontal vision",
+    "Moving a wall updates the exit without retaining old visibility",
+    "One-hop limit prevents a second relay",
+    "Two-hop chain works within the shared distance budget",
+    "VisionSource Portal Vision toggle controls wall relays too",
+    "Ordinary portals retain their original aperture clipping behavior"
+  ],
+  "isolated": true
+}

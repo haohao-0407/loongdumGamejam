@@ -1,0 +1,17 @@
+{
+  "operational": true,
+  "views": 1,
+  "remote": true,
+  "localShadow": false,
+  "wallVisible": true,
+  "collisionA": true,
+  "collisionB": true,
+  "disabled": {
+    "views": 0,
+    "remote": false,
+    "collisionA": true,
+    "collisionB": true
+  },
+  "reenabledRemote": true,
+  "reenabledViews": 1
+}

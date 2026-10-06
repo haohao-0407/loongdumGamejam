@@ -251,7 +251,8 @@ public sealed class VisionSource : MonoBehaviour
                 }
             }
             float blockingDistance = visibleDistance;
-            if (keepObstacleVisible && nearestObstacle != null)
+            float obstacleFootprint = visibleDistance;
+            if (nearestObstacle != null)
             {
                 // Reveal the blocking collider's footprint; its shadow begins at the far edge.
                 Bounds bounds = nearestObstacle.bounds;
@@ -261,7 +262,8 @@ public sealed class VisionSource : MonoBehaviour
                 float exitZ = Mathf.Abs(direction.z) > 0.00001f
                     ? ((direction.z > 0f ? bounds.max.z : bounds.min.z) - origin.z) / direction.z
                     : float.PositiveInfinity;
-                visibleDistance = Mathf.Min(lastRayRadius, Mathf.Min(exitX, exitZ));
+                obstacleFootprint = Mathf.Min(lastRayRadius, Mathf.Min(exitX, exitZ));
+                if (keepObstacleVisible) visibleDistance = obstacleFootprint;
             }
             VisionPortal nearestPortal = null;
             float portalDistance = blockingDistance;
@@ -274,7 +276,12 @@ public sealed class VisionSource : MonoBehaviour
                     { nearestPortal = portal; portalDistance = distance; }
             if (nearestPortal != null)
             {
-                visibleDistance = portalDistance;
+                // A paired wall transmits its shadow but must remain visible itself.
+                // Only extend to this wall's already computed footprint, never to objects behind it.
+                if (PairedVisionWalls.TryGetWall(nearestPortal, out var relayWall) && nearestObstacle == relayWall)
+                    visibleDistance = Mathf.Max(portalDistance, obstacleFootprint);
+                else
+                    visibleDistance = portalDistance;
                 if (!view.reachedPortals.Contains(nearestPortal)) view.reachedPortals.Add(nearestPortal);
             }
             view.minimum[i] = minimum;
