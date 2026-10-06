@@ -46,7 +46,8 @@
 *.lighting              unity-yaml
 *.mask                  unity-yaml
 *.mat                   unity-yaml
-*.meta                  unity-yaml
+# .meta files use ordinary YAML; UnityYAMLMerge expects Unity-serialized YAML.
+*.meta                  merge=text eol=lf linguist-language=yaml
 *.mixer                 unity-yaml
 *.overrideController    unity-yaml
 *.playable              unity-yaml

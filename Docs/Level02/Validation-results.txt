@@ -1,0 +1,42 @@
+PASS: All 121 tiles match the attached second-level diagram.
+PASS: Correct start and fixed upper body.
+PASS: Initial a/X closed, Y open.
+PASS: Neither remote lower body nor fixed upper body can operate A.
+PASS: Diagonal movement rejected.
+PASS: Multi-cell jumps rejected.
+PASS: Glass transmits light to the distant lever.
+PASS: Original beam stops after three cells.
+PASS: Closed shutter prevents remote light at start.
+PASS: Touch reveals four adjacent cells, never diagonal cells.
+PASS: Glass, lever, and mirror frames block shortcut movement.
+PASS: Lever is reachable diagonally; an occupied door cannot close on the player.
+PASS: Closed X prevents crossing before interaction.
+PASS: Lever pedestal prevents the central shortcut.
+PASS: A opens X and closes Y in the same action.
+PASS: Y blocks return after the throw.
+PASS: Double throw can be reversed, without latching both doors open.
+PASS: Standing on 1 immediately opens a.
+PASS: Light enters p and emerges from P.
+PASS: Portal preserves southward direction and grants three fresh cells of light.
+PASS: Portal does not grant extra radius or an omnidirectional exit light.
+PASS: Leaving the plate immediately removes the temporary remote route.
+PASS: Intended route wins after 24 moves and one lever interaction.
+PASS: Completion freezes movement and mechanisms.
+PASS: Restart clears all puzzle state.
+PASS: No solution exists without the lever.
+PASS: Exhaustive state search confirms the shortest solution.
+PASS: Scene contains all 121 cells and its controller.
+PASS: The upper body uses a fixed radius-10 world-space vision source.
+PASS: Walls, lever, and doors occlude vision; glass and mirrors transmit it.
+PASS: Tile meshes remain available for the continuous vision mask.
+PASS: Colliders match movement blocking, including hidden obstacles.
+PASS: Lower-body transform matches its grid position.
+PASS: Tile meshes remain available for the continuous vision mask.
+PASS: Colliders match movement blocking, including hidden obstacles.
+PASS: Lower-body transform matches its grid position.
+PASS: Pressure opens both the visible shutter and its collision.
+PASS: Release restores shutter rendering and collision.
+PASS: Tile meshes remain available for the continuous vision mask.
+PASS: Colliders match movement blocking, including hidden obstacles.
+PASS: Lower-body transform matches its grid position.
+PASS: Second-level scene registered in the build list.
