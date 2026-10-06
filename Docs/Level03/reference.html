@@ -1,0 +1,831 @@
+<title>光线门</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap">
+
+<style>
+/* ── 设计计划 ─────────────────────────────────────────────
+   主题:棋盘上的暗室。整页是一张图纸,棋盘是图纸上唯一有光的东西。
+   继承第三关那张图的设计语言:同一套色板、同一套字形、同一套棋盘栅格,
+   只加两样东西——一张不是方的地图,和一扇能把光接走的门。
+   这一版的三个条件:地图不是方的、头不在正中、光门能把视野延出去。
+   色彩:骨纸底 / 墨字 / 琥珀是光 / 冷青是玻璃 / 蓝灰是下半身
+        钢白是传送镜,墨绿是拉杆,青是压力板,紫是光闸,赭是路门,玫红是换位台,
+        亮紫是光门。
+   字体:Noto Serif SC 作标题(有刻印感),Noto Sans SC 作正文与标注
+   布局:单栏,标题 → 图例 → 设计者全图与玩家开局并排 → 两次换位后的两眼并排
+        → 踩板那一眼通栏(光门接力)→ 解谜链条 → 设计说明 → 规则检查表
+   ──────────────────────────────────────────────────────── */
+:root{
+  --bg:#efece3;
+  --surface:#f8f6f0;
+  --fg:#1a1916;
+  --muted:#6d6759;
+  --line:#d9d3c4;
+  --accent:#a0641a;
+  --lower:#42566b;
+
+  --board:#12121a;
+  --floor:#1e1e27;
+  --wall:#3b3b48;
+  --lit:#c08f3c;
+  --lit-soft:#8a6526;
+  --glass:#2f6f8f;
+  --glass-edge:#6fc2e0;
+  --void:#07070a;
+
+  --mirror:#39404d;
+  --mirror-edge:#eaf1fa;
+  --mirror-lit:#6e6350;
+  --lever:#2f5348;
+  --lever-ink:#8fe3bb;
+  --lever-lit:#5f7a4e;
+  --plate:#3f5f6b;
+  --plate-ink:#8fc9dc;
+  --plate-lit:#c08f3c;
+  --doorA:#4a3a63;
+  --doorA-ink:#c6a8f0;
+  --doorA-lit:#6b5286;
+  --doorB:#6b3f30;
+  --doorB-ink:#f0b090;
+  --doorB-lit:#8a5a3c;
+  --swap:#6d2f4f;
+  --swap-ink:#ffb3d8;
+  --swap-lit:#96506f;
+  --gate:#4a3f96;
+  --gate-ink:#d3c9ff;
+  --gate-lit:#7768cf;
+
+  --radius:5px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c0c10;
+    --surface:#15151b;
+    --fg:#e8e3d8;
+    --muted:#8d8778;
+    --line:#26262f;
+    --accent:#e0a63f;
+    --lower:#93b3cc;
+
+    --board:#050508;
+    --floor:#1a1a22;
+    --wall:#33333f;
+    --lit:#cf9a45;
+    --lit-soft:#7d5c22;
+    --glass:#2d6885;
+    --glass-edge:#6fc2e0;
+    --void:#030304;
+
+    --mirror:#333a46;
+    --mirror-edge:#e3ecf7;
+    --mirror-lit:#63594a;
+    --lever:#2a4a40;
+    --lever-ink:#7fd6ae;
+    --lever-lit:#557046;
+    --plate:#3a5866;
+    --plate-ink:#86c2d8;
+    --plate-lit:#cf9a45;
+    --doorA:#43355a;
+    --doorA-ink:#bb9ce6;
+    --doorA-lit:#614a7c;
+    --doorB:#613a2c;
+    --doorB-ink:#e6a888;
+    --doorB-lit:#7d5337;
+    --swap:#5e2845;
+    --swap-ink:#ffb3d8;
+    --swap-lit:#854766;
+    --gate:#423a88;
+    --gate-ink:#c8bdff;
+    --gate-lit:#6d5fc4;
+
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c0c10;
+  --surface:#15151b;
+  --fg:#e8e3d8;
+  --muted:#8d8778;
+  --line:#26262f;
+  --accent:#e0a63f;
+  --lower:#93b3cc;
+
+  --board:#050508;
+  --floor:#1a1a22;
+  --wall:#33333f;
+  --lit:#cf9a45;
+  --lit-soft:#7d5c22;
+  --glass:#2d6885;
+  --glass-edge:#6fc2e0;
+  --void:#030304;
+
+  --mirror:#333a46;
+  --mirror-edge:#e3ecf7;
+  --mirror-lit:#63594a;
+  --lever:#2a4a40;
+  --lever-ink:#7fd6ae;
+  --lever-lit:#557046;
+  --plate:#3a5866;
+  --plate-ink:#86c2d8;
+  --plate-lit:#cf9a45;
+  --doorA:#43355a;
+  --doorA-ink:#bb9ce6;
+  --doorA-lit:#614a7c;
+  --doorB:#613a2c;
+  --doorB-ink:#e6a888;
+  --doorB-lit:#7d5337;
+  --swap:#5e2845;
+  --swap-ink:#ffb3d8;
+  --swap-lit:#854766;
+  --gate:#423a88;
+  --gate-ink:#c8bdff;
+  --gate-lit:#6d5fc4;
+
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+  font-size:15px;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  max-width:880px;
+  margin:0 auto;
+  padding-block:44px 72px;
+  padding-inline:20px;
+}
+h1{
+  font-family:'Noto Serif SC','Songti SC','SimSun',serif;
+  font-weight:700;
+  font-size:clamp(26px,4.4vw,38px);
+  line-height:1.25;
+  letter-spacing:.02em;
+  text-wrap:balance;
+  margin:0 0 10px;
+}
+.lede{
+  color:var(--muted);
+  margin:0 0 4px;
+  max-width:34em;
+}
+.rule{
+  height:1px;
+  background:var(--line);
+  border:0;
+  margin:28px 0;
+}
+
+/* 图例 */
+.legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 22px;
+  margin:0 0 30px;
+  padding:0;
+  list-style:none;
+}
+.legend li{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:13px;
+  color:var(--muted);
+}
+.swatch{
+  width:16px;height:16px;
+  border-radius:3px;
+  flex:none;
+  position:relative;
+  background:var(--floor);
+  box-shadow:inset 0 0 0 1px var(--line);
+}
+.swatch.s-floor{background:var(--floor)}
+.swatch.s-wall{background:var(--wall)}
+.swatch.s-glass{background:var(--glass);box-shadow:inset 0 0 0 1px var(--glass-edge)}
+.swatch.s-lit{background:var(--lit)}
+.swatch.s-void{background:var(--void)}
+.swatch.s-out{background:transparent;box-shadow:inset 0 0 0 1px var(--line);opacity:.55}
+.swatch.s-upper{background:transparent;box-shadow:none}
+.swatch.s-upper::after{
+  content:'';position:absolute;inset:3px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 7px var(--accent);
+}
+.swatch.s-lower{background:transparent;box-shadow:none;display:flex;gap:3px;align-items:center;justify-content:center}
+.swatch.s-lower::before,.swatch.s-lower::after{
+  content:'';width:3px;height:11px;border-radius:2px;background:var(--lower);
+}
+.swatch.s-mirror{background:var(--mirror)}
+.swatch.s-mirror::after{
+  content:'';position:absolute;left:50%;top:18%;width:3px;height:64%;
+  margin-left:-1.5px;border-radius:999px;background:var(--mirror-edge);
+}
+.swatch.s-lever{background:var(--lever)}
+.swatch.s-lever::after{
+  content:'';position:absolute;inset:32% 38%;border-radius:2px;background:var(--lever-ink);
+}
+.swatch.s-plate{background:var(--floor)}
+.swatch.s-plate::after{
+  content:'';position:absolute;inset:16%;border-radius:2px;
+  box-shadow:inset 0 0 0 2px var(--plate);
+}
+.swatch.s-doorA{background:var(--doorA);box-shadow:inset 0 0 0 1px var(--doorA-ink)}
+.swatch.s-doorB{background:var(--doorB);box-shadow:inset 0 0 0 1px var(--doorB-ink)}
+.swatch.s-swap{background:var(--swap)}
+.swatch.s-swap::after{
+  content:'⇄';position:absolute;inset:0;display:grid;place-items:center;
+  font-size:11px;font-weight:700;line-height:1;color:var(--swap-ink);
+}
+.swatch.s-gate{background:var(--gate)}
+.swatch.s-gate::after{
+  content:'';position:absolute;inset:3px;border-radius:50%;
+  box-shadow:inset 0 0 0 1.5px var(--gate-ink);
+}
+
+/* 棋盘 */
+.boards{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:26px;
+}
+.boards + .boards{margin-top:34px}
+.panel{min-width:0}
+.panel h2{
+  font-family:'Noto Serif SC','Songti SC','SimSun',serif;
+  font-weight:600;
+  font-size:15px;
+  letter-spacing:.04em;
+  margin:0 0 2px;
+}
+.panel p{
+  font-size:12.5px;
+  color:var(--muted);
+  margin:0 0 12px;
+  line-height:1.55;
+}
+/* 地图不是方的:棋盘不铺底色,格与格之间露出纸面,
+   于是"地图外"的格子自然消失,留下的深色形状就是这一关真正的轮廓。 */
+.board{
+  display:grid;
+  gap:2px;
+  width:100%;
+  max-width:100%;
+}
+.panel.wide{margin-top:34px}
+.cell{
+  position:relative;
+  border-radius:2px;
+  background:var(--floor);
+}
+.cell.out{background:transparent}
+.cell.wall{background:var(--wall)}
+.cell.glass{
+  background:var(--glass);
+  box-shadow:inset 0 0 0 1px var(--glass-edge);
+}
+.cell.lit{background:var(--lit)}
+.cell.void{background:var(--void)}
+.cell.felt{
+  box-shadow:inset 0 0 0 1px var(--lower);
+  opacity:.85;
+}
+.cell.void.felt{background:var(--void);box-shadow:inset 0 0 0 1px var(--lower)}
+.cell.wall.lit{background:var(--lit-soft)}
+
+/* 机关 */
+.cell.mirror{background:var(--mirror)}
+.cell.mirror::after{
+  content:'';position:absolute;left:50%;top:16%;width:16%;height:68%;
+  margin-left:-8%;border-radius:999px;background:var(--mirror-edge);
+  box-shadow:0 0 5px var(--mirror-edge);
+}
+.cell.lever{background:var(--lever)}
+.cell.lever::after{
+  content:'';position:absolute;inset:30% 37%;border-radius:3px;
+  background:var(--lever-ink);
+}
+.cell.plate{background:var(--floor)}
+.cell.plate::after{
+  content:'';position:absolute;inset:14%;border-radius:3px;
+  box-shadow:inset 0 0 0 2px var(--plate);
+}
+.cell.doorA{background:var(--doorA);box-shadow:inset 0 0 0 1px var(--doorA-ink)}
+.cell.doorB{background:var(--doorB);box-shadow:inset 0 0 0 1px var(--doorB-ink)}
+.cell.swap{background:var(--swap)}
+.cell.swap::after{
+  content:'⇄';position:absolute;inset:0;display:grid;place-items:center;
+  font-size:11px;font-weight:700;line-height:1;color:var(--swap-ink);
+}
+/* 光门:一枚环。光进去就被吞掉,门再从这一格重新射出去。 */
+.cell.gate{background:var(--gate)}
+.cell.gate::after{
+  content:'';position:absolute;inset:16%;border-radius:50%;
+  box-shadow:inset 0 0 0 2px var(--gate-ink);
+}
+
+/* 被光照到的机关:保留自己的颜色,底色换成被照亮的版本 */
+.cell.mirror.lit{background:var(--mirror-lit)}
+.cell.lever.lit{background:var(--lever-lit)}
+.cell.plate.lit{background:var(--plate-lit)}
+.cell.doorA.lit{background:var(--doorA-lit)}
+.cell.doorB.lit{background:var(--doorB-lit)}
+.cell.swap.lit{background:var(--swap-lit)}
+.cell.gate.lit{background:var(--gate-lit)}
+
+/* 机关上的记号:压力板 1 / 光闸 a / 拉杆 A B C / 路门 X Z D / 光门 ①②③ / 换位台 ⇄ */
+.cell .glyph{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  font-size:9px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:0;
+  pointer-events:none;
+}
+.cell.plate .glyph{color:var(--plate-ink)}
+.cell.lever .glyph{color:var(--lever-ink)}
+.cell.doorA .glyph{color:var(--doorA-ink)}
+.cell.doorB .glyph{color:var(--doorB-ink)}
+.cell.gate .glyph{color:var(--gate-ink)}
+.cell.mirror .glyph{color:var(--mirror-edge);font-size:8px;letter-spacing:.02em}
+.board.wide .glyph{font-size:13px}
+.board.wide .cell.swap::after{font-size:15px}
+
+.cell.upper::after{
+  content:'';
+  position:absolute;
+  inset:26%;
+  border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 10px 1px var(--accent);
+}
+.cell.lower i{
+  position:absolute;
+  top:22%;
+  width:16%;
+  height:56%;
+  border-radius:2px;
+  background:var(--lower);
+  box-shadow:0 0 6px rgba(0,0,0,.5);
+}
+.cell.lower i:first-child{left:32%}
+.cell.lower i:last-child{right:32%}
+
+/* 解谜链条 */
+.sec{
+  font-family:'Noto Serif SC','Songti SC','SimSun',serif;
+  font-weight:600;
+  font-size:15px;
+  letter-spacing:.04em;
+  margin:34px 0 14px;
+}
+.steps{
+  margin:0;
+  padding:0;
+  list-style:none;
+  counter-reset:step;
+  display:grid;
+  gap:11px;
+}
+.steps li{
+  position:relative;
+  padding-left:36px;
+  font-size:14px;
+}
+.steps li::before{
+  counter-increment:step;
+  content:counter(step);
+  position:absolute;
+  left:0;
+  top:3px;
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:var(--fg);
+  color:var(--bg);
+  display:grid;
+  place-items:center;
+  font-size:12px;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+}
+.steps b{font-weight:700;color:var(--accent)}
+
+/* 说明区 */
+.note{
+  margin-top:34px;
+  padding:18px 20px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+}
+.note h3{
+  font-family:'Noto Serif SC','Songti SC','SimSun',serif;
+  font-weight:600;
+  font-size:14px;
+  margin:0 0 8px;
+  letter-spacing:.04em;
+}
+.note p{margin:0;font-size:14px;color:var(--fg);white-space:pre-line}
+.note p + p{margin-top:10px;color:var(--muted);font-size:13px}
+
+.checks{
+  margin:26px 0 0;
+  padding:0;
+  list-style:none;
+  display:grid;
+  gap:7px;
+  font-size:13px;
+  color:var(--muted);
+}
+.checks li{
+  position:relative;
+  padding-left:20px;
+}
+.checks li::before{
+  content:'—';
+  position:absolute;
+  left:0;
+  color:var(--line);
+}
+.checks b{color:var(--fg);font-weight:600}
+
+.spec{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:14px 24px;
+  margin-top:30px;
+  padding-top:24px;
+  border-top:1px solid var(--line);
+}
+.spec div{min-width:0}
+.spec dt{
+  font-size:11px;
+  letter-spacing:.1em;
+  color:var(--muted);
+}
+.spec dd{
+  margin:2px 0 0;
+  font-size:14px;
+  font-variant-numeric:tabular-nums;
+}
+
+@media (max-width:600px){
+  .boards{grid-template-columns:minmax(0,1fr);gap:30px}
+  .wrap{padding-block:32px 56px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .cell.upper::after{animation:breathe 3.4s ease-in-out infinite}
+  @keyframes breathe{
+    0%,100%{box-shadow:0 0 8px 0 var(--accent)}
+    50%{box-shadow:0 0 14px 3px var(--accent)}
+  }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>第四关 · 光线门</h1>
+    <p class="lede">左边是设计者看到的全图,右边是玩家开局真正看到的画面。这一关的题眼不在门上,在光上:光就是视野——头在哪,视野就在哪;而光门能把视野接到走路要走三十步的地方去。</p>
+  </header>
+
+  <hr class="rule">
+
+  <ul class="legend" id="legend"></ul>
+
+  <div class="boards">
+    <section class="panel">
+      <h2>设计者看到的全图</h2>
+      <p>21 × 17,四间屋子斜着咬在一起:东北角一间玻璃房、东边一条贴边的走廊、中间一座大厅、西南一片南翼。没有一圈套一圈,四条边全是断的——357 格里 145 格根本不存在,144 格是能站人的地板。</p>
+      <div class="board" id="board-full" role="img" aria-label="第四关设计者全图"></div>
+    </section>
+    <section class="panel">
+      <h2>玩家开局看到的</h2>
+      <p>头被关在玻璃房里,它的光只能照到 20 格;下半身在西南角 (行16, 列8) 醒来,靠得住的只有脚边八格。357 格里玩家总共看得见 24 格,两块亮处之间隔着两间屋子——开局几乎什么都不知道,只看得见一个自己走不进去的角落。</p>
+      <div class="board" id="board-open" role="img" aria-label="玩家开局可见范围"></div>
+    </section>
+  </div>
+
+  <div class="boards">
+    <section class="panel">
+      <h2>第一次换位之后 · 光跟着头走</h2>
+      <p>下半身走到南翼西北角 (行13, 列3) 按 E,头和腿对调:腿被换进玻璃房,头落在南翼。头一动,光跟着搬走——几步前摸黑走过的这一片,现在整片亮起来;玻璃房从此全黑,里面只剩两根拉杆。</p>
+      <div class="board" id="board-swap1" role="img" aria-label="第一次换位后的可见范围"></div>
+    </section>
+    <section class="panel">
+      <h2>第二次换位之后</h2>
+      <p>腿在玻璃房里拨开 A 和 C,顺门 D 落进东边走廊,一路走到最南端 (行10, 列17),在第二座换位台旁按 E。头被换到走廊尽头,光又一次搬到地图的另一边。走廊亮了,链子却还差一环:光闸 a 没开,大厅依旧是黑的。</p>
+      <div class="board" id="board-swap2" role="img" aria-label="第二次换位后的可见范围"></div>
+    </section>
+  </div>
+
+  <section class="panel wide">
+    <h2>踩住压力板的那一眼 · 光门接力三次</h2>
+    <p>下半身回到南翼,踩住压力板 (行16, 列6):光闸 a 一开,光从走廊西侧出去,穿过窗 G 打进大厅口上的第一道光门 ①。门把光吞掉,再从自己这一格重新射出八方向三格的光——②接着亮,②又点亮 ③,③的光正好够到三格开外 (行8, 列7) 深处的拉杆 B。板一松,整条链立刻断回黑暗:它只让你看一眼,不让你走过去。</p>
+    <div class="board wide" id="board-plate" role="img" aria-label="踩住压力板时光门接力照到的范围"></div>
+  </section>
+
+  <h3 class="sec">解谜链条 · 七步</h3>
+  <ol class="steps">
+    <li>在西南角 (行16, 列8) 醒来。玻璃房在远处亮着一点,那是头——隔着两间屋子,过不去。门 X 关着,而开 X 的<b>拉杆 A</b> 在玻璃房里 (行4, 列17),够不着。整片南翼只有一个出口:西北角 (行13, 列3) 的<b>换位台</b>。</li>
+    <li>站到换位台旁按 E:<b>头和腿对调</b>。腿被换进玻璃房,头落在南翼。头一动,光跟着搬走——南翼第一次亮起来,玻璃房从此全黑。</li>
+    <li>黑暗里在玻璃房摸到两根拉杆:A 开 X,C 开南墙上的门 D。</li>
+    <li>从 D 落进东边走廊,一路往南走到尽头,站上 (行10, 列17),在第二座换位台旁按 E。腿被换回南翼,头落在走廊尽头。视野又跟着换到地图的另一边。</li>
+    <li>回到南翼踩住<b>压力板</b> (行16, 列6):光闸 a 开,光穿过窗 G,穿过大厅里两道<b>光门</b>,横跨大半张图点亮 (行8, 列7) 深处的拉杆 B。</li>
+    <li>记下 B 在哪(脚一松板就断,光也跟着灭),从南翼穿过 X 进大厅,摸到 B 拨下去:通往走廊的路门 Z 开。</li>
+    <li>穿过 Z 回到走廊,走到头现在站着的那一格。重合,过关。</li>
+  </ol>
+
+  <div class="note">
+    <h3 id="note-title"></h3>
+    <p id="note-body"></p>
+    <p id="note-extra"></p>
+  </div>
+
+  <ul class="checks" id="checks"></ul>
+
+  <dl class="spec">
+    <div><dt>棋盘</dt><dd id="spec-board">21 × 17 格</dd></div>
+    <div><dt>地图外的格子</dt><dd>145 格</dd></div>
+    <div><dt>光半径</dt><dd>3 格</dd></div>
+    <div><dt>光门接力</dt><dd>最多 3 次</dd></div>
+    <div><dt>移动</dt><dd>四方向,一格一步</dd></div>
+    <div><dt>过关</dt><dd>下半身走到上半身那一格</dd></div>
+    <div><dt>最短解</dt><dd>38 步 + 5 次 E</dd></div>
+    <div><dt>路线覆盖</dt><dd>136 格可走,踩过 39 格</dd></div>
+  </dl>
+</div>
+
+<script>
+(function(){
+  var RADIUS = 3;
+  var MAX_RELAYS = 3;
+  var DIRS = [
+    [-1,0], [1,0], [0,-1], [0,1],
+    [-1,-1], [-1,1], [1,-1], [1,1]
+  ];
+
+  /* 行 0 在北。格子里存的东西:
+     ' ' 地图外(不存在,挡腿也挡光,不渲染)   #  墙
+     .  地面          G  玻璃(挡腿不挡光)
+     U  上半身(光源、终点)             L  下半身(起点)
+     A B C  拉杆底座(挡腿,不挡光)      1  压力板
+     a  光闸(挡腿也挡光,踩住板才开)    X Z D  路门(挡腿也挡光)
+     M  光门(可以走上去;光进去就被吞掉,门再从这一格重新射出八方向三格光,
+        最多接力三次)                 S  换位台(挡腿,不挡光) */
+  var GRID = [
+    "              #####  ",
+    "             #.....# ",
+    "             #..U..# ",
+    "             #.....# ",
+    "             #C..A.# ",
+    "   ########## #DG##  ",
+    "  #..........#.....# ",
+    "  #..........#.....# ",
+    "  #....B..M.MGaM...# ",
+    "  #..........#.....# ",
+    "  #..........Z..#..# ",
+    "  #..........#..#S## ",
+    "  ####X###### #####  ",
+    " #.S......#          ",
+    " #........#          ",
+    " #........#          ",
+    " #....1.L.#          "
+  ];
+
+  /* 三道光门按接力顺序编号:走廊尽头那一道先亮,一路往西传。 */
+  var GATE_LABEL = { '8,15':'①', '8,12':'②', '8,10':'③' };
+
+  function at(r, c){ return GRID[r].charAt(c); }
+  function findChar(ch){
+    for (var r = 0; r < GRID.length; r++){
+      var c = GRID[r].indexOf(ch);
+      if (c >= 0) return { r:r, c:c };
+    }
+    return null;
+  }
+  function isOutside(ch){ return ch === ' '; }
+  function isShutter(ch){ return ch === 'a'; }
+  function isDoor(ch){ return 'XZD'.indexOf(ch) >= 0; }
+  function isLever(ch){ return 'ABC'.indexOf(ch) >= 0; }
+  function isPlate(ch){ return ch === '1'; }
+  function isSwap(ch){ return ch === 'S'; }
+  function isGate(ch){ return ch === 'M'; }
+
+  /* 挡光的只有墙、地图外、关着的门和关着的光闸。
+     玻璃、拉杆底座、压力板、换位台、光门都让光过去。 */
+  function blocksLight(ch, open){
+    if (ch === '#' || ch === ' ') return true;
+    if (isDoor(ch) || isShutter(ch)) return !open[ch];
+    return false;
+  }
+
+  function blankLit(){
+    var out = [];
+    for (var r = 0; r < GRID.length; r++){
+      out[r] = [];
+      for (var c = 0; c < GRID[r].length; c++) out[r][c] = false;
+    }
+    return out;
+  }
+
+  /* 从上半身同时射出八道光线,一步一格,沿路点亮。
+     撞上光门:光停在那里,门从自己这一格重新射出八方向三格光,
+     于是头—门—门—门可以连成一条链,把视野送到很远的地方;
+     整条链最多接力三次。
+     墙、地图外、关着的光闸、关着的路门让它停下。 */
+  function litMapBeam(open, upper){
+    var lit = blankLit();
+    lit[upper.r][upper.c] = true;
+
+    var queue = [], fired = {};
+    if (isGate(at(upper.r, upper.c))){
+      fired[upper.r + ',' + upper.c] = 0;
+      queue.push({ r:upper.r, c:upper.c, depth:1 });
+    } else {
+      queue.push({ r:upper.r, c:upper.c, depth:0 });
+    }
+
+    while (queue.length){
+      var origin = queue.shift();
+      DIRS.forEach(function(dir){
+        var cr = origin.r, cc = origin.c;
+        var budget = RADIUS;
+        while (budget > 0){
+          var nr = cr + dir[0], nc = cc + dir[1];
+          if (nr < 0 || nc < 0 || nr >= GRID.length || nc >= GRID[nr].length) break;
+          var ch = at(nr, nc);
+          if (isOutside(ch)) break;          /* 地图外:不点亮,也不穿透 */
+          lit[nr][nc] = true;
+          cr = nr; cc = nc;
+          budget--;
+
+          if (blocksLight(ch, open)) break;
+          if (isGate(ch)){
+            var key = nr + ',' + nc;
+            if (origin.depth < MAX_RELAYS &&
+                (fired[key] === undefined || fired[key] > origin.depth)){
+              fired[key] = origin.depth;
+              queue.push({ r:nr, c:nc, depth:origin.depth + 1 });
+            }
+            break;                            /* 光被这道门吞掉 */
+          }
+        }
+      });
+    }
+    return lit;
+  }
+
+  function render(el, lit, mode, upper, lower, wide){
+    var rows = GRID.length, cols = GRID[0].length;
+    el.textContent = '';
+    if (wide) el.classList.add('wide');
+    el.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0,1fr))';
+    el.style.gridTemplateRows = 'repeat(' + rows + ', minmax(0,1fr))';
+    el.style.aspectRatio = cols + ' / ' + rows;
+    for (var r = 0; r < rows; r++){
+      for (var c = 0; c < cols; c++){
+        var ch = at(r, c);
+        var cell = document.createElement('div');
+        cell.className = 'cell';
+
+        if (ch === '#') cell.classList.add('wall');
+        if (ch === 'G') cell.classList.add('glass');
+        if (isLever(ch)) cell.classList.add('lever');
+        if (isPlate(ch)) cell.classList.add('plate');
+        if (isShutter(ch)) cell.classList.add('doorA');
+        if (isDoor(ch)) cell.classList.add('doorB');
+        if (isSwap(ch)) cell.classList.add('swap');
+        if (isGate(ch)) cell.classList.add('gate');
+
+        if (lit[r][c]) cell.classList.add('lit');
+
+        /* 设计者那张图里,"地图外"让纸面透出来,轮廓才看得出不是方的;
+           玩家那张图里,地图外和没照亮的地方一样是黑的——玩家本来就分不出。 */
+        if (mode === 'player'){
+          var dr = r - lower.r, dc = c - lower.c;
+          var felt = Math.abs(dr) + Math.abs(dc) === 1;
+          var seen = lit[r][c] || (r === lower.r && c === lower.c) || felt;
+          if (isOutside(ch) || !seen) cell.classList.add('void');
+          if (felt) cell.classList.add('felt');
+        } else if (isOutside(ch)) {
+          cell.classList.add('out');
+        }
+
+        if (isGate(ch)){
+          var gt = document.createElement('span');
+          gt.className = 'glyph';
+          gt.textContent = GATE_LABEL[r + ',' + c] || 'M';
+          cell.appendChild(gt);
+        } else if ('ABC1aXZD'.indexOf(ch) >= 0){
+          var g = document.createElement('span');
+          g.className = 'glyph';
+          g.textContent = ch;
+          cell.appendChild(g);
+        }
+
+        if (r === upper.r && c === upper.c) cell.classList.add('upper');
+
+        if (r === lower.r && c === lower.c){
+          cell.classList.add('lower');
+          cell.appendChild(document.createElement('i'));
+          cell.appendChild(document.createElement('i'));
+        }
+        el.appendChild(cell);
+      }
+    }
+  }
+
+  var LEGEND = [
+    { cls:'s-lit',    text:'被光找到' },
+    { cls:'s-floor',  text:'地面(未照亮)' },
+    { cls:'s-void',   text:'看不见的地方' },
+    { cls:'s-out',    text:'地图外 · 不存在,挡腿也挡光' },
+    { cls:'s-upper',  text:'上半身(光源 · 终点)· 头在哪,视野就在哪' },
+    { cls:'s-lower',  text:'下半身(你)· 只有四方向能走' },
+    { cls:'s-wall',   text:'墙 · 挡腿也挡光' },
+    { cls:'s-glass',  text:'玻璃 G · 挡腿不挡光' },
+    { cls:'s-gate',   text:'光门 M(图上标 ①②③)· 可以走上去。光打进一道门就被它吞掉、停在那里,门再从自己这一格重新射出八方向三格的光——这是这一版唯一能把视野送远的办法' },
+    { cls:'s-doorA',  text:'光闸 a · 挡腿也挡光,只有压力板被踩住的时候才开' },
+    { cls:'s-plate',  text:'压力板 1 · 下半身踩住,松开就断' },
+    { cls:'s-lever',  text:'拉杆 A B C · 八格里够得着的才拨得动。A 开 X,B 开 Z,C 开 D——A 和 C 都锁在玻璃房里,只有腿换进去以后才够得着' },
+    { cls:'s-doorB',  text:'路门 X Z D · 挡腿也挡光。X 通大厅,Z 通走廊,D 是玻璃房唯一的出口,开在房里的拉杆上' },
+    { cls:'s-swap',   text:'换位台 ⇄ · 站在八格以内按 E,上半身和下半身交换位置。这一关有两座,一座在南翼西北角,一座在东走廊最南端的壁龛里,两座都非按不可' }
+  ];
+
+  var CHECKS = [
+    '<b>两座换位台都是必需的</b> —— 任意一座拿掉,这一关都无解。',
+    '<b>三根拉杆都是必需的</b> —— A、B、C 的连线剪断任意一根,三种情况都无解。',
+    '<b>换位本身永远不会过关</b> —— 交换只是让两个身体互换格子,过后仍然不重合;要赢,腿必须自己走到头站着的那一格。',
+    '<b>光门链正好用满三环</b> —— 走廊里的 ① 是第一环,大厅口的 ②、③ 是第二、第三环,③ 的光恰好落在三格之外的 B 上。再远就没有第四道门了,接力到三为止。',
+    '<b>压力板只管眼睛</b> —— 去掉它照样能通关,但没有它就永远看不见 B 在哪。它负责让人先看见。',
+    '<b>开局是死的</b> —— 所有门关着时,下半身只能在南翼走到 31 格,玻璃房和走廊都进不去;而玻璃房唯一的门 D,开关就装在房里。'
+  ];
+
+  var NOTE = {
+    title: '这一版改的三件事:地图不再是方的、头不在正中、光能被门接走',
+    body: '第一,地图不再是一个方框。四间屋子斜着咬在一起——东北角一间玻璃房、东边一条贴着边的走廊、中间一座大厅、西南一片南翼——四条边全是断的,357 格里 145 格根本不存在。上半身也没有摆在正中:它在最东北的角落 (行2, 列16),离下半身最远的地方,而且被墙围死,光只能从唯一的窗 G 漏出一点点。\n\n第二,头在哪,光就在哪。这一关没有记忆:你看得见的东西 = 头的光照到的地方 + 脚边八格。所以换位台换的不只是两个身体的位置,它同时把整个视野搬到了地图的另一头——腿还站在原处,眼睛已经过去了。第一次换位,南翼忽然全亮、玻璃房全黑;第二次换位,亮的是走廊,黑的是南翼。\n\n第三,光门。光打进一道门,就被它吞掉、停在那里;门再从自己这一格重新射出八方向三格的光。于是头、门、门、门可以连成一条链,把视野送到走路要走三十步的地方。这条链最多接力三次,而且门与门之间必须真的连得上——中间隔一格墙、或关着一道光闸,链就断在那里。\n\n于是有了这一关最漂亮的一眼:下半身在南翼踩住压力板,走廊里的第一道门先亮,第二道跟着亮,第三道再亮,光从最东边一路捅进大厅中段,把地图另一头的拉杆 B 露出来。板一松,链就断,一切重归黑暗——它只让你看一眼,记住位置,然后摸黑走过去。',
+    extra: '最少 38 步、五次 E(两次换位、A、B、C)。357 格里 144 格不是墙,开门之后能走 136 格;最优解一共踩过 39 格。\n\n这两座换位台都非按不可:第一座是因为开 X 的拉杆 A 锁在玻璃房里,腿不进去就够不着;第二座是因为玻璃房和走廊加起来是一段死胡同——腿换进去以后,出门只有 D,而 D 通向的走廊,通大厅的门 Z 又由大厅深处的 B 控制,大厅根本不在腿能走到的地方。所以头必须先被换到走廊里来,腿才有一天能走到它那一格。中间任何一环拿掉,这一关都无解。'
+  };
+
+  function renderLegend(items){
+    var el = document.getElementById('legend');
+    el.textContent = '';
+    items.forEach(function(it){
+      var li = document.createElement('li');
+      var sw = document.createElement('span');
+      sw.className = 'swatch ' + it.cls;
+      li.appendChild(sw);
+      li.appendChild(document.createTextNode(it.text));
+      el.appendChild(li);
+    });
+  }
+
+  function renderChecks(items){
+    var el = document.getElementById('checks');
+    el.textContent = '';
+    items.forEach(function(text){
+      var li = document.createElement('li');
+      li.innerHTML = text;
+      el.appendChild(li);
+    });
+  }
+
+  var START = findChar('L');          /* 下半身起点 (16, 8) */
+  var VAULT = findChar('U');          /* 上半身起点 (2, 16) */
+  var PLATE = findChar('1');          /* 压力板     (16, 6) */
+
+  var OPEN_FULL  = { X:1, Z:1, D:1, a:1 };
+  var OPEN_START = { X:0, Z:0, D:0, a:0 };
+  var OPEN_XD    = { X:1, Z:0, D:1, a:0 };
+  var OPEN_PLATE = { X:1, Z:0, D:1, a:1 };
+
+  renderLegend(LEGEND);
+  render(document.getElementById('board-full'),
+         litMapBeam(OPEN_FULL, VAULT), 'full', VAULT, START, false);
+  render(document.getElementById('board-open'),
+         litMapBeam(OPEN_START, VAULT), 'player', VAULT, START, false);
+  render(document.getElementById('board-swap1'),
+         litMapBeam(OPEN_XD, { r:13, c:4 }), 'player', { r:13, c:4 }, VAULT, false);
+  render(document.getElementById('board-swap2'),
+         litMapBeam(OPEN_XD, { r:10, c:17 }), 'player', { r:10, c:17 }, { r:13, c:4 }, false);
+  render(document.getElementById('board-plate'),
+         litMapBeam(OPEN_PLATE, { r:10, c:17 }), 'player', { r:10, c:17 }, PLATE, true);
+
+  document.getElementById('note-title').textContent = NOTE.title;
+  document.getElementById('note-body').textContent = NOTE.body;
+  document.getElementById('note-extra').textContent = NOTE.extra;
+  renderChecks(CHECKS);
+  document.getElementById('spec-board').textContent =
+    GRID[0].length + ' × ' + GRID.length + ' 格';
+})();
+</script>

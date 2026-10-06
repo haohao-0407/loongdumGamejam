@@ -1,0 +1,123 @@
+{
+  "date": "2026-10-06",
+  "scene": "Assets/Scenes/Level04_WindowReturn.unity",
+  "structure": {
+    "initialOnlyCourtyard": true,
+    "centralNeedsA": true,
+    "westNeedsB": true,
+    "returnNeedsC": true,
+    "samples": 546,
+    "failures": [],
+    "missing": 0,
+    "tiles": 2,
+    "portals": 2,
+    "globalDoorToggles": 0
+  },
+  "vision": {
+    "radius": 10,
+    "maxHops": 1,
+    "rayCount": 512,
+    "secondTileSamples": 81,
+    "openVisible": 81,
+    "closedLeaks": 0,
+    "earlyPositionsVisible": false
+  },
+  "walkthrough": {
+    "success": true,
+    "syntheticKeyboard": true,
+    "teleports": false,
+    "visited": 90,
+    "frames": 3217,
+    "seconds": 38.16034489999947,
+    "AOpened": true,
+    "BObserved": true,
+    "BOpened": true,
+    "COpened": true,
+    "Completed": true,
+    "Stage": 5,
+    "player": "(17.94, 1.08, -6.83)",
+    "upper": "(17.96, 0.25, -7.87)",
+    "movementStopped": true
+  },
+  "reset": {
+    "reset": true,
+    "doorsClosed": true,
+    "movementEnabled": true,
+    "reversalEnabled": true,
+    "sourceReturned": true
+  },
+  "stateModel": [
+    {
+      "removed": "none",
+      "states": 1056,
+      "edges": 3314,
+      "goals": 2,
+      "stranded": 0
+    },
+    {
+      "removed": "F1",
+      "states": 49,
+      "edges": 166,
+      "goals": 0,
+      "stranded": 49
+    },
+    {
+      "removed": "F2",
+      "states": 172,
+      "edges": 537,
+      "goals": 0,
+      "stranded": 172
+    },
+    {
+      "removed": "A",
+      "states": 84,
+      "edges": 277,
+      "goals": 0,
+      "stranded": 84
+    },
+    {
+      "removed": "plate",
+      "states": 263,
+      "edges": 839,
+      "goals": 0,
+      "stranded": 263
+    },
+    {
+      "removed": "B",
+      "states": 442,
+      "edges": 1398,
+      "goals": 0,
+      "stranded": 442
+    },
+    {
+      "removed": "C",
+      "states": 646,
+      "edges": 2036,
+      "goals": 0,
+      "stranded": 646
+    }
+  ],
+  "resources": {
+    "terrainDataMatches": true,
+    "terrainMaterialMatches": true,
+    "terrainPositionMatches": true,
+    "extraVisualAssets": [],
+    "visibleFloorRenderers": 0,
+    "upperSolid": true
+  },
+  "finalEditor": {
+    "dirty": false,
+    "play": false,
+    "visionEnabled": true
+  },
+  "limitations": [
+    "Synthetic keyboard walkthrough is not manual playtesting.",
+    "Discrete state graph does not exhaust continuous coordinates or timing.",
+    "No Player Build performed.",
+    "Repeated reversals can change reunion location while preserving all key actions."
+  ],
+  "screenshots": {
+    "start": "start.png",
+    "fullLayout": "layout-debug.png (runtime vision disabled solely for screenshot, then restored)"
+  }
+}
