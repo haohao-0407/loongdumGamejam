@@ -18,3 +18,11 @@ MonoBehaviour:
     title: "\u767D\u76D2\u5173\u5361"
     description: "\u5FAA\u7740\u89C6\u7EBF\uFF0C\u8BA9\u5F7C\u6B64\u91CD\u65B0\u6C47\u5408\u3002"
     scenePath: Assets/Scenes/Whitebox1.unity
+  - id: Maze
+    title: Maze
+    description: "\u5FAA\u7740\u89C6\u7EBF\uFF0C\u8BA9\u5F7C\u6B64\u91CD\u65B0\u6C47\u5408\u3002"
+    scenePath: Assets/Scenes/Maze.unity
+  - id: Level02
+    title: level02
+    description: "\u5FAA\u7740\u89C6\u7EBF\uFF0C\u8BA9\u5F7C\u6B64\u91CD\u65B0\u6C47\u5408\u3002"
+    scenePath: Assets/Scenes/Level02_UnreachableLever.unity
