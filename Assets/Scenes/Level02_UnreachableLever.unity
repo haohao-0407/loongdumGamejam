@@ -1741,6 +1741,58 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1443906101}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &532565003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 532565005}
+  - component: {fileID: 532565004}
+  m_Layer: 0
+  m_Name: LevelGoal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &532565004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 532565003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3596885726277fc44b13b378a37771e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Loongdum.SceneFlow.LevelGoal
+  player: {fileID: 1738300335}
+  visionSource: {fileID: 1395635707}
+  reunionDistance: 1.1
+  ignoreHeight: 1
+  playerControls: []
+  onCompleted:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!4 &532565005
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 532565003}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.74045, y: 1, z: 1.08969}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &534651023
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4726,6 +4778,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 663019707377712385, guid: 8717b15f6bc60f9458e8a903b5979a3a, type: 3}
   m_PrefabInstance: {fileID: 1395635705}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1395635707 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5829313263477826103, guid: 8717b15f6bc60f9458e8a903b5979a3a, type: 3}
+  m_PrefabInstance: {fileID: 1395635705}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d15e33c9f950f04479efe9a3a404fbe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionSource
 --- !u!1001 &1408219226
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7089,3 +7152,4 @@ SceneRoots:
   - {fileID: 2130625227}
   - {fileID: 197937818}
   - {fileID: 181117513}
+  - {fileID: 532565005}
