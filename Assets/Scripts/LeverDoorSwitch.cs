@@ -1,21 +1,19 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// 独立拉杆门：拉杆和门都可以随便摆，走近拉杆按 F 就把门打开。
-///
-/// 门用的还是项目里原来那套 —— Door.prefab + Door.controller，靠 Animator 的
-/// <c>DoorOpen</c> 布尔开关；开门时同时禁用挡路的碰撞块、把拉杆手柄转过去并换材质，
-/// 行为对齐 Level03Flow / Level04Flow 里的拉杆逻辑（那边是 2.6 米内按 E）。
-///
-/// 用法：
-///   1. 拉杆物体（或任意空物体）上挂本组件，Lever 留空 = 用自己。
-///   2. Doors 里拖入门的 Animator（不是 GameObject）。
-///   3. Barriers 里拖入挡路的碰撞块（可选）。
+/// 玩家进入拉杆范围后，通过 Input System 的 Interact 动作反复开关门。
+/// 同步门动画、可选挡路碰撞块和手柄外观。
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class LeverDoorSwitch : MonoBehaviour
 {
+    private const string DefaultInteractPath = "Player/Interact";
+
+    // 多个拉杆可以共用未被其他组件启用的 Action，最后一个停用时再释放它。
+    private static readonly Dictionary<InputAction, int> ManagedActions = new Dictionary<InputAction, int>();
+
     [Header("拉杆")]
     [Tooltip("拉杆位置，判定「站得够不够近」用它。留空 = 用挂脚本的这个物体。")]
     [SerializeField] private Transform lever;
@@ -23,17 +21,19 @@ public sealed class LeverDoorSwitch : MonoBehaviour
     [Tooltip("玩家站多近才能拨动（米）。原来 Level03/04 用的是 2.6。")]
     [SerializeField, Min(0.1f)] private float reachDistance = 2.6f;
 
-    [Tooltip("拨动拉杆的按键。")]
-    [SerializeField] private Key activationKey = Key.F;
+    [Header("Input System")]
+    [Tooltip("交互动作。留空时使用项目全局 Input Actions 中的 Player/Interact，支持其中配置的键盘、手柄和重绑定。")]
+    [SerializeField] private InputActionReference interactAction;
 
+    [Header("拉杆状态")]
     [Tooltip("拨动后手柄的旋转角度。原来 Level03/04 用的是 Z 轴 -35°。")]
     [SerializeField] private Vector3 thrownEuler = new Vector3(0f, 0f, -35f);
 
     [Tooltip("true = 只能拨一次（门开了就一直开着）；false = 再按一次可以复位关门。")]
-    [SerializeField] private bool oneShot = true;
+    [SerializeField] private bool oneShot;
 
     [Tooltip("要求玩家落地了才允许拨动。")]
-    [SerializeField] private bool requireGrounded = true;
+    [SerializeField] private bool requireGrounded;
 
     [Tooltip("要求玩家和拉杆之间没有实体遮挡（Level03/04 是开着的）。")]
     [SerializeField] private bool requireLineOfSight;
@@ -56,11 +56,22 @@ public sealed class LeverDoorSwitch : MonoBehaviour
     [SerializeField] private CharacterController player;
 
     private Material idleMaterial;
+    private Quaternion idleRotation;
+    private InputAction input;
+    private bool managesInput;
+    private bool started;
     private string feedback;
     private float feedbackUntil;
     private bool thrown;
 
     public bool Thrown => thrown;
+
+    public bool IsPlayerInRange => player != null && player.enabled && player.gameObject.activeInHierarchy
+        && (player.transform.position - (lever != null ? lever.position : transform.position)).sqrMagnitude
+            <= reachDistance * reachDistance;
+
+    public bool CanInteract => isActiveAndEnabled && !(oneShot && thrown) && IsPlayerInRange
+        && (!requireGrounded || player.isGrounded) && (!requireLineOfSight || !BlockedOff());
 
     private void Awake()
     {
@@ -68,51 +79,117 @@ public sealed class LeverDoorSwitch : MonoBehaviour
         if (handle == null && handleRenderer != null) handle = handleRenderer.transform;
         if (handleRenderer == null && handle != null) handleRenderer = handle.GetComponent<Renderer>();
         if (handleRenderer != null) idleMaterial = handleRenderer.sharedMaterial;
-
-        if (doors == null) return;
-        foreach (Animator door in doors)
-        {
-            if (door == null) continue;
-            if (door.GetComponent<DoorAnimatorToggle>() != null)
-            {
-                Debug.LogWarning("[LeverDoorSwitch] " + door.name
-                    + " 上还挂着 DoorAnimatorToggle，按 E 也会直接开关这扇门；建议把这个组件删掉。", door);
-            }
-        }
+        if (handle != null) idleRotation = handle.localRotation;
     }
 
     private void Start()
     {
-        if (player != null) return;
-        WhiteboxPlayerMovement movement = Object.FindAnyObjectByType<WhiteboxPlayerMovement>();
-        if (movement != null) player = movement.GetComponent<CharacterController>();
+        started = true;
+        if (player == null)
+        {
+            WhiteboxPlayerMovement movement = Object.FindAnyObjectByType<WhiteboxPlayerMovement>();
+            if (movement != null) player = movement.GetComponent<CharacterController>();
+        }
+
+        // 以第一扇门的初始状态为准，避免已经打开的门第一次交互仍然执行开门。
+        if (doors != null)
+        {
+            foreach (Animator door in doors)
+            {
+                if (door == null) continue;
+                thrown = door.GetBool(doorParameter);
+                break;
+            }
+        }
+        ApplyState();
+        BindInput();
+    }
+
+    private void OnEnable()
+    {
+        if (started) BindInput();
+    }
+
+    private void OnDisable()
+    {
+        ReleaseInput();
+    }
+
+    private void BindInput()
+    {
+        ReleaseInput();
+
+        PlayerInput playerInput = player != null ? player.GetComponentInParent<PlayerInput>() : null;
+        if (playerInput != null)
+        {
+            // PlayerInput 可能使用独立的 Action 副本，应跟随该玩家的重绑定和动作图切换。
+            string actionId = interactAction != null && interactAction.action != null
+                ? interactAction.action.id.ToString() : DefaultInteractPath;
+            input = playerInput.actions != null ? playerInput.actions.FindAction(actionId) : null;
+        }
+        else
+        {
+            input = interactAction != null ? interactAction.action
+                : InputSystem.actions != null ? InputSystem.actions.FindAction(DefaultInteractPath) : null;
+
+            if (input != null && input.actionMap?.asset != InputSystem.actions)
+            {
+                if (ManagedActions.TryGetValue(input, out int users))
+                {
+                    ManagedActions[input] = users + 1;
+                    managesInput = true;
+                }
+                else if (!input.enabled)
+                {
+                    ManagedActions.Add(input, 1);
+                    managesInput = true;
+                    input.Enable();
+                }
+            }
+        }
+
+        if (input == null)
+            Debug.LogError("[LeverDoorSwitch] 找不到 Interact 动作。请设置项目全局 Player/Interact，或在 Interact Action 中指定动作。", this);
+    }
+
+    private void ReleaseInput()
+    {
+        if (managesInput && input != null && ManagedActions.TryGetValue(input, out int users))
+        {
+            if (users > 1) ManagedActions[input] = users - 1;
+            else
+            {
+                ManagedActions.Remove(input);
+                input.Disable();
+            }
+        }
+        managesInput = false;
+        input = null;
     }
 
     private void Update()
     {
-        if (oneShot && thrown) return;
+        if (input != null && input.enabled && input.WasPressedThisFrame() && IsPlayerInRange)
+            TryInteract();
+    }
 
-        Keyboard keyboard = Keyboard.current;
-        if (keyboard == null || !keyboard[activationKey].wasPressedThisFrame) return;
-        if (player == null) return;
-
+    /// <summary>仅当玩家处于范围内且满足条件时拨动拉杆。成功时返回 true。</summary>
+    public bool TryInteract()
+    {
+        if (!isActiveAndEnabled || (oneShot && thrown) || !IsPlayerInRange) return false;
         if (requireGrounded && !player.isGrounded)
         {
             Say("落地之后再拨动拉杆。");
-            return;
-        }
-        if (Vector3.Distance(player.transform.position, lever.position) > reachDistance)
-        {
-            Say("走到拉杆旁边再按 " + activationKey + "。");
-            return;
+            return false;
         }
         if (requireLineOfSight && BlockedOff())
         {
             Say("机关被实体隔开，先走到它旁边。");
-            return;
+            return false;
         }
 
         SetThrown(!thrown);
+        return true;
     }
 
     /// <summary>玩家和拉杆之间隔着实体就不允许操作（和 Level03/04 的写法一致）。</summary>
@@ -138,27 +215,35 @@ public sealed class LeverDoorSwitch : MonoBehaviour
     public void SetThrown(bool open)
     {
         thrown = open;
+        ApplyState();
+        Say(open ? "拉杆已接通：门开了。" : "拉杆复位：门关了。");
+    }
 
+    private void ApplyState()
+    {
         if (doors != null)
         {
             foreach (Animator door in doors)
             {
-                if (door != null) door.SetBool(doorParameter, open);
+                if (door == null) continue;
+                DoorAnimatorToggle toggle = door.GetComponent<DoorAnimatorToggle>();
+                if (toggle != null && doorParameter == DoorAnimatorToggle.OpenParameter)
+                    toggle.SetOpen(thrown);
+                else
+                    door.SetBool(doorParameter, thrown);
             }
         }
         if (barriers != null)
         {
             foreach (Collider barrier in barriers)
             {
-                if (barrier != null) barrier.enabled = !open;
+                if (barrier != null) barrier.enabled = !thrown;
             }
         }
         if (handle != null)
-            handle.localRotation = open ? Quaternion.Euler(thrownEuler) : Quaternion.identity;
+            handle.localRotation = thrown ? idleRotation * Quaternion.Euler(thrownEuler) : idleRotation;
         if (handleRenderer != null && activeMaterial != null && idleMaterial != null)
-            handleRenderer.sharedMaterial = open ? activeMaterial : idleMaterial;
-
-        Say(open ? "拉杆已接通：门开了。" : "拉杆复位：门关了。");
+            handleRenderer.sharedMaterial = thrown ? activeMaterial : idleMaterial;
     }
 
     private void Say(string message)
@@ -174,10 +259,16 @@ public sealed class LeverDoorSwitch : MonoBehaviour
             GUI.Label(new Rect(20f, Screen.height - 70f, 620f, 24f), feedback);
             return;
         }
-        if (oneShot && thrown) return;
-        if (player == null) return;
-        if (Vector3.Distance(player.transform.position, lever.position) > reachDistance) return;
+        if (input == null || !input.enabled || !CanInteract) return;
+        string binding = input.GetBindingDisplayString();
+        if (string.IsNullOrEmpty(binding)) binding = input.name;
         GUI.Label(new Rect(20f, Screen.height - 70f, 620f, 24f),
-            activationKey + "  拨动拉杆开门");
+            binding + (thrown ? "  拨动拉杆关门" : "  拨动拉杆开门"));
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(lever != null ? lever.position : transform.position, reachDistance);
     }
 }
