@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/LevelSelect.unity
+    guid: 32b4d929c92218e47a0a5dc99ad17df5
+  - enabled: 1
     path: Assets/Scenes/CollapsedBuilding_Interior.unity
     guid: ad73dffcc373a76409a73f576d088cf3
   - enabled: 1
@@ -14,5 +17,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Level02_UnreachableLever.unity
     guid: 8ca1cbb1871b3b144a1516ab76c850a6
+  - enabled: 1
+    path: Assets/Scenes/Whitebox1.unity
+    guid: 96af830d07d7af44082980758c2f2d54
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

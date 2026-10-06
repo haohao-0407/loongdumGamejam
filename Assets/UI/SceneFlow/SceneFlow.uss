@@ -1,0 +1,130 @@
+.scene-flow-root {
+    flex-grow: 1;
+    color: rgb(236, 232, 219);
+    font-size: 18px;
+}
+
+.full-screen {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.selection-view {
+    background-color: rgb(25, 36, 31);
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-shell {
+    width: 88%;
+    max-width: 1160px;
+    height: 86%;
+    max-height: 760px;
+}
+
+.menu-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 22px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(211, 215, 190, 0.25);
+}
+
+.brand {
+    font-size: 20px;
+    letter-spacing: 4px;
+    -unity-font-style: bold;
+    color: rgb(222, 229, 187);
+}
+
+.level-count { font-size: 15px; color: rgb(169, 181, 162); }
+.menu-body { flex-grow: 1; flex-direction: row; align-items: center; }
+.intro { width: 44%; padding-right: 48px; }
+.eyebrow { color: rgb(176, 192, 158); font-size: 15px; margin-bottom: 16px; }
+.menu-title { font-size: 54px; -unity-font-style: bold; margin-bottom: 20px; }
+.intro-copy { color: rgb(181, 188, 175); max-width: 330px; white-space: normal; font-size: 18px; }
+.reunion-mark { width: 180px; height: 64px; margin-top: 38px; }
+.mark-ring { position: absolute; width: 50px; height: 50px; top: 7px; border-width: 2px; border-radius: 26px; }
+.mark-ring-left { left: 0; border-color: rgb(212, 220, 170); }
+.mark-ring-right { right: 0; border-color: rgb(111, 142, 120); }
+.mark-line { position: absolute; left: 58px; right: 58px; top: 31px; height: 1px; background-color: rgb(101, 123, 99); }
+.level-list { flex-grow: 1; flex-shrink: 1; max-height: 460px; min-width: 0; }
+.level-list .unity-scroll-view__content-container { padding-right: 8px; }
+
+.level-card {
+    min-height: 254px;
+    margin-top: 8px;
+    margin-bottom: 16px;
+    padding: 26px;
+    border-radius: 12px;
+    border-width: 1px;
+    border-color: rgb(93, 114, 82);
+    background-color: rgb(38, 51, 42);
+}
+
+.level-number { font-size: 15px; color: rgb(180, 199, 151); letter-spacing: 3px; margin-bottom: 17px; }
+.level-content { flex-grow: 1; }
+.level-title { font-size: 29px; -unity-font-style: bold; margin-bottom: 12px; white-space: normal; }
+.level-description { color: rgb(180, 191, 171); font-size: 17px; white-space: normal; margin-bottom: 26px; }
+
+.primary-button, .secondary-button, .quiet-button {
+    margin: 0;
+    border-width: 1px;
+    border-radius: 6px;
+    padding-left: 23px;
+    padding-right: 23px;
+    padding-top: 13px;
+    padding-bottom: 13px;
+    font-size: 17px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    flex-shrink: 0;
+}
+
+.primary-button { background-color: rgb(215, 227, 165); border-color: rgb(215, 227, 165); color: rgb(30, 42, 29); }
+.primary-button:hover { background-color: rgb(234, 243, 196); border-color: rgb(234, 243, 196); }
+.primary-button:focus { border-color: white; border-width: 2px; }
+.primary-button:active { background-color: rgb(187, 207, 131); }
+.primary-button:disabled { background-color: rgb(77, 90, 71); border-color: rgb(77, 90, 71); color: rgb(162, 171, 155); }
+.secondary-button { background-color: rgb(48, 64, 50); border-color: rgb(108, 131, 92); color: rgb(234, 239, 218); }
+.secondary-button:hover, .secondary-button:focus { background-color: rgb(64, 83, 61); border-color: rgb(197, 217, 159); }
+.quiet-button { background-color: rgba(22, 31, 27, 0.88); border-color: rgba(197, 215, 173, 0.55); color: rgb(238, 242, 224); font-size: 15px; }
+.quiet-button:hover, .quiet-button:focus { background-color: rgb(61, 80, 55); border-color: rgb(212, 230, 174); }
+.menu-footer { flex-direction: row; justify-content: space-between; padding-top: 20px; border-top-width: 1px; border-top-color: rgba(211, 215, 190, 0.25); }
+.footer-copy { font-size: 14px; color: rgb(155, 173, 145); }
+.footer-index { font-size: 12px; color: rgb(121, 144, 117); letter-spacing: 1px; }
+.empty-label { color: rgb(181, 188, 175); margin: 28px; }
+
+.playing-view { position: absolute; top: 24px; left: 28px; right: 28px; flex-direction: row; align-items: flex-start; justify-content: space-between; }
+.playing-heading { background-color: rgba(22, 31, 27, 0.88); border-radius: 6px; padding: 12px 20px; }
+.playing-title { font-size: 19px; color: rgb(235, 240, 218); -unity-font-style: bold; }
+.playing-objective { font-size: 14px; color: rgb(187, 203, 163); margin-top: 5px; }
+.loading-view { background-color: rgb(25, 36, 31); align-items: center; justify-content: center; }
+.loading-card { width: 440px; max-width: 85%; }
+.loading-title { font-size: 30px; margin-top: 32px; margin-bottom: 30px; }
+.loading-progress { height: 26px; }
+.loading-progress .unity-progress-bar__background { background-color: rgb(55, 73, 53); border-radius: 4px; border-width: 0; }
+.loading-progress .unity-progress-bar__progress { background-color: rgb(205, 221, 156); border-radius: 4px; }
+.loading-progress .unity-progress-bar__title { color: rgb(235, 240, 220); font-size: 13px; }
+.completion-view { background-color: rgba(12, 21, 16, 0.88); align-items: center; justify-content: center; }
+.completion-card { width: 640px; max-width: 90%; padding: 50px 42px; align-items: center; background-color: rgb(33, 47, 35); border-radius: 14px; border-width: 1px; border-color: rgb(117, 142, 92); }
+.completion-eyebrow { color: rgb(193, 217, 148); font-size: 15px; letter-spacing: 4px; margin-bottom: 24px; }
+.completion-message { font-size: 32px; -unity-font-style: bold; white-space: normal; -unity-text-align: middle-center; margin-bottom: 25px; }
+.completion-level { color: rgb(190, 203, 172); font-size: 18px; margin-bottom: 8px; }
+.completion-caption { color: rgb(143, 166, 119); font-size: 14px; margin-bottom: 32px; }
+.completion-actions { flex-direction: row; justify-content: center; }
+.completion-actions .primary-button { margin-right: 14px; }
+.error-banner { position: absolute; left: 12%; right: 12%; bottom: 24px; padding: 14px 20px; background-color: rgb(87, 51, 36); color: rgb(255, 229, 201); border-radius: 6px; white-space: normal; -unity-text-align: middle-center; }
+.compact .menu-body { flex-direction: column; align-items: stretch; justify-content: center; }
+.compact .intro { width: 100%; padding-right: 0; margin-top: 24px; margin-bottom: 26px; }
+.compact .menu-title { font-size: 38px; margin-bottom: 12px; }
+.compact .reunion-mark { display: none; }
+.compact .level-list { max-height: 340px; }
+.compact .level-card { min-height: 210px; padding: 22px; }
+.compact .footer-index { display: none; }
+.compact .completion-message { font-size: 25px; }
+.compact .completion-card { padding: 32px 22px; }

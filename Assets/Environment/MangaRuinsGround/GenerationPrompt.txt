@@ -1,0 +1,23 @@
+Built-in image_gen; reference: user-provided manga panel.
+Final asset: first generation, selected after 2x2 Unity repeat preview.
+Source resolution: 1254 x 1254 RGB.
+
+GENERATION PROMPT
+Use case: stylized-concept.
+Asset type: a single production-ready seamless square base-color / albedo texture for Unity Terrain, 2048 x 2048 pixels.
+Input image 1 is STYLE REFERENCE ONLY: use the manga background's black ink outlines, sparse cross-hatching, fine stipple and pale grayscale ruined-ground textures. Do not reproduce the characters, panel composition, buildings, text, speech balloons or camera perspective.
+Primary request: create a monochrome manga-style ruined urban ground surface. Strict orthographic overhead view looking straight down at a flat horizontal surface; the entire canvas IS the ground texture.
+Materials: pale dusty cracked concrete and compacted rubble, irregular fractured concrete plates embedded flush in the ground, thin branching ink cracks, chipped slab edges, scattered small angular concrete chips and gravel, a few tiny masonry fragments, fine scraped dirt lines. Mix broad quiet light-gray/off-white surface areas with irregular low rubble clusters. Convincing natural varied distribution with no central focal feature.
+Style: clean hand-drawn Japanese manga environment ink, delicate variable-weight black contours, restrained small cross-hatched and stippled recesses, readable at game-camera distance. Neutral grayscale only, near-white concrete, light-gray dust and charcoal crevices. Crisp detail, no paper grain overlay.
+Lighting: flat diffuse albedo; no directional cast shadows, no ambient gradient, no vignette, no perspective shading. Depict shallow cracks with ink, avoid tall stones or piled vertical debris.
+Critical tiling: texture must repeat seamlessly in BOTH X and Y, opposite edges continue the same ground pattern exactly. Let slabs, lines and gravel naturally cross canvas edges; maintain identical detail density and brightness at all four borders. No border or frame. No visible square patch boundaries or repeating grid.
+Avoid: people, silhouettes, bodies, vegetation, roads, footprints, buildings, typography, watermarks, panel borders, speech bubbles, large beams/rebar, photorealism, colored paint, dramatic lighting, a rendered 3D scene, multiple texture sheets. Output ONLY the complete square ground albedo texture, filling the entire image.
+
+BOUNDARY REPAIR TRIAL (not selected; stronger edge discontinuities)
+Use case: precise-object-edit.
+Input image 1 is the EDIT TARGET: a black-and-white manga rubble-ground albedo texture for Unity Terrain.
+Make a single targeted correction: repair its tile boundaries so this same texture repeats seamlessly horizontally AND vertically. Preserve the existing manga linework, neutral grayscale values, cracked pale concrete slabs, scattered small angular gravel, scale, flat top-down view and irregular composition across the interior.
+Modify only narrow strips near the four outer edges as needed to connect cracks, stones, concrete outlines and dust consistently across opposite edges. Left and right edges MUST join the same shapes and linework when repeated. Top and bottom edges MUST join the same shapes and linework when repeated. Also ensure the four corners join naturally. Do not simply blur the borders and do not create clear white margin strips.
+Make the outer edge texture continuous with the interior and retain the crisp manga ink marks. No directional shadows, no frame, no letters or text, no new objects, no color, no vignette, no paper overlay.
+Output only the corrected single seamless square albedo texture at the same composition and detail scale.
+

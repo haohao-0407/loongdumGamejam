@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68cd53495d1cf4046bf8a96675e26aea, type: 3}
+  m_Name: SceneFlowSettings
+  m_EditorClassIdentifier: Assembly-CSharp::Loongdum.SceneFlow.SceneFlowSettings
+  catalog: {fileID: 11400000, guid: 206e9d2277414f541a8a5bd1a964da41, type: 2}
+  panelSettings: {fileID: 11400000, guid: 5bb740e7908165344ab37024ccd9617e, type: 2}
+  uiDocument: {fileID: 9197481963319205126, guid: 09e47f24921b60f4dbf3d9550605478b, type: 3}
+  uiFont: {fileID: 0}

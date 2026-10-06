@@ -1,0 +1,116 @@
+{
+  "verifiedAtUtc": "2026-10-06 09:11:27 UTC",
+  "project": "D:/unity-projects/loongdum",
+  "unityVersion": "6000.6.4f1",
+  "scope": {
+    "ui": "UI Toolkit (UIDocument, UXML, USS)",
+    "catalog": [
+      "Assets/Scenes/Whitebox1.unity"
+    ],
+    "entryScene": "Assets/Scenes/LevelSelect.unity",
+    "goal": "Player and VisionSource reunion; default X/Z radius 1.1 world units. No other prerequisites.",
+    "configuration": "LevelCatalog controls selection/order. LevelGoal holds scene object references and controls to suspend on completion."
+  },
+  "checks": {
+    "proximity": {
+      "scene": "Assets/Scenes/Whitebox1.unity",
+      "farDoesNotComplete": true,
+      "outsideDoesNotComplete": true,
+      "reunionCompletes": true,
+      "repeatDoesNotComplete": true,
+      "completedEvents": 1,
+      "completedState": "Completed",
+      "controlsStopped": true,
+      "noNextLevel": true,
+      "singletonCount": 1
+    },
+    "completionUI": {
+      "completionVisible": true,
+      "lastLevelHidesNext": true,
+      "returnButtonStartsLoading": true,
+      "duplicateRejected": true
+    },
+    "returnAndReentry": {
+      "returnedToSelection": true,
+      "secondEntryLoading": true,
+      "duplicateRejected": true,
+      "managerCount": 1
+    },
+    "reentry": {
+      "reentryPlaying": true,
+      "freshGoal": true,
+      "controlsRestored": true,
+      "missingSceneRejected": true,
+      "stateBeforeAutomaticCheck": "Playing",
+      "sourcePlacedWithinGoal": true,
+      "managerCount": 1
+    },
+    "automaticCompletion": {
+      "automaticCompletion": true,
+      "completedEvents": 1,
+      "completionVisible": true,
+      "controlsStopped": true,
+      "lastError": null,
+      "state": "Completed"
+    },
+    "reloadDisabled": {
+      "selectionStartup": true,
+      "selectionVisible": true,
+      "managerCount": 1,
+      "documentCount": 1,
+      "goalNotRetained": true,
+      "currentLevelNotRetained": true,
+      "inputSettingsValid": true,
+      "domainReloadDisabled": true,
+      "sceneReloadDisabled": true,
+      "scene": "Assets/Scenes/LevelSelect.unity"
+    },
+    "cleanRepeatPlay": {
+      "selectionStartup": true,
+      "managerCount": 1,
+      "documentCount": 1,
+      "inputSettingsValid": true,
+      "scene": "Assets/Scenes/LevelSelect.unity"
+    },
+    "finalConfiguration": {
+      "playing": false,
+      "scene": "Assets/Scenes/LevelSelect.unity",
+      "dirty": false,
+      "inputSettingsValid": true,
+      "inputBackground": "ResetAndDisableNonBackgroundDevices",
+      "inputFocus": "PointersAndKeyboardsRespectGameViewFocus",
+      "catalogValid": true,
+      "error": null,
+      "levelCount": 1,
+      "uiAssetsLinked": true,
+      "entryScene": "Assets/Scenes/LevelSelect.unity"
+    },
+    "exit": {
+      "playing": false,
+      "activeScene": "Assets/Scenes/LevelSelect.unity",
+      "dirty": false,
+      "inputSettingsValid": true,
+      "inputBackground": "ResetAndDisableNonBackgroundDevices",
+      "inputFocus": "PointersAndKeyboardsRespectGameViewFocus",
+      "managerCount": 0
+    }
+  },
+  "validation": {
+    "editorCompilation": "Passed",
+    "uiButtons": "UI Toolkit NavigationSubmit events exercised the actual Button clicked handlers.",
+    "proximity": "Live scene transforms exercised outside/inside thresholds and one-shot completion. LateUpdate automatic completion also verified.",
+    "finalConsoleErrorsAndWarnings": 0,
+    "gitDiffCheck": "Passed",
+    "standalonePlayerBuild": "Not run",
+    "nativeMouseAcceptance": "Not asserted by the automated checks"
+  },
+  "automationCleanup": {
+    "temporaryInputSettingsAndCallback": "Removed. Default settings restored; existing editor callbacks preserved.",
+    "temporaryBackgroundRun": "Restored to false",
+    "editor": "Stopped in LevelSelect, scene clean"
+  },
+  "screenshots": [
+    "Captures/SceneFlow/LevelSelect.png",
+    "Captures/SceneFlow/Completed.png"
+  ]
+}

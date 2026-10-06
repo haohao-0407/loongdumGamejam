@@ -1,0 +1,57 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <Style src="SceneFlow.uss" />
+    <ui:VisualElement name="scene-flow-root" class="scene-flow-root" picking-mode="Ignore">
+        <ui:VisualElement name="selection-view" class="full-screen selection-view">
+            <ui:VisualElement class="menu-shell">
+                <ui:VisualElement class="menu-header">
+                    <ui:Label text="LOONGDUM" class="brand" />
+                    <ui:Label name="level-count" class="level-count" />
+                </ui:VisualElement>
+                <ui:VisualElement class="menu-body">
+                    <ui:VisualElement class="intro">
+                        <ui:Label text="沿着视线，走向彼此。" class="eyebrow" />
+                        <ui:Label text="关卡选择" class="menu-title" />
+                        <ui:Label text="选择一段归途，让分离的身体重新汇合。" class="intro-copy" />
+                        <ui:VisualElement class="reunion-mark" picking-mode="Ignore">
+                            <ui:VisualElement class="mark-ring mark-ring-left" />
+                            <ui:VisualElement class="mark-line" />
+                            <ui:VisualElement class="mark-ring mark-ring-right" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:ScrollView name="level-list" class="level-list" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto" />
+                </ui:VisualElement>
+                <ui:VisualElement class="menu-footer">
+                    <ui:Label text="循光而行 · 终将重逢" class="footer-copy" />
+                    <ui:Label text="LOONGDUM / LEVEL SELECT" class="footer-index" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="playing-view" class="playing-view" picking-mode="Ignore" style="display: none;">
+            <ui:VisualElement name="playing-heading" class="playing-heading" picking-mode="Ignore">
+                <ui:Label name="playing-title" class="playing-title" />
+                <ui:Label name="playing-objective" text="与视野源汇合" class="playing-objective" />
+            </ui:VisualElement>
+            <ui:Button name="return-button" text="返回选关" class="quiet-button" />
+        </ui:VisualElement>
+        <ui:VisualElement name="loading-view" class="full-screen loading-view" style="display: none;">
+            <ui:VisualElement class="loading-card">
+                <ui:Label text="LOONGDUM" class="brand" />
+                <ui:Label text="正在前往…" class="loading-title" />
+                <ui:ProgressBar name="loading-progress" low-value="0" high-value="100" class="loading-progress" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="completion-view" class="full-screen completion-view" style="display: none;">
+            <ui:VisualElement class="completion-card">
+                <ui:Label text="REUNITED" class="completion-eyebrow" />
+                <ui:Label text="终于，重新走到一起。" class="completion-message" />
+                <ui:Label name="completion-title" class="completion-level" />
+                <ui:Label text="关卡完成" class="completion-caption" />
+                <ui:VisualElement class="completion-actions">
+                    <ui:Button name="next-button" text="下一关  →" class="primary-button" />
+                    <ui:Button name="completed-return-button" text="返回选关" class="secondary-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:Label name="error-banner" class="error-banner" style="display: none;" />
+    </ui:VisualElement>
+</ui:UXML>
