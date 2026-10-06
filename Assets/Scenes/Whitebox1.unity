@@ -2593,6 +2593,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1674521341664180608, guid: da5ebd68e2f372d40a17616fb8e1fa64, type: 3}
+      propertyPath: prewarm
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1674521341664180608, guid: da5ebd68e2f372d40a17616fb8e1fa64, type: 3}
       propertyPath: ShapeModule.m_Scale.x
       value: 10
       objectReference: {fileID: 0}
