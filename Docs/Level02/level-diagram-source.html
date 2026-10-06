@@ -1,0 +1,738 @@
+<title>下半身找上半身</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap">
+
+<style>
+/* ── 设计计划 ─────────────────────────────────────────────
+   主题:棋盘上的暗室。整页是一张图纸,棋盘是图纸上唯一有光的东西。
+   色彩:骨纸底 / 墨字 / 琥珀是光 / 冷青是玻璃 / 蓝灰是下半身
+        第二关加进来的机关各占一个色相:钢白是传送镜,墨绿是拉杆,
+        青是压力板,紫是光闸,赭是路门。
+   字体:Noto Serif SC 作标题(有刻印感),Noto Sans SC 作正文与标注
+   布局:单栏,标题 → 图例 → 并排两张棋盘 → 该关要教的东西
+   ──────────────────────────────────────────────────────── */
+:root{
+  --bg:#efece3;
+  --surface:#f8f6f0;
+  --fg:#1a1916;
+  --muted:#6d6759;
+  --line:#d9d3c4;
+  --accent:#a0641a;
+  --lower:#42566b;
+
+  --board:#12121a;
+  --floor:#1e1e27;
+  --wall:#3b3b48;
+  --lit:#c08f3c;
+  --lit-soft:#8a6526;
+  --glass:#2f6f8f;
+  --glass-edge:#6fc2e0;
+  --void:#07070a;
+
+  --mirror:#39404d;
+  --mirror-edge:#eaf1fa;
+  --mirror-lit:#6e6350;
+  --lever:#2f5348;
+  --lever-ink:#8fe3bb;
+  --lever-lit:#5f7a4e;
+  --plate:#3f5f6b;
+  --plate-ink:#8fc9dc;
+  --plate-lit:#c08f3c;
+  --doorA:#4a3a63;
+  --doorA-ink:#c6a8f0;
+  --doorA-lit:#6b5286;
+  --doorB:#6b3f30;
+  --doorB-ink:#f0b090;
+  --doorB-lit:#8a5a3c;
+
+  --radius:5px;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0c0c10;
+    --surface:#15151b;
+    --fg:#e8e3d8;
+    --muted:#8d8778;
+    --line:#26262f;
+    --accent:#e0a63f;
+    --lower:#93b3cc;
+
+    --board:#050508;
+    --floor:#1a1a22;
+    --wall:#33333f;
+    --lit:#cf9a45;
+    --lit-soft:#7d5c22;
+    --glass:#2d6885;
+    --glass-edge:#6fc2e0;
+    --void:#030304;
+
+    --mirror:#333a46;
+    --mirror-edge:#e3ecf7;
+    --mirror-lit:#63594a;
+    --lever:#2a4a40;
+    --lever-ink:#7fd6ae;
+    --lever-lit:#557046;
+    --plate:#3a5866;
+    --plate-ink:#86c2d8;
+    --plate-lit:#cf9a45;
+    --doorA:#43355a;
+    --doorA-ink:#bb9ce6;
+    --doorA-lit:#614a7c;
+    --doorB:#613a2c;
+    --doorB-ink:#e6a888;
+    --doorB-lit:#7d5337;
+
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0c0c10;
+  --surface:#15151b;
+  --fg:#e8e3d8;
+  --muted:#8d8778;
+  --line:#26262f;
+  --accent:#e0a63f;
+  --lower:#93b3cc;
+
+  --board:#050508;
+  --floor:#1a1a22;
+  --wall:#33333f;
+  --lit:#cf9a45;
+  --lit-soft:#7d5c22;
+  --glass:#2d6885;
+  --glass-edge:#6fc2e0;
+  --void:#030304;
+
+  --mirror:#333a46;
+  --mirror-edge:#e3ecf7;
+  --mirror-lit:#63594a;
+  --lever:#2a4a40;
+  --lever-ink:#7fd6ae;
+  --lever-lit:#557046;
+  --plate:#3a5866;
+  --plate-ink:#86c2d8;
+  --plate-lit:#cf9a45;
+  --doorA:#43355a;
+  --doorA-ink:#bb9ce6;
+  --doorA-lit:#614a7c;
+  --doorB:#613a2c;
+  --doorB-ink:#e6a888;
+  --doorB-lit:#7d5337;
+
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',system-ui,sans-serif;
+  font-size:15px;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{
+  max-width:880px;
+  margin:0 auto;
+  padding-block:44px 72px;
+  padding-inline:20px;
+}
+h1{
+  font-family:'Noto Serif SC','Songti SC','SimSun',serif;
+  font-weight:700;
+  font-size:clamp(26px,4.4vw,38px);
+  line-height:1.25;
+  letter-spacing:.02em;
+  text-wrap:balance;
+  margin:0 0 10px;
+}
+.lede{
+  color:var(--muted);
+  margin:0 0 4px;
+  max-width:34em;
+}
+.rule{
+  height:1px;
+  background:var(--line);
+  border:0;
+  margin:28px 0;
+}
+
+/* 图例 */
+.legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px 22px;
+  margin:0 0 30px;
+  padding:0;
+  list-style:none;
+}
+.legend li{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:13px;
+  color:var(--muted);
+}
+.swatch{
+  width:16px;height:16px;
+  border-radius:3px;
+  flex:none;
+  position:relative;
+  background:var(--floor);
+  box-shadow:inset 0 0 0 1px var(--line);
+}
+.swatch.s-floor{background:var(--floor)}
+.swatch.s-wall{background:var(--wall)}
+.swatch.s-glass{background:var(--glass);box-shadow:inset 0 0 0 1px var(--glass-edge)}
+.swatch.s-lit{background:var(--lit)}
+.swatch.s-void{background:var(--void)}
+.swatch.s-upper{background:transparent;box-shadow:none}
+.swatch.s-upper::after{
+  content:'';position:absolute;inset:3px;border-radius:50%;
+  background:var(--accent);box-shadow:0 0 7px var(--accent);
+}
+.swatch.s-lower{background:transparent;box-shadow:none;display:flex;gap:3px;align-items:center;justify-content:center}
+.swatch.s-lower::before,.swatch.s-lower::after{
+  content:'';width:3px;height:11px;border-radius:2px;background:var(--lower);
+}
+.swatch.s-mirror{background:var(--mirror)}
+.swatch.s-mirror::after{
+  content:'';position:absolute;left:50%;top:18%;width:3px;height:64%;
+  margin-left:-1.5px;border-radius:999px;background:var(--mirror-edge);
+}
+.swatch.s-lever{background:var(--lever)}
+.swatch.s-lever::after{
+  content:'';position:absolute;inset:32% 38%;border-radius:2px;background:var(--lever-ink);
+}
+.swatch.s-plate{background:var(--floor)}
+.swatch.s-plate::after{
+  content:'';position:absolute;inset:16%;border-radius:2px;
+  box-shadow:inset 0 0 0 2px var(--plate);
+}
+.swatch.s-doorA{background:var(--doorA);box-shadow:inset 0 0 0 1px var(--doorA-ink)}
+.swatch.s-doorB{background:var(--doorB);box-shadow:inset 0 0 0 1px var(--doorB-ink)}
+
+/* 关卡切换 */
+.tabs{
+  display:flex;
+  gap:8px;
+  margin:0 0 22px;
+  flex-wrap:wrap;
+}
+.tab{
+  font:inherit;
+  font-size:13px;
+  color:var(--muted);
+  background:transparent;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:6px 15px;
+  cursor:pointer;
+}
+.tab:hover{color:var(--fg);border-color:var(--muted)}
+.tab[aria-selected="true"]{
+  color:var(--bg);
+  background:var(--fg);
+  border-color:var(--fg);
+}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* 两张棋盘 */
+.boards{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:26px;
+}
+.panel{min-width:0}
+.panel h2{
+  font-family:'Noto Serif SC','Songti SC','SimSun',serif;
+  font-weight:600;
+  font-size:15px;
+  letter-spacing:.04em;
+  margin:0 0 2px;
+}
+.panel p{
+  font-size:12.5px;
+  color:var(--muted);
+  margin:0 0 12px;
+  line-height:1.55;
+}
+.board{
+  display:grid;
+  gap:2px;
+  width:100%;
+  aspect-ratio:1;
+  background:var(--board);
+  padding:7px;
+  border-radius:var(--radius);
+  box-shadow:0 1px 0 rgba(0,0,0,.06), 0 8px 22px -14px rgba(0,0,0,.55);
+}
+.cell{
+  position:relative;
+  border-radius:2px;
+  background:var(--floor);
+}
+.cell.wall{background:var(--wall)}
+.cell.glass{
+  background:var(--glass);
+  box-shadow:inset 0 0 0 1px var(--glass-edge);
+}
+.cell.lit{background:var(--lit)}
+.cell.void{background:var(--void)}
+.cell.felt{
+  box-shadow:inset 0 0 0 1px var(--lower);
+  opacity:.85;
+}
+.cell.void.felt{background:var(--void);box-shadow:inset 0 0 0 1px var(--lower)}
+.cell.wall.lit{background:var(--lit-soft)}
+
+/* 第二关的机关 */
+.cell.mirror{background:var(--mirror)}
+.cell.mirror::after{
+  content:'';position:absolute;left:50%;top:16%;width:16%;height:68%;
+  margin-left:-8%;border-radius:999px;background:var(--mirror-edge);
+  box-shadow:0 0 5px var(--mirror-edge);
+}
+.cell.lever{background:var(--lever)}
+.cell.lever::after{
+  content:'';position:absolute;inset:30% 37%;border-radius:3px;
+  background:var(--lever-ink);
+}
+.cell.plate{background:var(--floor)}
+.cell.plate::after{
+  content:'';position:absolute;inset:14%;border-radius:3px;
+  box-shadow:inset 0 0 0 2px var(--plate);
+}
+.cell.doorA{background:var(--doorA);box-shadow:inset 0 0 0 1px var(--doorA-ink)}
+.cell.doorB{background:var(--doorB);box-shadow:inset 0 0 0 1px var(--doorB-ink)}
+
+/* 被光照到的机关:保留自己的颜色,底色换成被照亮的版本 */
+.cell.mirror.lit{background:var(--mirror-lit)}
+.cell.lever.lit{background:var(--lever-lit)}
+.cell.plate.lit{background:var(--plate-lit)}
+.cell.doorA.lit{background:var(--doorA-lit)}
+.cell.doorB.lit{background:var(--doorB-lit)}
+
+/* 机关上的记号:压力板 1 / 光闸 a / 拉杆 A / 路门 X Y / 传送镜 p P */
+.cell .glyph{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  font-size:10px;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:0;
+  pointer-events:none;
+}
+.cell.plate .glyph{color:var(--plate-ink)}
+.cell.lever .glyph{color:var(--lever-ink)}
+.cell.doorA .glyph{color:var(--doorA-ink)}
+.cell.doorB .glyph{color:var(--doorB-ink)}
+.cell.mirror .glyph{color:var(--mirror-edge);font-size:8px;letter-spacing:.02em}
+
+.cell.upper::after{
+  content:'';
+  position:absolute;
+  inset:26%;
+  border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 10px 1px var(--accent);
+}
+.cell.lower i{
+  position:absolute;
+  top:22%;
+  width:16%;
+  height:56%;
+  border-radius:2px;
+  background:var(--lower);
+  box-shadow:0 0 6px rgba(0,0,0,.5);
+}
+.cell.lower i:first-child{left:32%}
+.cell.lower i:last-child{right:32%}
+
+/* 说明区 */
+.note{
+  margin-top:34px;
+  padding:18px 20px;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+}
+.note h3{
+  font-family:'Noto Serif SC','Songti SC','SimSun',serif;
+  font-weight:600;
+  font-size:14px;
+  margin:0 0 8px;
+  letter-spacing:.04em;
+}
+.note p{margin:0;font-size:14px;color:var(--fg);white-space:pre-line}
+.note p + p{margin-top:10px;color:var(--muted);font-size:13px}
+
+.spec{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:14px 24px;
+  margin-top:30px;
+  padding-top:24px;
+  border-top:1px solid var(--line);
+}
+.spec div{min-width:0}
+.spec dt{
+  font-size:11px;
+  letter-spacing:.1em;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+.spec dd{
+  margin:2px 0 0;
+  font-size:14px;
+  font-variant-numeric:tabular-nums;
+}
+
+@media (max-width:600px){
+  .boards{grid-template-columns:minmax(0,1fr);gap:30px}
+  .wrap{padding-block:32px 56px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .cell.upper::after{animation:breathe 3.4s ease-in-out infinite}
+  @keyframes breathe{
+    0%,100%{box-shadow:0 0 8px 0 var(--accent)}
+    50%{box-shadow:0 0 14px 3px var(--accent)}
+  }
+}
+</style>
+
+<div class="wrap">
+
+  <h1>下半身找上半身 · 关卡示意图</h1>
+  <p class="lede">左边是设计者看到的全图,右边是玩家开局真正看到的画面。这游戏的全部内容,就是这两个画面之间的那道缝。</p>
+
+  <hr class="rule">
+
+  <ul class="legend" id="legend"></ul>
+
+  <div class="tabs" role="tablist" aria-label="选择关卡">
+    <button class="tab" role="tab" id="tab-1" aria-selected="true" aria-controls="board-1" data-level="0">第一关 · 面包屑</button>
+    <button class="tab" role="tab" id="tab-2" aria-selected="false" aria-controls="board-2" data-level="1">对照 · 拆掉玻璃</button>
+    <button class="tab" role="tab" id="tab-3" aria-selected="false" aria-controls="board-3" data-level="2">第二关 · 够不着的拉杆</button>
+  </div>
+
+  <div class="boards">
+    <section class="panel">
+      <h2>迷宫全图</h2>
+      <p>设计者视角。整张棋盘的样子。</p>
+      <div class="board" id="board-1" role="img" aria-label="关卡全图"></div>
+    </section>
+    <section class="panel">
+      <h2>玩家开局看到的</h2>
+      <p>只有上半身光照到的地方,加上下半身摸得到的四周一格。其余不渲染。</p>
+      <div class="board" id="board-2" role="img" aria-label="玩家视角"></div>
+    </section>
+  </div>
+
+  <div class="note">
+    <h3 id="note-title"></h3>
+    <p id="note-body"></p>
+    <p id="note-extra"></p>
+  </div>
+
+  <dl class="spec">
+    <div><dt>棋盘</dt><dd id="spec-board">9 × 9 格</dd></div>
+    <div><dt>光半径</dt><dd>3 格</dd></div>
+    <div><dt>移动</dt><dd>四方向,一格一步</dd></div>
+    <div><dt>过关</dt><dd>下半身碰到上半身</dd></div>
+  </dl>
+
+</div>
+
+<script>
+(function(){
+  var LEGEND_BASE = [
+    { cls:'s-lit',   text:'被光找到' },
+    { cls:'s-floor', text:'地面(未照亮)' },
+    { cls:'s-void',  text:'不渲染' },
+    { cls:'s-upper', text:'上半身(光源 · 终点)' },
+    { cls:'s-lower', text:'下半身(你)' }
+  ];
+  var LEGEND_TILES = [
+    { cls:'s-wall',  text:'墙 · 挡腿也挡光' },
+    { cls:'s-glass', text:'玻璃 · 挡腿不挡光' }
+  ];
+  var LEGEND_MECH = [
+    { cls:'s-mirror', text:'传送镜 p P · 成对。视线从一端进去、另一端出来,方向不变,出口重新计满 3 格' },
+    { cls:'s-doorA',  text:'光闸 a · 挡腿也挡光,只有压力板被踩住的时候才开' },
+    { cls:'s-plate',  text:'压力板 1 · 下半身踩住,松开就断' },
+    { cls:'s-lever',  text:'拉杆 A · 八格里够得着的才拨得动。头钉死在原地,所以远处的杆只能靠下半身走过去拨。双掷:开一扇路门,就关上另一扇' },
+    { cls:'s-doorB',  text:'路门 X Y · 挡腿也挡光。同一根拉杆管着两扇,一扇开,另一扇必关' }
+  ];
+  var LEGEND_MECH_NOGLASS = [{ cls:'s-wall', text:'墙 · 挡腿也挡光' }].concat(LEGEND_MECH);
+
+  var LEVELS = [
+    {
+      legend: LEGEND_BASE.slice(0, 2).concat(LEGEND_TILES, LEGEND_BASE.slice(2)),
+      grid: [
+        "#########",
+        "#..#L...#",
+        "#.#####.#",
+        "#.##.##.#",
+        "#...U.G.#",
+        "#.##.##.#",
+        "#.##G##.#",
+        "#.......#",
+        "#########"
+      ],
+      title: "第一关要教的事:看得见,不等于走得进",
+      body: "上半身在正中央,光半径 3 格。它的光被一圈内墙压成一横一竖的十字,只有三条臂能穿过墙伸到外圈走廊上——正东 (5,8)、正南 (8,5)、正西 (5,2),三个光斑就是全部的路标。下半身站在正北 (2,5),而正北那条臂是实墙,所以它开局全黑:玩家得自己摸出上、左、下三面是墙,只有右边通。",
+      extra: "路径唯一。整张图是一棵树:(2,4) 那格墙把外圈从环拆成了线,下半身开局只能往东。全程唯一的岔路在 (5,2),往北是死胡同、往南是回程、往东进中央——而东边那格在光里。"
+    },
+    {
+      legend: LEGEND_BASE.slice(0, 2).concat(LEGEND_TILES, LEGEND_BASE.slice(2)),
+      grid: [
+        "#########",
+        "#..#L...#",
+        "#.#####.#",
+        "#.##.##.#",
+        "#...U.#.#",
+        "#.##.##.#",
+        "#.#####.#",
+        "#.......#",
+        "#########"
+      ],
+      title: "对照:拆掉两块玻璃,面包屑就没了",
+      body: "同一张图,把 (5,7) 和 (7,5) 两块玻璃换成墙。上半身的光现在被内墙关死在中央,外圈走廊只剩正西一处在光里——那是门本身在漏光。下半身还是要走同样的 21 步,但前 18 步一片黑,一个光斑也撞不见,只能靠摸,直到站在门口才知道自己走对了。",
+      extra: "这就是玻璃数量的意义。少一块,中间那段走廊就断了,玩家要在全黑里摸 12 步才知道自己没走错;多一块,路标太密,他不用记路也能走。"
+    },
+    {
+      beam: true,
+      openFull:  {a:1, X:1, Y:1},
+      openStart: {a:0, X:0, Y:1},
+      legend: LEGEND_BASE.slice(0, 2).concat(LEGEND_MECH_NOGLASS, LEGEND_BASE.slice(2)),
+      grid: [
+        "###########",
+        "#...Y.X...#",
+        "#.#P#A#.#.#",
+        "#.#....1#.#",
+        "#.#.#G#.#.#",
+        "#.#..U#.#.#",
+        "#.#.#a#.#.#",
+        "#.#..p..#.#",
+        "#.#######.#",
+        "#L...#....#",
+        "###########"
+      ],
+      title: "第二关要教的事:杆够不着,门才真的挡人",
+      body: "上半身钉死在正中 (5,5),能拨动的只有紧挨着它的八格——偏偏那八格里一根杆也没有。北面隔着一块玻璃,光是穿得过去的,三格开外的 (2,5) 立着拉杆 A:全图唯一的开关,而头够不到它。西面 (5,4)(5,3) 是一条两格短走廊,南面 (6,5) 压着关着的光闸 a。开局头看得见的就这么多:北边那条走廊连同尽头的杆、西边那两格、四面贴脸的墙。",
+      extra: "下半身在左下角 (9,1) 醒来。外圈往西三步是死胡同,往北要绕大半圈才到 (1,3)。再往东:(1,4) 是一扇开着的路门 Y,穿过去;(1,6) 的路门 X 关着。两扇门归同一根拉杆 A 管,双掷——拨一次,X 开,Y 关。头够不到 (2,5),可下半身站到 (1,5) 就挨着它。拨过之后来路自己封在身后,这一关每一步都得往前走。\n\n再往东,(1,7) 往南拐进内圈,落在 (3,7)。踩住压力板 1 的那一瞬,头顶的光闸 a 打开,光穿过脚下的传送镜 p,从西北角 (2,3) 的 P 出来,把 (3,3)(4,3)(5,3) 照出来——正是接下来唯一要走的一段;脚一松,光就断,只能记住它。沿内圈西行到 (3,3),再南下,西拐进 (5,4),就撞上上半身了。\n\n唯一解 25 格,全图能走 49 格,占 51%。剩下三处死胡同:外圈西边 3 格、外圈东边 13 格、内圈南侧 8 格——专门留给摸黑走错的人。"
+    }
+  ];
+
+  var RADIUS = 3;
+  var DIRS = [
+    [-1,0], [1,0], [0,-1], [0,1],
+    [-1,-1], [-1,1], [1,-1], [1,1]
+  ];
+
+  function findChar(grid, ch){
+    for (var r = 0; r < grid.length; r++){
+      var c = grid[r].indexOf(ch);
+      if (c >= 0) return { r: r, c: c };
+    }
+    return null;
+  }
+
+  /* 传送镜:成对。视线从一端进去、另一端原方向出来,出口重新计满 3 格。 */
+  var PORTAL = { p:'P', P:'p' };
+
+  function isPortal(ch){ return PORTAL[ch] !== undefined; }
+  function isShutter(ch){ return 'abc'.indexOf(ch) >= 0; }
+  function isDoor(ch){ return 'XYZW'.indexOf(ch) >= 0; }
+  function isLever(ch){ return 'AB'.indexOf(ch) >= 0; }
+  function isPlate(ch){ return '123'.indexOf(ch) >= 0; }
+
+  /* 第一关用的老算法:从上半身朝每一格采样一条直线,撞到墙就断。玻璃不断。 */
+  function visible(grid, ur, uc, r, c){
+    var dr = r - ur, dc = c - uc;
+    if (Math.sqrt(dr*dr + dc*dc) > RADIUS + 1e-6) return false;
+    if (dr === 0 && dc === 0) return true;
+    var N = 64;
+    for (var i = 1; i < N; i++){
+      var t = i / N;
+      var tr = Math.round(ur + dr * t);
+      var tc = Math.round(uc + dc * t);
+      if (tr === ur && tc === uc) continue;
+      if (tr === r && tc === c) break;
+      var row = grid[tr];
+      if (row && row.charAt(tc) === '#') return false;
+    }
+    return true;
+  }
+
+  function blankLit(grid){
+    var out = [];
+    for (var r = 0; r < grid.length; r++){
+      out[r] = [];
+      for (var c = 0; c < grid[r].length; c++) out[r][c] = false;
+    }
+    return out;
+  }
+
+  function litMap(grid){
+    var up = findChar(grid, 'U');
+    var out = [];
+    for (var r = 0; r < grid.length; r++){
+      out[r] = [];
+      for (var c = 0; c < grid[r].length; c++){
+        out[r][c] = visible(grid, up.r, up.c, r, c);
+      }
+    }
+    return out;
+  }
+
+  /* 第二关用的算法:从上半身同时射出八道光线,一步一格,沿路点亮。
+     撞上传送镜就从另一头出来,方向不变、出口重新计满 3 格;
+     墙、关着的光闸、关着的路门、以及第三条传送链之后的镜子都让它停。
+     拉杆不挡光,压力板就是地板。 */
+  function litMapBeam(grid, open){
+    var up = findChar(grid, 'U');
+    var lit = blankLit(grid);
+    lit[up.r][up.c] = true;
+
+    DIRS.forEach(function(start){
+      var dir = start.slice();
+      var cr = up.r, cc = up.c;
+      var budget = RADIUS, hops = 0;
+      while (budget > 0){
+        var nr = cr + dir[0], nc = cc + dir[1];
+        if (nr < 0 || nc < 0 || nr >= grid.length || nc >= grid[nr].length) break;
+        var ch = grid[nr].charAt(nc);
+        lit[nr][nc] = true;
+        cr = nr; cc = nc;
+        budget--;
+
+        if (ch === '#') break;
+        if (ch === 'G') continue;
+        if (isPortal(ch)){
+          if (hops >= 3) break;
+          var mate = findChar(grid, PORTAL[ch]);
+          if (!mate) break;
+          hops++;
+          cr = mate.r; cc = mate.c;
+          lit[cr][cc] = true;
+          budget = RADIUS;
+          continue;
+        }
+        if (isShutter(ch) && !open[ch]) break;
+        if (isDoor(ch) && !open[ch]) break;
+      }
+    });
+    return lit;
+  }
+
+  function render(el, grid, lit, mode){
+    var low = findChar(grid, 'L');
+    var rows = grid.length, cols = grid[0].length;
+    el.textContent = '';
+    el.style.gridTemplateColumns = 'repeat(' + cols + ', minmax(0,1fr))';
+    el.style.gridTemplateRows = 'repeat(' + rows + ', minmax(0,1fr))';
+    for (var r = 0; r < grid.length; r++){
+      for (var c = 0; c < grid[r].length; c++){
+        var ch = grid[r].charAt(c);
+        var cell = document.createElement('div');
+        cell.className = 'cell';
+
+        if (ch === '#') cell.classList.add('wall');
+        if (ch === 'G') cell.classList.add('glass');
+        if (isPortal(ch)) cell.classList.add('mirror');
+        if (isLever(ch)) cell.classList.add('lever');
+        if (isPlate(ch)) cell.classList.add('plate');
+        if (isShutter(ch)) cell.classList.add('doorA');
+        if (isDoor(ch)) cell.classList.add('doorB');
+
+        if (lit[r][c]) cell.classList.add('lit');
+
+        if (mode === 'player'){
+          var felt = Math.abs(r - low.r) + Math.abs(c - low.c) === 1;
+          var seen = lit[r][c] || (r === low.r && c === low.c) || felt;
+          if (!seen) cell.classList.add('void');
+          if (felt) cell.classList.add('felt');
+        }
+
+        if ('AB123abcXYZWpPqQrR'.indexOf(ch) >= 0){
+          var g = document.createElement('span');
+          g.className = 'glyph';
+          g.textContent = ch;
+          cell.appendChild(g);
+        }
+        if (ch === 'U') cell.classList.add('upper');
+        if (ch === 'L'){
+          cell.classList.add('lower');
+          cell.appendChild(document.createElement('i'));
+          cell.appendChild(document.createElement('i'));
+        }
+        el.appendChild(cell);
+      }
+    }
+  }
+
+  var boardFull = document.getElementById('board-1');
+  var boardPlay = document.getElementById('board-2');
+  var legendEl = document.getElementById('legend');
+  var noteTitle = document.getElementById('note-title');
+  var noteBody = document.getElementById('note-body');
+  var noteExtra = document.getElementById('note-extra');
+  var specBoard = document.getElementById('spec-board');
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+
+  function renderLegend(items){
+    legendEl.textContent = '';
+    items.forEach(function(it){
+      var li = document.createElement('li');
+      var sw = document.createElement('span');
+      sw.className = 'swatch ' + it.cls;
+      li.appendChild(sw);
+      li.appendChild(document.createTextNode(it.text));
+      legendEl.appendChild(li);
+    });
+  }
+
+  function show(i){
+    var lv = LEVELS[i];
+    var litFull, litPlay;
+    if (lv.beam){
+      litFull = litMapBeam(lv.grid, lv.openFull);
+      litPlay = litMapBeam(lv.grid, lv.openStart);
+    } else {
+      litFull = litMap(lv.grid);
+      litPlay = litFull;
+    }
+    render(boardFull, lv.grid, litFull, 'full');
+    render(boardPlay, lv.grid, litPlay, 'player');
+    renderLegend(lv.legend);
+    var rows = lv.grid.length, cols = lv.grid[0].length;
+    boardFull.setAttribute('aria-label', rows + '乘' + cols + ' 的迷宫全图');
+    boardPlay.setAttribute('aria-label', '同一张迷宫在玩家开局的可见范围');
+    specBoard.textContent = cols + ' × ' + rows + ' 格';
+    noteTitle.textContent = lv.title;
+    noteBody.textContent = lv.body;
+    noteExtra.textContent = lv.extra;
+    tabs.forEach(function(t, k){ t.setAttribute('aria-selected', k === i ? 'true' : 'false'); });
+    try { localStorage.setItem('halfbody-level', String(i)); } catch(e){}
+  }
+
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){ show(Number(t.dataset.level)); });
+  });
+
+  var start = 0;
+  try {
+    var saved = Number(localStorage.getItem('halfbody-level'));
+    if (saved >= 0 && saved < LEVELS.length) start = saved;
+  } catch(e){}
+  show(start);
+})();
+</script>
