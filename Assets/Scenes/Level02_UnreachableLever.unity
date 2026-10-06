@@ -448,14 +448,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 197937817}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.887, y: 0.98, z: 11.611}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 3.89, y: 0.98, z: 13.216}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1755078666}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1001 &204981573
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3771,7 +3771,7 @@ MonoBehaviour:
   handleRenderer: {fileID: 0}
   activeMaterial: {fileID: 0}
   doors:
-  - {fileID: 0}
+  - {fileID: 1897938503}
   doorParameter: DoorOpen
   barriers: []
   player: {fileID: 0}
@@ -5788,6 +5788,10 @@ PrefabInstance:
       value: Door
       objectReference: {fileID: 0}
     - target: {fileID: 3605626868646032761, guid: b2d8430305b65704b884b7bdc26c7d64, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.9614
+      objectReference: {fileID: 0}
+    - target: {fileID: 3605626868646032761, guid: b2d8430305b65704b884b7bdc26c7d64, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.21
       objectReference: {fileID: 0}
@@ -5801,19 +5805,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3605626868646032761, guid: b2d8430305b65704b884b7bdc26c7d64, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7103833
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3605626868646032761, guid: b2d8430305b65704b884b7bdc26c7d64, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3605626868646032761, guid: b2d8430305b65704b884b7bdc26c7d64, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.7038151
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3605626868646032761, guid: b2d8430305b65704b884b7bdc26c7d64, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3605626868646032761, guid: b2d8430305b65704b884b7bdc26c7d64, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5821,7 +5825,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3605626868646032761, guid: b2d8430305b65704b884b7bdc26c7d64, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -89.468
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3605626868646032761, guid: b2d8430305b65704b884b7bdc26c7d64, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
@@ -6084,6 +6088,11 @@ Transform:
   - {fileID: 911001076}
   m_Father: {fileID: 911902759}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &1897938503 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7858597383721027866, guid: b2d8430305b65704b884b7bdc26c7d64, type: 3}
+  m_PrefabInstance: {fileID: 1755078665}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1915108239
 PrefabInstance:
   m_ObjectHideFlags: 0
