@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4389956080651855370}
   - component: {fileID: 3751410386404922197}
   - component: {fileID: 4493665039180162300}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: "\u5E10"
   m_TagString: VisionObstacle
   m_Icon: {fileID: 0}

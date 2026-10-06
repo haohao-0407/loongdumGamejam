@@ -1,3 +1,6 @@
+// Legacy builder for the pre-integration grid runtime. Keep the source for reference;
+// restore its matching runtime before enabling LOONGDUM_LEVEL02_LEGACY_TOOLS.
+#if LOONGDUM_LEVEL02_LEGACY_TOOLS
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -256,3 +259,4 @@ namespace Loongdum.Levels.Editor
         }
     }
 }
+#endif

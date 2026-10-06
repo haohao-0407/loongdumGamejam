@@ -1,3 +1,6 @@
+// Legacy checks target the old grid runtime, scene schema, and 24-step solution.
+// Restore that matching version before enabling LOONGDUM_LEVEL02_LEGACY_TOOLS.
+#if LOONGDUM_LEVEL02_LEGACY_TOOLS
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -343,3 +346,4 @@ namespace Loongdum.Levels.Editor
         }
     }
 }
+#endif

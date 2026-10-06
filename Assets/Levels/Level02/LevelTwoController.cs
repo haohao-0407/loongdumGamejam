@@ -7,52 +7,111 @@ namespace Loongdum.Levels
     [DisallowMultipleComponent]
     public sealed class LevelTwoController : MonoBehaviour
     {
+        /// <summary>One cell that carries something. Cells the diagram draws as plain floor get no
+        /// entry at all, so the list holds the level's bodies rather than its grid.</summary>
         [Serializable]
         public sealed class CellVisual
         {
-            public GameObject root;
-            public Renderer floor;
+            public Vector2Int cell;
             public GameObject barrier;
+            /// <summary>The wall this cell owns. Only the two cells the mirror is swapped between carry
+            /// one that the model can take away or hand over.</summary>
+            public GameObject wall;
             public Transform leverHandle;
+            public Transform leverBHandle;
+            public Transform plate;
             public Renderer[] renderers;
+            /// <summary>The body's own collider, sized to the cell wherever the rules say the cell
+            /// blocks. A cell never carries two: the duplicated blanket collider is gone.</summary>
             public Collider collider;
         }
 
-        public const float CellSize = 1.6f;
+        public const float CellSize = 3f;
+        /// <summary>The first level places its player capsule at this height; the lower body keeps it.</summary>
+        [SerializeField] private float lowerBodyHeight = 1.41f;
         [SerializeField] private TextAsset layout;
         [SerializeField] private CellVisual[] cells;
         [SerializeField] private Transform lowerBody;
-        [SerializeField] private Material darkFloor;
-        [SerializeField] private Material litFloor;
-        [SerializeField] private Material feltFloor;
         [SerializeField] private Camera levelCamera;
-        [SerializeField] private VisionSource upperVision;
+        /// <summary>The orange mirror's frame. The near lever trades it with the wall above the far
+        /// lever, so it hangs off the portal pair rather than off a cell and is driven here.</summary>
+        [SerializeField] private Transform portalExit;
+        [SerializeField] private Vector3 portalHomeLocal;
+        [SerializeField] private Vector3 portalWallLocal;
+        /// <summary>The first level's vision source, standing on the fixed upper body. It paints the
+        /// lit disc and the darkness around it over the whole camera, as it does in the first level.</summary>
+        [SerializeField] private Transform visionSource;
+        private Renderer[] portalRenderers;
+        private VisionSource vision;
         private LevelTwoModel model;
         private Font font;
         private GUIStyle heading, text, small, centered;
-        private float nextMoveTime;
-        private Vector2Int previousDirection;
         private bool designerView;
+
+        /// <summary>The orange mirror's own renderers. The mirror is saved with the scene; the list
+        /// gathered off it is not, so a scene that is loaded rather than just built has the mirror and
+        /// nothing cached off it.</summary>
+        private Renderer[] PortalRenderers
+        {
+            get
+            {
+                if (portalRenderers == null && portalExit != null)
+                    portalRenderers = portalExit.GetComponentsInChildren<Renderer>(true);
+                return portalRenderers;
+            }
+        }
+
+        /// <summary>The vision source component. The reference is saved with the scene; the component
+        /// looked up off it is not, so a scene that is loaded rather than just built has the source and
+        /// nothing cached off it.</summary>
+        private VisionSource Vision
+        {
+            get
+            {
+                if (vision == null && visionSource != null) vision = visionSource.GetComponent<VisionSource>();
+                return vision;
+            }
+        }
+
         public LevelTwoModel Model => model;
         public CellVisual[] Cells => cells;
         public Transform LowerBody => lowerBody;
+        public Transform VisionSourceTransform => visionSource;
+        public bool VisionSourceEnabled => Vision != null && Vision.enabled;
+        public bool DesignerView => designerView;
         public Camera LevelCamera => levelCamera;
-        public VisionSource UpperVision => upperVision;
+        public Transform PortalExitTransform => portalExit;
 
         public static Vector3 CellPosition(Vector2Int cell) =>
             new Vector3((cell.x - 5) * CellSize, 0f, (5 - cell.y) * CellSize);
 
-        public void Configure(TextAsset data, CellVisual[] visuals, Transform lower,
-            Material dark, Material light, Material felt, Camera camera, VisionSource vision = null)
+        /// <summary>The cell a point on the board stands in. The board was measured out in cells, but
+        /// nothing walks cell by cell: the first level's movement module carries the body wherever the
+        /// keyboard points, and the rules read back which cell that turned out to be.</summary>
+        public static Vector2Int CellAt(Vector3 position) => new Vector2Int(
+            Mathf.RoundToInt(position.x / CellSize) + 5,
+            5 - Mathf.RoundToInt(position.z / CellSize));
+
+        public void Configure(TextAsset data, CellVisual[] visuals, Transform lower, Camera camera)
         {
             layout = data;
             cells = visuals;
             lowerBody = lower;
-            darkFloor = dark;
-            litFloor = light;
-            feltFloor = felt;
             levelCamera = camera;
-            upperVision = vision;
+        }
+
+        public void ConfigureVision(Transform source)
+        {
+            visionSource = source;
+            vision = null;
+        }
+
+        public void ConfigurePortal(Transform exit, Vector3 homeLocal, Vector3 wallLocal)
+        {
+            portalExit = exit;
+            portalHomeLocal = homeLocal;
+            portalWallLocal = wallLocal;
+            portalRenderers = null;
         }
 
         private void OnEnable()
@@ -66,46 +125,62 @@ namespace Loongdum.Levels
         {
             model = new LevelTwoModel(JsonUtility.FromJson<LevelTwoLayout>(layout.text).rows);
             designerView = false;
-            nextMoveTime = 0f;
-            previousDirection = Vector2Int.zero;
+            PlaceLowerBody();
+            RefreshPresentation();
+        }
+
+        /// <summary>Puts the lower body on the cell the rules hold, without walking it there. The level
+        /// starts and restarts with this, and every check compares against it. How high the body stands
+        /// is left alone: that is the first level's gravity to decide.</summary>
+        public void PlaceLowerBody()
+        {
+            if (lowerBody == null) return;
+            var controller = lowerBody.GetComponent<CharacterController>();
+            // A CharacterController keeps its own copy of where it is, so moving the transform under
+            // it needs the controller switched off and on again, or its next Move walks from the old
+            // spot and drags the body back there.
+            if (controller != null) controller.enabled = false;
+            Vector3 placed = CellPosition(model.Lower) + Vector3.up * lowerBodyHeight;
+            placed.y = lowerBody.position.y;
+            lowerBody.position = placed;
+            if (controller != null) controller.enabled = true;
+        }
+
+        /// <summary>Reads the cell the lower body has walked into and hands it to the rules. The body
+        /// is never moved here: it walks itself, on the first level's movement module, and this only
+        /// notices where it got to.</summary>
+        private void FollowLowerBody()
+        {
+            if (model == null || lowerBody == null) return;
+            Vector2Int cell = CellAt(lowerBody.position);
+            if (cell == model.Lower) return;
+            model.SetLower(cell);
             RefreshPresentation();
         }
 
         private void Update()
         {
             Keyboard keyboard = Keyboard.current;
-            if (keyboard == null) return;
-            if (keyboard.rKey.wasPressedThisFrame) { Restart(); return; }
-            if ((Application.isEditor || Debug.isDebugBuild) && keyboard.f1Key.wasPressedThisFrame)
+            if (keyboard != null)
             {
-                designerView = !designerView;
-                RefreshPresentation();
+                if (keyboard.rKey.wasPressedThisFrame) { Restart(); return; }
+                if ((Application.isEditor || Debug.isDebugBuild) && keyboard.f1Key.wasPressedThisFrame)
+                {
+                    designerView = !designerView;
+                    RefreshPresentation();
+                }
+                if (keyboard.eKey.wasPressedThisFrame) Interact();
             }
-            if (keyboard.eKey.wasPressedThisFrame) Interact();
-            Vector2Int direction = ReadDirection(keyboard);
-            if (direction == Vector2Int.zero) { previousDirection = direction; return; }
-            bool newPress = direction != previousDirection;
-            if (newPress || Time.unscaledTime >= nextMoveTime)
-            {
-                Move(direction);
-                nextMoveTime = Time.unscaledTime + (newPress ? 0.28f : 0.14f);
-            }
-            previousDirection = direction;
+            FollowLowerBody();
         }
 
-        private static Vector2Int ReadDirection(Keyboard keyboard)
-        {
-            // Never permit a diagonal step or a diagonal corner cut.
-            if (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed) return Vector2Int.down;
-            if (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed) return Vector2Int.up;
-            if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed) return Vector2Int.left;
-            if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed) return Vector2Int.right;
-            return Vector2Int.zero;
-        }
-
-        public bool Move(Vector2Int direction)
+        /// <summary>Walks the rules one cell and stands the body on the cell they land on. The scene
+        /// itself is walked by the first level's movement module; this is the entry the checks use to
+        /// travel the same route without a keyboard.</summary>
+        public bool Step(Vector2Int direction)
         {
             bool moved = model.TryMove(direction);
+            PlaceLowerBody();
             RefreshPresentation();
             return moved;
         }
@@ -121,32 +196,49 @@ namespace Loongdum.Levels
         {
             model.Reset();
             designerView = false;
-            previousDirection = Vector2Int.zero;
-            nextMoveTime = 0f;
+            PlaceLowerBody();
             RefreshPresentation();
         }
 
         public void RefreshPresentation()
         {
-            bool continuousVision = upperVision != null;
-            if (continuousVision) upperVision.enabled = !designerView;
-            for (int r = 0; r < model.Height; r++)
-                for (int c = 0; c < model.Width; c++)
+            // Only the cells that carry a body are walked: plain floor is the first level's terrain and
+            // has nothing to switch, so it has no entry in the first place.
+            foreach (CellVisual visual in cells)
+            {
+                Vector2Int cell = visual.cell;
+                char tile = model.Tile(cell);
+                bool visible = designerView || model.IsVisible(cell);
+                foreach (Renderer renderer in visual.renderers) renderer.enabled = visible;
+                if (visual.barrier != null) visual.barrier.SetActive(!model.IsOpen(tile));
+                // The two cells the orange mirror trades between carry a wall each, and the model
+                // says which of them is a wall right now. Every other cell's wall never changes.
+                if (visual.wall != null && visual.wall.activeSelf != (tile == '#'))
+                    visual.wall.SetActive(tile == '#');
+                if (visual.collider != null) visual.collider.enabled = model.BlocksMovement(cell);
+                if (visual.leverHandle != null)
+                    visual.leverHandle.localRotation = Quaternion.Euler(0f, 0f, model.LeverThrown ? -32f : 32f);
+                if (visual.leverBHandle != null)
+                    visual.leverBHandle.localRotation = Quaternion.Euler(0f, 0f, model.LeverBThrown ? -32f : 32f);
+                if (visual.plate != null)
                 {
-                    Vector2Int cell = new Vector2Int(c, r);
-                    CellVisual visual = cells[r * model.Width + c];
-                    char tile = model.Tile(cell);
-                    bool visible = continuousVision || designerView || model.IsVisible(cell);
-                    foreach (Renderer renderer in visual.renderers) renderer.enabled = visible;
-                    visual.floor.sharedMaterial = continuousVision ? litFloor
-                        : model.IsLit(cell) ? litFloor
-                        : model.IsFelt(cell) || cell == model.Lower ? feltFloor : darkFloor;
-                    if (visual.barrier != null) visual.barrier.SetActive(!model.IsOpen(tile));
-                    if (visual.collider != null) visual.collider.enabled = model.BlocksMovement(cell);
-                    if (visual.leverHandle != null)
-                        visual.leverHandle.localRotation = Quaternion.Euler(0f, 0f, model.LeverThrown ? -32f : 32f);
+                    // The plate is its own body on the board, so it keeps the position of its cell and
+                    // only sinks where it stands.
+                    Vector3 platePosition = visual.plate.localPosition;
+                    platePosition.y = model.PlatePressed ? .03f : .12f;
+                    visual.plate.localPosition = platePosition;
                 }
-            lowerBody.position = CellPosition(model.Lower);
+            }
+            if (portalExit != null)
+            {
+                portalExit.localPosition = model.LeverThrown ? portalWallLocal : portalHomeLocal;
+                bool mirrorVisible = designerView || model.IsVisible(model.PortalExit);
+                foreach (Renderer renderer in PortalRenderers) renderer.enabled = mirrorVisible;
+            }
+            // The designer's view switches the lamp off as well as switching every cell on: with the
+            // mask gone the whole board renders lit, which is what the editor's Scene view already
+            // shows, since the first level's source only paints over a game camera.
+            if (Vision != null) Vision.enabled = !designerView;
         }
 
         private void OnGUI()
@@ -162,7 +254,7 @@ namespace Loongdum.Levels
             GUI.Label(new Rect(36, 64, width - 72, 28), "下半身找上半身", small);
             GUI.Label(new Rect(36, height - 74, width - 72, 28), model.Feedback, text);
             GUI.Label(new Rect(36, height - 40, width - 72, 26),
-                "WASD / 方向键  移动      E  拨动拉杆      R  重来", small);
+                "WASD  移动      E  拨动拉杆      R  重来", small);
             if (designerView)
                 GUI.Label(new Rect(width - 285, 32, 250, 30), "设计者全图 · F1 返回", text);
             if (model.Won)
