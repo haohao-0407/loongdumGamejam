@@ -59707,7 +59707,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 663019707377712385, guid: 8717b15f6bc60f9458e8a903b5979a3a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.25
+      value: 0.19
       objectReference: {fileID: 0}
     - target: {fileID: 663019707377712385, guid: 8717b15f6bc60f9458e8a903b5979a3a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -59745,6 +59745,10 @@ PrefabInstance:
       propertyPath: targetCamera
       value: 
       objectReference: {fileID: 1328422821}
+    - target: {fileID: 5829313263477826103, guid: 8717b15f6bc60f9458e8a903b5979a3a, type: 3}
+      propertyPath: visionRadius
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
