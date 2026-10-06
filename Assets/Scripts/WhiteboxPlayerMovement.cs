@@ -52,7 +52,7 @@ public sealed class WhiteboxPlayerMovement : MonoBehaviour
 
         if (controller.isGrounded && verticalSpeed < 0f)
         {
-            verticalSpeed = -2f;
+            verticalSpeed = -10f;
         }
 
         verticalSpeed += Physics.gravity.y * Time.deltaTime;
