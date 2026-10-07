@@ -2275,6 +2275,8 @@ MonoBehaviour:
   doorParameter: DoorOpen
   barriers: []
   player: {fileID: 0}
+  interactClip: {fileID: 8300000, guid: 2ecf67f1978237546a4b6d50733bd8fe, type: 3}
+  interactVolume: 1
 --- !u!1001 &570538450
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4755,6 +4757,8 @@ MonoBehaviour:
   doorParameter: DoorOpen
   barriers: []
   player: {fileID: 0}
+  interactClip: {fileID: 8300000, guid: 2ecf67f1978237546a4b6d50733bd8fe, type: 3}
+  interactVolume: 1
 --- !u!1001 &1219135269
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -2981,6 +2981,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FullBodyReversal
   upperBody: {fileID: 1560240308}
   activationKey: 20
+  interactClip: {fileID: 8300000, guid: 2ecf67f1978237546a4b6d50733bd8fe, type: 3}
+  interactVolume: 1
   snapLowerBodyToGround: 0
   groundProbeRise: 5
   groundMask:

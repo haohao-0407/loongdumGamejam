@@ -36546,6 +36546,8 @@ MonoBehaviour:
   activeMarker: {fileID: 2100000, guid: 9b81406554e5e774f8152c19901df97b, type: 2}
   lowerSpawn: {x: -5.124374, y: 1.95, z: -18.31153}
   upperSpawn: {x: 15.62, y: 0.33, z: 14.11}
+  interactClip: {fileID: 8300000, guid: 2ecf67f1978237546a4b6d50733bd8fe, type: 3}
+  interactVolume: 1
 --- !u!4 &1895891280
 Transform:
   m_ObjectHideFlags: 0

@@ -55,6 +55,11 @@ public sealed class LeverDoorSwitch : MonoBehaviour
     [Header("玩家（留空会自动找场景里的白盒玩家）")]
     [SerializeField] private CharacterController player;
 
+    [Header("音效（留空则不发声）")]
+    [Tooltip("拨动成功时播放，例如「SFX_UI_BottonClick」。")]
+    [SerializeField] private AudioClip interactClip;
+    [SerializeField, Range(0f, 1f)] private float interactVolume = 1f;
+
     private Material idleMaterial;
     private Quaternion idleRotation;
     private InputAction input;
@@ -189,6 +194,7 @@ public sealed class LeverDoorSwitch : MonoBehaviour
         }
 
         SetThrown(!thrown);
+        AudioOneShot.Play(interactClip, player != null ? player.gameObject : gameObject, interactVolume);
         return true;
     }
 
