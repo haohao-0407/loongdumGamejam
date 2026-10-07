@@ -3263,7 +3263,7 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1645749763682259112, guid: 2f54f1ae0e09d9f4c8ea494d2267bd21, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
+      propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: ad07fdedde06aff4bb2d910fa02d132c, type: 2}
     - target: {fileID: 7275357659846277091, guid: 2f54f1ae0e09d9f4c8ea494d2267bd21, type: 3}
@@ -4676,7 +4676,7 @@ PrefabInstance:
       value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: -5625514024101680977, guid: 81a5da716bcbf0c40a82da2bd7378bd9, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
+      propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: d3276ddb51b7d674ba4e6e9435c5b1cf, type: 2}
     - target: {fileID: -4741581586619794905, guid: 81a5da716bcbf0c40a82da2bd7378bd9, type: 3}
@@ -14955,7 +14955,7 @@ Light:
   serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 0.96, b: 0.89, a: 1}
-  m_Intensity: 1.8
+  m_Intensity: 12.97
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
