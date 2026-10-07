@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Moves an exposed right-side UI page left first, then up.
+/// Moves bound UI panels along their configured horizontal and vertical distances.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class UIRightPanelFocus : MonoBehaviour
@@ -14,6 +14,8 @@ public sealed class UIRightPanelFocus : MonoBehaviour
         public RectTransform panel;
         [Min(-500f)] public float leftDistance;
         [Min(-500f)] public float upDistance;
+        [Min(0f)] public float hoverLeftDistance;
+        [Min(0.01f)] public float hoverDuration;
     }
 
     [SerializeField, Min(0.05f)] private float moveDuration = 0.8f;
@@ -22,7 +24,10 @@ public sealed class UIRightPanelFocus : MonoBehaviour
 
     private Vector2[] homePositions;
     private int[] homeSiblingIndices;
+    private Coroutine[] hoverMovements;
+    private bool[] hovered;
     private int focusedIndex = -1;
+    private int siblingToRestoreOnEnable = -1;
     private Coroutine movement;
     private bool isClosing;
 
@@ -30,6 +35,8 @@ public sealed class UIRightPanelFocus : MonoBehaviour
     {
         homePositions = new Vector2[panels.Length];
         homeSiblingIndices = new int[panels.Length];
+        hoverMovements = new Coroutine[panels.Length];
+        hovered = new bool[panels.Length];
 
         for (int i = 0; i < panels.Length; i++)
         {
@@ -39,6 +46,27 @@ public sealed class UIRightPanelFocus : MonoBehaviour
             homePositions[i] = panels[i].panel.anchoredPosition;
             homeSiblingIndices[i] = panels[i].panel.GetSiblingIndex();
         }
+    }
+
+    private void OnEnable()
+    {
+        if (siblingToRestoreOnEnable >= 0)
+            StartCoroutine(RestoreSiblingAfterActivation());
+    }
+
+    private IEnumerator RestoreSiblingAfterActivation()
+    {
+        // Unity rejects sibling changes while the parent Canvas is activating.
+        yield return null;
+
+        if (!isActiveAndEnabled || siblingToRestoreOnEnable < 0)
+            yield break;
+
+        int index = siblingToRestoreOnEnable;
+        siblingToRestoreOnEnable = -1;
+        RectTransform panel = panels[index].panel;
+        if (panel != null)
+            panel.SetSiblingIndex(homeSiblingIndices[index]);
     }
 
     public void Focus(RectTransform panel)
@@ -56,18 +84,70 @@ public sealed class UIRightPanelFocus : MonoBehaviour
             movement = null;
         }
 
+        StopHover(index);
+
         if (focusedIndex >= 0)
+        {
+            int previousIndex = focusedIndex;
             Restore(focusedIndex);
+            StartHover(previousIndex);
+        }
 
         isClosing = false;
 
         Vector2 start = panel.anchoredPosition;
-        Vector2 afterLeftMove = start + Vector2.left * panels[index].leftDistance;
+        Vector2 afterLeftMove = homePositions[index] + Vector2.left * panels[index].leftDistance;
         Vector2 destination = afterLeftMove + Vector2.up * panels[index].upDistance;
 
         focusedIndex = index;
         panel.SetAsLastSibling();
         movement = StartCoroutine(MoveInTwoSteps(panel, start, afterLeftMove, destination));
+    }
+
+    public void SetHovered(RectTransform panel, bool isHovered)
+    {
+        if (panel == null)
+            return;
+
+        int index = Array.FindIndex(panels, entry => entry.panel == panel);
+        if (index < 0)
+            return;
+
+        hovered[index] = isHovered;
+        if (index != focusedIndex)
+            StartHover(index);
+    }
+
+    private void StartHover(int index)
+    {
+        StopHover(index);
+
+        RectTransform panel = panels[index].panel;
+        if (panel == null)
+            return;
+
+        Vector2 destination = homePositions[index] +
+            Vector2.left * (hovered[index] ? panels[index].hoverLeftDistance : 0f);
+        if ((panel.anchoredPosition - destination).sqrMagnitude < 0.0001f)
+            return;
+
+        hoverMovements[index] = StartCoroutine(MoveHover(index, panel, destination));
+    }
+
+    private void StopHover(int index)
+    {
+        if (hoverMovements[index] == null)
+            return;
+
+        StopCoroutine(hoverMovements[index]);
+        hoverMovements[index] = null;
+    }
+
+    private IEnumerator MoveHover(int index, RectTransform panel, Vector2 destination)
+    {
+        yield return Interpolate(panel, panel.anchoredPosition, destination,
+            Mathf.Max(0.01f, panels[index].hoverDuration));
+        hoverMovements[index] = null;
     }
 
     public void Close(RectTransform panel)
@@ -92,8 +172,15 @@ public sealed class UIRightPanelFocus : MonoBehaviour
     private IEnumerator MoveInTwoSteps(RectTransform panel, Vector2 start, Vector2 afterLeftMove, Vector2 destination)
     {
         float duration = Mathf.Max(0.05f, moveDuration);
-        yield return Interpolate(panel, start, afterLeftMove, duration * horizontalTimeShare);
-        yield return Interpolate(panel, afterLeftMove, destination, duration * (1f - horizontalTimeShare));
+        if ((start - afterLeftMove).sqrMagnitude < 0.0001f)
+            yield return Interpolate(panel, start, destination, duration);
+        else if ((afterLeftMove - destination).sqrMagnitude < 0.0001f)
+            yield return Interpolate(panel, start, afterLeftMove, duration);
+        else
+        {
+            yield return Interpolate(panel, start, afterLeftMove, duration * horizontalTimeShare);
+            yield return Interpolate(panel, afterLeftMove, destination, duration * (1f - horizontalTimeShare));
+        }
         movement = null;
     }
 
@@ -103,16 +190,22 @@ public sealed class UIRightPanelFocus : MonoBehaviour
 
         // An early click during the first leg returns directly to its starting
         // point; otherwise the page travels down to the corner, then right.
-        bool stillOnFirstLeg = Mathf.Abs(current.y - home.y) < 0.01f &&
-                               Mathf.Abs(current.x - afterLeftMove.x) > 0.01f;
-        if (!stillOnFirstLeg)
-            yield return Interpolate(panel, current, afterLeftMove, duration * (1f - horizontalTimeShare));
+        if ((afterLeftMove - home).sqrMagnitude < 0.0001f)
+            yield return Interpolate(panel, current, home, duration);
+        else
+        {
+            bool stillOnFirstLeg = Mathf.Abs(current.y - home.y) < 0.01f &&
+                                   Mathf.Abs(current.x - afterLeftMove.x) > 0.01f;
+            if (!stillOnFirstLeg)
+                yield return Interpolate(panel, current, afterLeftMove, duration * (1f - horizontalTimeShare));
 
-        yield return Interpolate(panel, stillOnFirstLeg ? current : afterLeftMove, home, duration * horizontalTimeShare);
+            yield return Interpolate(panel, stillOnFirstLeg ? current : afterLeftMove, home, duration * horizontalTimeShare);
+        }
         Restore(index);
         focusedIndex = -1;
         isClosing = false;
         movement = null;
+        StartHover(index);
     }
 
     private static IEnumerator Interpolate(RectTransform panel, Vector2 from, Vector2 to, float duration)
@@ -147,9 +240,21 @@ public sealed class UIRightPanelFocus : MonoBehaviour
             movement = null;
         }
 
+        if (hoverMovements != null)
+        {
+            for (int i = 0; i < hoverMovements.Length; i++)
+            {
+                StopHover(i);
+                hovered[i] = false;
+                if (panels[i].panel != null)
+                    panels[i].panel.anchoredPosition = homePositions[i];
+            }
+        }
+
         if (focusedIndex >= 0)
         {
-            Restore(focusedIndex);
+            // Positions are reset above. Reorder only after Canvas is active again.
+            siblingToRestoreOnEnable = focusedIndex;
             focusedIndex = -1;
         }
 
