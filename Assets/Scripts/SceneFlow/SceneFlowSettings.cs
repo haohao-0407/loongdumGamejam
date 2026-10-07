@@ -14,10 +14,16 @@ namespace Loongdum.SceneFlow
         [FormerlySerializedAs("returnToSelectionAction")]
         [SerializeField] private InputActionReference openSettingsAction;
         [SerializeField] private bool returnOnCompletion = true;
+        [Tooltip("整局循环播放的 BGM。留空则不放音乐。")]
+        [SerializeField] private AudioClip musicClip;
+        [Range(0f, 1f)]
+        [SerializeField] private float musicVolume = 0.7f;
 
         public LevelCatalog Catalog => catalog;
         public InputActionReference OpenSettingsAction => openSettingsAction;
         public bool ReturnOnCompletion => returnOnCompletion;
+        public AudioClip MusicClip => musicClip;
+        public float MusicVolume => musicVolume;
 
 #if UNITY_EDITOR
         public void Configure(LevelCatalog levelCatalog, InputActionReference settingsAction)

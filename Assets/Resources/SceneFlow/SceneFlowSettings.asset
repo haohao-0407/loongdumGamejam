@@ -15,3 +15,5 @@ MonoBehaviour:
   catalog: {fileID: 11400000, guid: 206e9d2277414f541a8a5bd1a964da41, type: 2}
   openSettingsAction: {fileID: 7727032971491509709, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   returnOnCompletion: 1
+  musicClip: {fileID: 8300000, guid: 3f9c7a1d84b2e6409c5d1f7a2b6e83d5, type: 3}
+  musicVolume: 0.7

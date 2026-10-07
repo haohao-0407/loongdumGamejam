@@ -105,6 +105,7 @@ namespace Loongdum.SceneFlow
             StopAllCoroutines();
             catalog = settings.Catalog;
             returnOnCompletion = settings.ReturnOnCompletion;
+            BackgroundMusic.Ensure(gameObject, settings.MusicClip, settings.MusicVolume);
             transitioning = false;
             LastError = null;
             loadingLevelPath = null;
