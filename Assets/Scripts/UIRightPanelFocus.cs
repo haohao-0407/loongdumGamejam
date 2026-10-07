@@ -26,6 +26,8 @@ public sealed class UIRightPanelFocus : MonoBehaviour
     private int[] homeSiblingIndices;
     private Coroutine[] hoverMovements;
     private bool[] hovered;
+    private bool[] dismissOnFocus;
+    private bool[] dismissed;
     private int focusedIndex = -1;
     private int siblingToRestoreOnEnable = -1;
     private Coroutine movement;
@@ -37,6 +39,8 @@ public sealed class UIRightPanelFocus : MonoBehaviour
         homeSiblingIndices = new int[panels.Length];
         hoverMovements = new Coroutine[panels.Length];
         hovered = new bool[panels.Length];
+        dismissOnFocus = new bool[panels.Length];
+        dismissed = new bool[panels.Length];
 
         for (int i = 0; i < panels.Length; i++)
         {
@@ -66,7 +70,7 @@ public sealed class UIRightPanelFocus : MonoBehaviour
         siblingToRestoreOnEnable = -1;
         RectTransform panel = panels[index].panel;
         if (panel != null)
-            panel.SetSiblingIndex(homeSiblingIndices[index]);
+            Restore(index);
     }
 
     public void Focus(RectTransform panel)
@@ -75,7 +79,7 @@ public sealed class UIRightPanelFocus : MonoBehaviour
             return;
 
         int index = Array.FindIndex(panels, entry => entry.panel == panel);
-        if (index < 0 || index == focusedIndex)
+        if (index < 0 || dismissed[index] || (index == focusedIndex && !isClosing))
             return;
 
         if (movement != null)
@@ -86,7 +90,7 @@ public sealed class UIRightPanelFocus : MonoBehaviour
 
         StopHover(index);
 
-        if (focusedIndex >= 0)
+        if (focusedIndex >= 0 && focusedIndex != index)
         {
             int previousIndex = focusedIndex;
             Restore(focusedIndex);
@@ -100,8 +104,53 @@ public sealed class UIRightPanelFocus : MonoBehaviour
         Vector2 destination = afterLeftMove + Vector2.up * panels[index].upDistance;
 
         focusedIndex = index;
+        dismissed[index] = dismissOnFocus[index];
         panel.SetAsLastSibling();
-        movement = StartCoroutine(MoveInTwoSteps(panel, start, afterLeftMove, destination));
+        movement = StartCoroutine(MoveInTwoSteps(panel, start, afterLeftMove, destination, index));
+    }
+
+    public void Toggle(RectTransform panel)
+    {
+        if (focusedIndex >= 0 && panels[focusedIndex].panel == panel && !isClosing)
+            Close(panel);
+        else
+            Focus(panel);
+    }
+
+    /// <summary>Reset page motion when moving between the menu and a level.</summary>
+    public void ResetPanels()
+    {
+        if (homePositions == null) return;
+        StopAllCoroutines();
+        movement = null;
+        if (focusedIndex >= 0) Restore(focusedIndex);
+        else if (siblingToRestoreOnEnable >= 0) Restore(siblingToRestoreOnEnable);
+        for (int i = 0; i < panels.Length; i++)
+        {
+            hoverMovements[i] = null;
+            hovered[i] = false;
+            dismissed[i] = false;
+            if (panels[i].panel != null) panels[i].panel.anchoredPosition = homePositions[i];
+        }
+        focusedIndex = -1;
+        siblingToRestoreOnEnable = -1;
+        isClosing = false;
+    }
+
+    /// <summary>Replay a page's existing return animation from its configured offset.</summary>
+    public void ReplayReturn(RectTransform panel, bool dismissAfterClick = false)
+    {
+        if (panel == null || homePositions == null) return;
+        int index = Array.FindIndex(panels, entry => entry.panel == panel);
+        if (index < 0) return;
+        ResetPanels();
+        dismissOnFocus[index] = dismissAfterClick;
+        panel.gameObject.SetActive(true);
+        panel.anchoredPosition = homePositions[index] + Vector2.left * panels[index].leftDistance +
+            Vector2.up * panels[index].upDistance;
+        panel.SetAsLastSibling();
+        focusedIndex = index;
+        Close(panel);
     }
 
     public void SetHovered(RectTransform panel, bool isHovered)
@@ -123,7 +172,7 @@ public sealed class UIRightPanelFocus : MonoBehaviour
         StopHover(index);
 
         RectTransform panel = panels[index].panel;
-        if (panel == null)
+        if (panel == null || dismissed[index] || !panel.gameObject.activeInHierarchy)
             return;
 
         Vector2 destination = homePositions[index] +
@@ -152,7 +201,7 @@ public sealed class UIRightPanelFocus : MonoBehaviour
 
     public void Close(RectTransform panel)
     {
-        if (focusedIndex < 0 || panels[focusedIndex].panel != panel || isClosing)
+        if (focusedIndex < 0 || dismissed[focusedIndex] || panels[focusedIndex].panel != panel || isClosing)
             return;
 
         if (movement != null)
@@ -169,7 +218,7 @@ public sealed class UIRightPanelFocus : MonoBehaviour
         movement = StartCoroutine(MoveBackAlongPath(panel, current, afterLeftMove, home, index));
     }
 
-    private IEnumerator MoveInTwoSteps(RectTransform panel, Vector2 start, Vector2 afterLeftMove, Vector2 destination)
+    private IEnumerator MoveInTwoSteps(RectTransform panel, Vector2 start, Vector2 afterLeftMove, Vector2 destination, int index)
     {
         float duration = Mathf.Max(0.05f, moveDuration);
         if ((start - afterLeftMove).sqrMagnitude < 0.0001f)
@@ -182,6 +231,7 @@ public sealed class UIRightPanelFocus : MonoBehaviour
             yield return Interpolate(panel, afterLeftMove, destination, duration * (1f - horizontalTimeShare));
         }
         movement = null;
+        if (dismissed[index]) panel.gameObject.SetActive(false);
     }
 
     private IEnumerator MoveBackAlongPath(RectTransform panel, Vector2 current, Vector2 afterLeftMove, Vector2 home, int index)
@@ -228,7 +278,12 @@ public sealed class UIRightPanelFocus : MonoBehaviour
         if (panel == null)
             return;
 
-        panel.anchoredPosition = homePositions[index];
+        // A dismissed entry Dialog must never be restored into view by a
+        // sidebar switch, even if that switch interrupted its exit animation.
+        panel.anchoredPosition = dismissed[index]
+            ? homePositions[index] + Vector2.left * panels[index].leftDistance + Vector2.up * panels[index].upDistance
+            : homePositions[index];
+        if (dismissed[index]) panel.gameObject.SetActive(false);
         panel.SetSiblingIndex(homeSiblingIndices[index]);
     }
 

@@ -26,3 +26,7 @@ MonoBehaviour:
     title: level02
     description: "\u5FAA\u7740\u89C6\u7EBF\uFF0C\u8BA9\u5F7C\u6B64\u91CD\u65B0\u6C47\u5408\u3002"
     scenePath: Assets/Scenes/Level02_UnreachableLever.unity
+  - id: Level03
+    title: level03
+    description: "\u5FAA\u7740\u89C6\u7EBF\uFF0C\u8BA9\u5F7C\u6B64\u91CD\u65B0\u6C47\u5408\u3002"
+    scenePath: Assets/Scenes/Level03_LightGates.unity

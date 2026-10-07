@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
+using UnityEngine.EventSystems;
 using UnitySceneManager = UnityEngine.SceneManagement.SceneManager;
 
 namespace Loongdum.SceneFlow
@@ -22,6 +22,9 @@ namespace Loongdum.SceneFlow
     {
         private LevelCatalog catalog;
         private bool transitioning;
+        private bool returnOnCompletion;
+        private Scene levelScene;
+        private string loadingLevelPath;
 
         public static GameSceneManager Instance { get; private set; }
         public LevelCatalog Catalog => catalog;
@@ -32,6 +35,7 @@ namespace Loongdum.SceneFlow
         public string LastError { get; private set; }
         public bool IsTransitioning => transitioning;
         public event Action Changed;
+        public event Action<LevelEntry> LevelEntered;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetStatics() => Instance = null;
@@ -46,8 +50,7 @@ namespace Loongdum.SceneFlow
             if (settings.Catalog.SelectionScenePath != scenePath &&
                 settings.Catalog.FindByScenePath(scenePath) == null) return;
 
-            if (!settings.Catalog.Validate(out string error) || settings.PanelSettings == null ||
-                settings.UIDocument == null)
+            if (!settings.Catalog.Validate(out string error))
             {
                 Debug.LogError("Scene Flow settings are incomplete. " + error, settings);
                 return;
@@ -57,21 +60,17 @@ namespace Loongdum.SceneFlow
             if (existing != null)
             {
                 Instance = existing;
-                existing.Initialize(settings.Catalog);
+                DontDestroyOnLoad(existing.gameObject);
+                existing.Initialize(settings);
                 return;
             }
 
             var root = new GameObject("Scene Flow");
             root.SetActive(false);
             GameSceneManager manager = root.AddComponent<GameSceneManager>();
-            var document = root.AddComponent<UIDocument>();
-            document.panelSettings = settings.PanelSettings;
-            document.visualTreeAsset = settings.UIDocument;
-            document.sortingOrder = 100;
-            root.AddComponent<SceneFlowUI>().Configure(settings);
             root.SetActive(true);
             DontDestroyOnLoad(root);
-            manager.Initialize(settings.Catalog);
+            manager.Initialize(settings);
         }
 
         private void Awake()
@@ -101,14 +100,19 @@ namespace Loongdum.SceneFlow
             if (Instance == this) Instance = null;
         }
 
-        private void Initialize(LevelCatalog levelCatalog)
+        private void Initialize(SceneFlowSettings settings)
         {
             StopAllCoroutines();
-            catalog = levelCatalog;
+            catalog = settings.Catalog;
+            returnOnCompletion = settings.ReturnOnCompletion;
             transitioning = false;
             LastError = null;
-            BindScene(UnitySceneManager.GetActiveScene());
-            EnterReadyState();
+            loadingLevelPath = null;
+            Scene activeScene = UnitySceneManager.GetActiveScene();
+            levelScene = catalog.FindByScenePath(activeScene.path) != null ? activeScene : default;
+            BindScene(activeScene);
+            if (levelScene.IsValid()) StartCoroutine(PrepareDirectLevelEntry());
+            else EnterReadyState();
         }
 
         public bool CanLoad(LevelEntry level)
@@ -119,16 +123,16 @@ namespace Loongdum.SceneFlow
 
         public bool LoadLevel(string levelId)
         {
-            if (transitioning) return false;
+            if (transitioning || catalog == null) return false;
             LevelEntry level = catalog.FindById(levelId);
             if (level == null) return RejectLoad("未找到这个关卡。", "Unknown level ID: " + levelId);
-            return BeginLoad(level.ScenePath);
+            return BeginLoad(level);
         }
 
         public bool ReturnToSelection()
         {
             if (transitioning || State == SceneFlowState.LevelSelection) return false;
-            return BeginLoad(catalog.SelectionScenePath);
+            return BeginLoad(null);
         }
 
         public bool LoadNextLevel()
@@ -138,12 +142,15 @@ namespace Loongdum.SceneFlow
             return next != null && LoadLevel(next.Id);
         }
 
-        private bool BeginLoad(string path)
+        private bool BeginLoad(LevelEntry level)
         {
-            if (!Application.CanStreamedLevelBeLoaded(path))
-                return RejectLoad("暂时无法进入，请重新选择关卡。", "Scene is not enabled in the build: " + path);
+            if (level != null && !CanLoad(level))
+                return RejectLoad("暂时无法进入，请重新选择关卡。", "Scene is not enabled in the build: " + level.ScenePath);
+            Scene uiScene = UnitySceneManager.GetSceneByPath(catalog.SelectionScenePath);
+            if (!uiScene.isLoaded && !Application.CanStreamedLevelBeLoaded(catalog.SelectionScenePath))
+                return RejectLoad("无法打开选关界面。", "Selection scene is not enabled in the build.");
 
-            StartCoroutine(LoadScene(path));
+            StartCoroutine(LoadScene(level));
             return true;
         }
 
@@ -155,62 +162,162 @@ namespace Loongdum.SceneFlow
             return false;
         }
 
-        private IEnumerator LoadScene(string path)
+        private void BeginTransition()
         {
-            SceneFlowState previousState = State;
             transitioning = true;
             State = SceneFlowState.Loading;
             LoadingProgress = 0f;
             LastError = null;
             if (ActiveGoal != null) ActiveGoal.SetControlsEnabled(false);
             Changed?.Invoke();
+        }
 
-            // Allow the loading panel to render even when the next scene is very small.
+        // Keep direct Play from a level usable in the editor: load the same UI
+        // scene that a normal game starts with, without reloading the level.
+        private IEnumerator PrepareDirectLevelEntry()
+        {
+            BeginTransition();
+            yield return EnsureUIScene();
+            if (!UnitySceneManager.GetSceneByPath(catalog.SelectionScenePath).isLoaded)
+            {
+                transitioning = false;
+                EnterReadyState();
+                yield break;
+            }
+            ConfigureLevelEventSystems();
+            UnitySceneManager.SetActiveScene(levelScene);
             yield return null;
+            FinishTransition();
+        }
 
-            AsyncOperation operation = null;
-            string error = null;
+        private IEnumerator EnsureUIScene()
+        {
+            if (UnitySceneManager.GetSceneByPath(catalog.SelectionScenePath).isLoaded) yield break;
+            AsyncOperation operation = StartAdditiveLoad(catalog.SelectionScenePath);
+            if (operation != null) yield return operation;
+        }
+
+        private AsyncOperation StartAdditiveLoad(string path)
+        {
             try
             {
-                operation = UnitySceneManager.LoadSceneAsync(path, LoadSceneMode.Single);
+                AsyncOperation operation = UnitySceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
+                if (operation == null) RejectLoad("加载未完成，请重新选择关卡。", "No load operation for: " + path);
+                return operation;
             }
             catch (Exception exception)
             {
-                error = exception.Message;
+                RejectLoad("加载未完成，请重新选择关卡。", exception.Message);
+                return null;
             }
+        }
 
-            if (operation == null)
+        private IEnumerator LoadScene(LevelEntry target)
+        {
+            SceneFlowState previousState = State;
+            BeginTransition();
+            yield return EnsureUIScene();
+            Scene uiScene = UnitySceneManager.GetSceneByPath(catalog.SelectionScenePath);
+            if (!uiScene.isLoaded)
             {
-                transitioning = false;
-                State = previousState;
-                if (ActiveGoal != null) ActiveGoal.SetControlsEnabled(State == SceneFlowState.Playing);
-                RejectLoad("加载未完成，请重新选择关卡。", error ?? "LoadSceneAsync returned no operation.");
+                RestoreAfterFailedTransition(previousState);
                 yield break;
             }
 
-            while (!operation.isDone)
+            // Hide the menu camera before the next level's Awake/Start callbacks.
+            yield return null;
+            UnitySceneManager.SetActiveScene(uiScene);
+
+            // Unload first: scene scripts use global searches for cameras and
+            // VisionSources, so two playable levels must never coexist.
+            if (levelScene.IsValid() && levelScene.isLoaded)
             {
-                float progress = Mathf.Clamp01(operation.progress / 0.9f);
-                if (!Mathf.Approximately(LoadingProgress, progress))
+                AsyncOperation unload = null;
+                try { unload = UnitySceneManager.UnloadSceneAsync(levelScene); }
+                catch (Exception exception) { RejectLoad("无法离开当前关卡。", exception.Message); }
+                if (unload == null)
                 {
-                    LoadingProgress = progress;
-                    Changed?.Invoke();
+                    UnitySceneManager.SetActiveScene(levelScene);
+                    RestoreAfterFailedTransition(previousState);
+                    yield break;
                 }
-                yield return null;
+                yield return unload;
+            }
+            UnbindGoal();
+            levelScene = default;
+            CurrentLevel = null;
+
+            if (target != null)
+            {
+                loadingLevelPath = target.ScenePath;
+                AsyncOperation operation = StartAdditiveLoad(target.ScenePath);
+                if (operation == null)
+                {
+                    loadingLevelPath = null;
+                    FinishTransition();
+                    yield break;
+                }
+                while (!operation.isDone)
+                {
+                    float progress = Mathf.Clamp01(operation.progress / 0.9f);
+                    if (!Mathf.Approximately(LoadingProgress, progress))
+                    {
+                        LoadingProgress = progress;
+                        Changed?.Invoke();
+                    }
+                    yield return null;
+                }
+                loadingLevelPath = null;
             }
 
-            // sceneLoaded binds references; input becomes available only after scene Start callbacks.
+            // Scene Start callbacks finish before input and the entry Dialog.
             yield return null;
+            FinishTransition();
+        }
+
+        private void RestoreAfterFailedTransition(SceneFlowState previousState)
+        {
+            transitioning = false;
+            State = previousState;
+            if (ActiveGoal != null) ActiveGoal.SetControlsEnabled(State == SceneFlowState.Playing);
+            Changed?.Invoke();
+        }
+
+        private void FinishTransition()
+        {
             transitioning = false;
             LoadingProgress = 1f;
             EnterReadyState();
+            if (State == SceneFlowState.Playing) LevelEntered?.Invoke(CurrentLevel);
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (catalog == null || mode != LoadSceneMode.Single) return;
+            if (catalog == null || scene.path != loadingLevelPath) return;
+            levelScene = scene;
+            // This callback precedes Start, including scene-local object spawning.
+            UnitySceneManager.SetActiveScene(scene);
+            ConfigureLevelEventSystems();
             BindScene(scene);
-            if (!transitioning) EnterReadyState();
+        }
+
+        private void ConfigureLevelEventSystems()
+        {
+            Scene uiScene = UnitySceneManager.GetSceneByPath(catalog.SelectionScenePath);
+            if (!uiScene.isLoaded || !levelScene.IsValid() || !levelScene.isLoaded) return;
+            EventSystem shared = null;
+            foreach (GameObject root in uiScene.GetRootGameObjects())
+                foreach (EventSystem candidate in root.GetComponentsInChildren<EventSystem>(true))
+                    if (candidate.isActiveAndEnabled) shared = candidate;
+            if (shared == null) return;
+            foreach (GameObject root in levelScene.GetRootGameObjects())
+                foreach (EventSystem duplicate in root.GetComponentsInChildren<EventSystem>(true))
+                {
+                    foreach (BaseInputModule module in duplicate.GetComponents<BaseInputModule>())
+                        module.enabled = false;
+                    duplicate.enabled = false;
+                }
+            EventSystem.current = shared;
         }
 
         private void BindScene(Scene scene)
@@ -244,8 +351,8 @@ namespace Loongdum.SceneFlow
 
         private void EnterReadyState()
         {
-            State = UnitySceneManager.GetActiveScene().path == catalog.SelectionScenePath
-                ? SceneFlowState.LevelSelection : SceneFlowState.Playing;
+            State = levelScene.IsValid() && levelScene.isLoaded && CurrentLevel != null
+                ? SceneFlowState.Playing : SceneFlowState.LevelSelection;
             if (ActiveGoal != null) ActiveGoal.SetControlsEnabled(true);
             Changed?.Invoke();
         }
@@ -253,9 +360,10 @@ namespace Loongdum.SceneFlow
         private void OnGoalCompleted(LevelGoal goal)
         {
             if (transitioning || State != SceneFlowState.Playing || goal != ActiveGoal ||
-                goal.gameObject.scene != UnitySceneManager.GetActiveScene()) return;
+                goal.gameObject.scene != levelScene) return;
             State = SceneFlowState.Completed;
             Changed?.Invoke();
+            if (returnOnCompletion) ReturnToSelection();
         }
     }
 }

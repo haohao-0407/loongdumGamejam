@@ -43,20 +43,27 @@ public sealed class UIStarBlackWhiteFlash : MonoBehaviour, IPointerClickHandler
     private Material flashMaterial;
     private Texture2D capturedFrame;
     private Coroutine flashRoutine;
+    public event System.Action Completed;
 
     public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button != PointerEventData.InputButton.Left || !isActiveAndEnabled)
             return;
 
+        Play();
+    }
+
+    public void Play()
+    {
+        if (!isActiveAndEnabled || flashRoutine != null)
+            return;
+
         if (flashShader == null || ringTexture == null)
         {
             Debug.LogError("Star flash needs a shader and ring texture.", this);
+            Completed?.Invoke();
             return;
         }
-
-        if (flashRoutine != null)
-            StopCoroutine(flashRoutine);
 
         HideAndReleaseFrame();
         flashRoutine = StartCoroutine(PlayFlash());
@@ -73,6 +80,7 @@ public sealed class UIStarBlackWhiteFlash : MonoBehaviour, IPointerClickHandler
         if (capturedFrame == null)
         {
             flashRoutine = null;
+            Completed?.Invoke();
             yield break;
         }
 
@@ -105,6 +113,7 @@ public sealed class UIStarBlackWhiteFlash : MonoBehaviour, IPointerClickHandler
 
         HideAndReleaseFrame();
         flashRoutine = null;
+        Completed?.Invoke();
     }
 
     private void EnsureOverlay()

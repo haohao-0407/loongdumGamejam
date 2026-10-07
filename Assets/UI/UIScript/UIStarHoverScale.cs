@@ -41,7 +41,7 @@ public sealed class UIStarHoverScale : MonoBehaviour, IPointerEnterHandler, IPoi
                 continue;
 
             UnityEngine.UI.Image decoration = sibling.GetComponent<UnityEngine.UI.Image>();
-            if (decoration != null)
+            if (decoration != null && sibling.GetComponent<UnityEngine.UI.Selectable>() == null)
                 decoration.raycastTarget = false;
         }
     }

@@ -13,6 +13,5 @@ MonoBehaviour:
   m_Name: SceneFlowSettings
   m_EditorClassIdentifier: Assembly-CSharp::Loongdum.SceneFlow.SceneFlowSettings
   catalog: {fileID: 11400000, guid: 206e9d2277414f541a8a5bd1a964da41, type: 2}
-  panelSettings: {fileID: 11400000, guid: 5bb740e7908165344ab37024ccd9617e, type: 2}
-  uiDocument: {fileID: 9197481963319205126, guid: 09e47f24921b60f4dbf3d9550605478b, type: 3}
-  uiFont: {fileID: 0}
+  openSettingsAction: {fileID: 7727032971491509709, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  returnOnCompletion: 1

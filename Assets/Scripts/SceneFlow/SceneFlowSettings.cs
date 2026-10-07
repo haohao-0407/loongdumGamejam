@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.TextCore.Text;
-using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 namespace Loongdum.SceneFlow
 {
@@ -10,22 +10,20 @@ namespace Loongdum.SceneFlow
         public const string ResourcePath = "SceneFlow/SceneFlowSettings";
 
         [SerializeField] private LevelCatalog catalog;
-        [SerializeField] private PanelSettings panelSettings;
-        [SerializeField] private VisualTreeAsset uiDocument;
-        [Tooltip("Optional bundled font for the target platforms. Otherwise a local CJK font is used.")]
-        [SerializeField] private FontAsset uiFont;
+        [Tooltip("Use the project's UI/Cancel action to open the settings page.")]
+        [FormerlySerializedAs("returnToSelectionAction")]
+        [SerializeField] private InputActionReference openSettingsAction;
+        [SerializeField] private bool returnOnCompletion = true;
 
         public LevelCatalog Catalog => catalog;
-        public PanelSettings PanelSettings => panelSettings;
-        public VisualTreeAsset UIDocument => uiDocument;
-        public FontAsset UIFont => uiFont;
+        public InputActionReference OpenSettingsAction => openSettingsAction;
+        public bool ReturnOnCompletion => returnOnCompletion;
 
 #if UNITY_EDITOR
-        public void Configure(LevelCatalog levelCatalog, PanelSettings panel, VisualTreeAsset document)
+        public void Configure(LevelCatalog levelCatalog, InputActionReference settingsAction)
         {
             catalog = levelCatalog;
-            panelSettings = panel;
-            uiDocument = document;
+            openSettingsAction = settingsAction;
         }
 #endif
     }

@@ -7,7 +7,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
 
 namespace Loongdum.EditorTools
 {
@@ -17,7 +17,6 @@ namespace Loongdum.EditorTools
         public const string WhiteboxScenePath = "Assets/Scenes/Whitebox1.unity";
         public const string CatalogPath = "Assets/SceneFlow/LevelCatalog.asset";
         public const string SettingsPath = "Assets/Resources/SceneFlow/SceneFlowSettings.asset";
-        public const string PanelPath = "Assets/UI/SceneFlow/SceneFlowPanel.asset";
 
         [MenuItem("Tools/Loongdum/Scene Flow/Set Up Whitebox Selection")]
         public static void SetUp()
@@ -40,25 +39,6 @@ namespace Loongdum.EditorTools
                 Directory.CreateDirectory("Assets/Resources/SceneFlow");
                 AssetDatabase.Refresh();
 
-                VisualTreeAsset document = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/UI/SceneFlow/SceneFlow.uxml");
-                ThemeStyleSheet theme = AssetDatabase.LoadAssetAtPath<ThemeStyleSheet>("Assets/UI/SceneFlow/SceneFlow.tss");
-                if (document == null || theme == null)
-                    throw new InvalidOperationException("Import SceneFlow UXML, USS and TSS before running setup.");
-
-                PanelSettings panel = AssetDatabase.LoadAssetAtPath<PanelSettings>(PanelPath);
-                if (panel == null)
-                {
-                    panel = ScriptableObject.CreateInstance<PanelSettings>();
-                    panel.name = "Scene Flow Panel";
-                    panel.scaleMode = PanelScaleMode.ScaleWithScreenSize;
-                    panel.screenMatchMode = PanelScreenMatchMode.MatchWidthOrHeight;
-                    panel.referenceResolution = new Vector2Int(1280, 720);
-                    panel.match = 0.5f;
-                    panel.themeStyleSheet = theme;
-                    panel.sortingOrder = 100;
-                    AssetDatabase.CreateAsset(panel, PanelPath);
-                }
-
                 LevelCatalog catalog = AssetDatabase.LoadAssetAtPath<LevelCatalog>(CatalogPath);
                 if (catalog == null)
                 {
@@ -72,7 +52,10 @@ namespace Loongdum.EditorTools
                 if (settings == null)
                 {
                     settings = ScriptableObject.CreateInstance<SceneFlowSettings>();
-                    settings.Configure(catalog, panel, document);
+                    InputActionReference cancel = AssetDatabase.LoadAllAssetsAtPath("Assets/InputSystem_Actions.inputactions")
+                        .OfType<InputActionReference>().FirstOrDefault(reference => reference.action != null &&
+                            reference.action.actionMap.name == "UI" && reference.action.name == "Cancel");
+                    settings.Configure(catalog, cancel);
                     AssetDatabase.CreateAsset(settings, SettingsPath);
                 }
 
