@@ -467,8 +467,8 @@ MonoBehaviour:
   m_NormalThreshold: 0.292
   m_TextureEdgeStrength: 0.473
   m_LineWobble: 0.34
-  m_SketchStrength: 0.29
-  m_HalftoneSpacing: 1.66
+  m_SketchStrength: 0.28
+  m_HalftoneSpacing: 2.53
   m_HalftoneStrength: 0.221
   m_HatchingStrength: 0.506
   m_CurvedSurfaceInk: 0.774
