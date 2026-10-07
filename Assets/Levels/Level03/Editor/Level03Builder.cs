@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
@@ -90,6 +91,10 @@ public static class Level03Builder
         sourceData.ApplyModifiedPropertiesWithoutUndo();
         var reversalData = new SerializedObject(flow.reversal);
         reversalData.FindProperty("upperBody").objectReferenceValue = source;
+        // This level drives both the levers and the reversal tile with E, so the
+        // copy's reversal must not inherit the shared prefab's F.
+        SerializedProperty keyProperty = reversalData.FindProperty("activationKey");
+        keyProperty.enumValueIndex = Array.IndexOf(keyProperty.enumNames, Key.E.ToString());
         reversalData.ApplyModifiedPropertiesWithoutUndo();
         var animatorData = new SerializedObject(player.GetComponent<WhiteboxPlayerAnimator>());
         animatorData.FindProperty("spriteRenderer").objectReferenceValue = player.GetComponent<SpriteRenderer>();
@@ -203,8 +208,8 @@ public static class Level03Builder
         // Preserve lens, rotation, renderer, post-processing, lights and volume;
         // pull back this scene's camera solely to fit its larger footprint.
         camera.transform.position = new Vector3(0, 44, -29);
-        Label("F → 玻璃房", Level03Layout.Position(15, 5, .07f), devices);
-        Label("D → F", Level03Layout.Position(7, 17, .07f), devices);
+        Label("E → 玻璃房", Level03Layout.Position(15, 5, .07f), devices);
+        Label("D → E", Level03Layout.Position(7, 17, .07f), devices);
         Label("X → B", Level03Layout.Position(11, 7, .07f), devices);
 
         foreach (var go in new[] { cubeTemplate, labelTemplate, tileTemplate, doorTemplate, portalTemplate }) UnityEngine.Object.DestroyImmediate(go);

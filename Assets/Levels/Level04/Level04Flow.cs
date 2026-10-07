@@ -56,7 +56,7 @@ public sealed class Level04Flow : MonoBehaviour
             if (Stage == 0 && Distance(lastUpper, Level04Layout.FirstTile) < 1.5f)
             {
                 Stage = 1;
-                Say("进入中央观察室。光留在庭院；靠近 A 按 F，同时打开 D 与 X。");
+                Say("进入中央观察室。光留在庭院；靠近 A 按 E，同时打开 D 与 X。");
             }
             else if (AOpened && Distance(lastUpper, Level04Layout.SecondTile) < .8f)
             {
@@ -73,7 +73,7 @@ public sealed class Level04Flow : MonoBehaviour
             plateMarker.sharedMaterial = held ? activeMarker : idleMarker;
             Say(held ? "1 已压下：a 开启，视线穿过门户。" : "离开 1：a 关闭；已辨认的 B 线索保留。");
         }
-        if (keyboard != null && keyboard.fKey.wasPressedThisFrame) Interact();
+        if (keyboard != null && keyboard.eKey.wasPressedThisFrame) Interact();
         if (COpened && player.isGrounded && Distance(player.transform.position, source.transform.position) < 1.1f)
         {
             Completed = true; Stage = 5;
@@ -97,7 +97,7 @@ public sealed class Level04Flow : MonoBehaviour
             float d = Distance(player.transform.position, levers[i].position);
             if (d < best) { best = d; nearest = i; }
         }
-        if (nearest < 0) { Say("走到拉杆旁再按 F。门由对应机关控制。"); return false; }
+        if (nearest < 0) { Say("走到拉杆旁再按 E。门由对应机关控制。"); return false; }
         var start = player.transform.position; start.y = source.transform.position.y;
         var end = levers[nearest].position; end.y = start.y;
         foreach (var hit in Physics.RaycastAll(start, (end - start).normalized,
@@ -170,7 +170,7 @@ public sealed class Level04Flow : MonoBehaviour
         textStyle.normal.textColor = titleStyle.normal.textColor = Color.white;
         GUI.Box(new Rect(12, 12, Mathf.Min(720, Screen.width - 24), 160), "");
         GUI.Label(new Rect(26, 20, 650, 32), "第四关 · 隔窗归途    " + Mathf.Min(Stage + 1, 5) + " / 5", titleStyle);
-        GUI.Label(new Rect(26, 56, 650, 30), "WASD 移动   F 站格反转 / 邻近拉杆   R 重置", textStyle);
+        GUI.Label(new Rect(26, 56, 650, 30), "WASD 移动   F 站格反转   E 邻近拉杆   R 重置", textStyle);
         string[] tasks = { "庭院 F① → 中央观察室。", "靠近 A，同时打开 D 与 X。",
             "穿 D，向南找到东廊 F②；把眼睛留在这里。", "庭院穿 X，向北踩 1；看清 B。",
             BOpened ? "进入 Y，操作 C，穿 Z 与上半身汇合。" : "向南找 B → Y，然后进入西控制室。", "已完成；R 可重新开始。" };

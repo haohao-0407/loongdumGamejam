@@ -23,5 +23,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Mazeold.unity
     guid: 3ea97c6fad6f39b4398e6ef0fc7df782
+  - enabled: 1
+    path: Assets/Scenes/Maze.unity
+    guid: 7201252e57d1656498e0e3901945502c
+  - enabled: 1
+    path: Assets/Scenes/Level03_LightGates.unity
+    guid: c537611bf924d174e90cbdfb6d6a9425
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
