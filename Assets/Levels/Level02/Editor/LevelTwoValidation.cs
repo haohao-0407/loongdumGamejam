@@ -244,13 +244,13 @@ namespace Loongdum.Levels.Editor
                         if (!controller.Model.Won || controller.Model.MoveCount != 24)
                             throw new Exception("Keyboard route did not finish in 24 moves: " + controller.Model.Lower + ", moves=" + controller.Model.MoveCount);
                         Capture("04-complete");
-                        results.Add("PASS: Keyboard input completed the level in 24 moves plus F.");
+                        results.Add("PASS: Keyboard input completed the level in 24 moves plus E.");
                         stage = 3;
                         return;
                     }
                     char action = LevelTwoValidation.Solution[step];
                     Key key = action == 'N' ? Key.W : action == 'S' ? Key.DownArrow
-                        : action == 'W' ? Key.A : action == 'D' ? Key.RightArrow : Key.F;
+                        : action == 'W' ? Key.A : action == 'D' ? Key.RightArrow : Key.E;
                     InputSystem.QueueStateEvent(keyboard, new KeyboardState(key));
                     stage = 2;
                     return;
