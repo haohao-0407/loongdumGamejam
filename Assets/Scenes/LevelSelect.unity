@@ -305,6 +305,10 @@ PrefabInstance:
       propertyPath: m_RaycastTarget
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8766176568101905661, guid: 30f67ff13180f9b4493147a51a21107b, type: 3}
+      propertyPath: m_text
+      value:
+      objectReference: {fileID: 0}
     - target: {fileID: 8828736004546891393, guid: 30f67ff13180f9b4493147a51a21107b, type: 3}
       propertyPath: m_RaycastTarget
       value: 0
