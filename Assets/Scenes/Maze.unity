@@ -15288,6 +15288,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1798461137}
   m_SourcePrefab: {fileID: 100100000, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+--- !u!4 &1805044537 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5253508265972991108, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+  m_PrefabInstance: {fileID: 1805044536}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1838293186
 GameObject:
   m_ObjectHideFlags: 0
@@ -15949,8 +15954,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3596885726277fc44b13b378a37771e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Loongdum.SceneFlow.LevelGoal
-  player: {fileID: 0}
-  visionSource: {fileID: 0}
+  player: {fileID: 1805044537}
+  visionSource: {fileID: 470246694}
   reunionDistance: 1.1
   ignoreHeight: 1
   playerControls: []

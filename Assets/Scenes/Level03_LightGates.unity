@@ -7094,6 +7094,58 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 389928203}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &390970349
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 390970350}
+  - component: {fileID: 390970351}
+  m_Layer: 0
+  m_Name: LevelGoal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &390970350
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 390970349}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &390970351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 390970349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3596885726277fc44b13b378a37771e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Loongdum.SceneFlow.LevelGoal
+  player: {fileID: 1926385474}
+  visionSource: {fileID: 283578291}
+  reunionDistance: 1.1
+  ignoreHeight: 1
+  playerControls: []
+  onCompleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &394040436
 GameObject:
   m_ObjectHideFlags: 0
@@ -17683,59 +17735,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f95670e20d56daa4f8c38980192df876, type: 3}
---- !u!1 &984775695
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 984775696}
-  - component: {fileID: 984775697}
-  m_Layer: 8
-  m_Name: Closed Z
-  m_TagString: VisionObstacle
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &984775696
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 984775695}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.2000003, y: 0.5, z: -4.8}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1468767319}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &984775697
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 984775695}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 2.4, y: 1, z: 2.4}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &991968432
 GameObject:
   m_ObjectHideFlags: 0
@@ -29564,7 +29563,6 @@ Transform:
   - {fileID: 1468201006}
   - {fileID: 1300251348}
   - {fileID: 1685788760}
-  - {fileID: 984775696}
   - {fileID: 389613477}
   - {fileID: 93782309}
   - {fileID: 560180682}
@@ -36535,7 +36533,7 @@ MonoBehaviour:
   barriers:
   - {fileID: 693215275}
   - {fileID: 1242659440}
-  - {fileID: 984775697}
+  - {fileID: 0}
   - {fileID: 1468201007}
   leverHandles:
   - {fileID: 1225902752}
@@ -37077,6 +37075,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+--- !u!4 &1926385474 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5253508265972991108, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+  m_PrefabInstance: {fileID: 1926385473}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1927211582
 GameObject:
   m_ObjectHideFlags: 0
@@ -40491,6 +40494,7 @@ SceneRoots:
   - {fileID: 2128970652}
   - {fileID: 1379887142}
   - {fileID: 87859789}
+  - {fileID: 390970350}
   - {fileID: 1895891280}
   - {fileID: 402301044}
   - {fileID: 1875326885}

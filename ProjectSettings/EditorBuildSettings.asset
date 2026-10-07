@@ -8,10 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LevelSelect.unity
     guid: 32b4d929c92218e47a0a5dc99ad17df5
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/CollapsedBuilding_Interior.unity
     guid: ad73dffcc373a76409a73f576d088cf3
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
@@ -20,8 +20,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Whitebox1.unity
     guid: 96af830d07d7af44082980758c2f2d54
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Mazeold.unity
     guid: 3ea97c6fad6f39b4398e6ef0fc7df782
+  - enabled: 1
+    path: Assets/Scenes/Maze.unity
+    guid: 7201252e57d1656498e0e3901945502c
+  - enabled: 1
+    path: Assets/Scenes/Level03_LightGates.unity
+    guid: c537611bf924d174e90cbdfb6d6a9425
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

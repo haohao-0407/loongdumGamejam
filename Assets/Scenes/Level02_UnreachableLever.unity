@@ -642,6 +642,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f54f1ae0e09d9f4c8ea494d2267bd21, type: 3}
+--- !u!114 &117230233 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3563374738574809598, guid: 2f54f1ae0e09d9f4c8ea494d2267bd21, type: 3}
+  m_PrefabInstance: {fileID: 117230232}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d15e33c9f950f04479efe9a3a404fbe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionSource
 --- !u!1001 &150140927
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1295,6 +1306,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+--- !u!4 &327259342 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5253508265972991108, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+  m_PrefabInstance: {fileID: 327259341}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &334933621
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2197,8 +2213,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3596885726277fc44b13b378a37771e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Loongdum.SceneFlow.LevelGoal
-  player: {fileID: 0}
-  visionSource: {fileID: 0}
+  player: {fileID: 327259342}
+  visionSource: {fileID: 117230233}
   reunionDistance: 1.1
   ignoreHeight: 1
   playerControls: []
