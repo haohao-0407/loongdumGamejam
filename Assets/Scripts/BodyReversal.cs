@@ -16,11 +16,35 @@ public sealed class BodyReversal : MonoBehaviour
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        if (upperBody == null) upperBody = ResolveUpperBody();
         if (upperBody == null)
         {
             Debug.LogError("BodyReversal requires an upper-body VisionSource reference.", this);
             enabled = false;
         }
+    }
+
+    /// <summary>
+    /// 预制体(prefab)无法保存对其他场景对象的引用，所以「脚」从别的场景搬过来时
+    /// upperBody 会变空。这里做一次自动配对，让「反转格 + 头 + 脚」搬到任何场景都能直接用：
+    ///   1. 优先取与自身同一根节点下的 VisionSource（同一个玩法套装）；
+    ///   2. 否则取场景里唯一的那一个；
+    ///   3. 有多个又没有共同根时返回 null —— 宁可报错也不猜，避免接错身体。
+    /// 在 Inspector 里手动接好的引用不受影响（不为空时不会走到这里）。
+    /// </summary>
+    private VisionSource ResolveUpperBody()
+    {
+        VisionSource[] all = FindObjectsByType<VisionSource>(FindObjectsSortMode.None);
+        if (all.Length == 1) return all[0];
+
+        Transform myRoot = transform.root;
+        VisionSource sameRoot = null;
+        int sameRootCount = 0;
+        foreach (VisionSource candidate in all)
+        {
+            if (candidate.transform.root == myRoot) { sameRoot = candidate; sameRootCount++; }
+        }
+        return sameRootCount == 1 ? sameRoot : null;
     }
 
     public bool CanReverse

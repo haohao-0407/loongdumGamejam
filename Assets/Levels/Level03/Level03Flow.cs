@@ -75,7 +75,7 @@ public sealed class Level03Flow : MonoBehaviour
             Say(held ? "1 已压下：a 开启。观察光门链是否照到 B。" : "离开 1：a 关闭。已看清的 B 标记会保留。");
         }
 
-        if (keyboard != null && keyboard.eKey.wasPressedThisFrame) Interact();
+        if (keyboard != null && keyboard.fKey.wasPressedThisFrame) Interact();
         // Winning requires walking together, and never merely exchanging positions.
         // Both bodies are solid in Whitebox1. Allow their collision separation
         // and controller skin width, rather than requiring them to overlap.
@@ -100,7 +100,7 @@ public sealed class Level03Flow : MonoBehaviour
         {
             BObserved = true;
             Stage = 4;
-            Say("已看清 B → Z。松开板也不会丢失线索：穿过 X，去 B 按 E。");
+            Say("已看清 B → Z。松开板也不会丢失线索：穿过 X，去 B 按 F。");
         }
     }
 
@@ -203,7 +203,7 @@ public sealed class Level03Flow : MonoBehaviour
         titleStyle.normal.textColor = Color.white;
         GUI.Box(new Rect(12, 12, Mathf.Min(720, Screen.width - 24), 160), "");
         GUI.Label(new Rect(26, 20, 650, 32), "第三关 · 光线门    " + Mathf.Min(Stage + 1, 5) + " / 5", titleStyle);
-        GUI.Label(new Rect(26, 56, 650, 30), "WASD 移动   F 站格反转   E 邻近拉杆   R 重置", bodyStyle);
+        GUI.Label(new Rect(26, 56, 650, 30), "WASD 移动   F 站格反转 / 拨动拉杆   R 重置", bodyStyle);
         string[] tasks = { "找到西北的反转格；F 进入玻璃房。", "房内先 A → X，再 C → D。",
             "沿 D 出口走到走廊南端，站格按 F。", "南翼踩 1，观察光门链，辨认 B。", "穿 X，B → Z；穿 Z 与上半身汇合。", "已完成；R 可重新开始。" };
         GUI.Label(new Rect(26, 90, 660, 64), Time.time < feedbackUntil ? feedback : tasks[Stage], bodyStyle);
