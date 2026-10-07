@@ -7,7 +7,7 @@ public sealed class WhiteboxPlayerMovement : MonoBehaviour
 {
     [SerializeField, Min(0f)] private float moveSpeed = 5f;
 
-    [Tooltip("让 WASD 跟随相机朝向：相机在上方俯视时，W 始终是画面里的“向上”。默认关闭，保持原有世界坐标方向。")]
+    [Tooltip("让移动输入跟随相机朝向：相机在上方俯视时，向前输入始终是画面里的“向上”。默认关闭，保持原有世界坐标方向。")]
     [SerializeField] private bool alignToCamera;
 
     [Tooltip("用来取朝向的相机。留空则用 Camera.main。")]
@@ -33,6 +33,7 @@ public sealed class WhiteboxPlayerMovement : MonoBehaviour
     [SerializeField, Range(500f, 22000f)] private float stepLowPassHz = 2600f;
 
     private CharacterController controller;
+    private InputAction moveAction;
     private float verticalSpeed;
     private float stepTimer;
     private AudioSource stepSource;
@@ -43,34 +44,40 @@ public sealed class WhiteboxPlayerMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
     }
 
+    private void Start()
+    {
+        // PlayerInput 使用该玩家自己的动作；未挂载时使用项目全局 Input Actions。
+        // 动作的启停由 PlayerInput 或 Input System 管理，避免绕过动作图切换。
+        PlayerInput playerInput = GetComponentInParent<PlayerInput>();
+        InputActionAsset actions = playerInput != null ? playerInput.actions : InputSystem.actions;
+        moveAction = actions != null ? actions.FindAction("Player/Move") : null;
+
+        if (moveAction == null)
+            Debug.LogError("[WhiteboxPlayerMovement] 找不到 Player/Move 动作，请在 Input Actions 中配置 Vector2 类型的 Move 动作。", this);
+    }
+
     private void Update()
     {
-        Keyboard keyboard = Keyboard.current;
-        Vector3 direction = Vector3.zero;
+        Vector2 moveInput = moveAction != null && moveAction.enabled
+            ? moveAction.ReadValue<Vector2>() : Vector2.zero;
+        Vector3 direction = new Vector3(moveInput.x, 0f, moveInput.y);
 
-        if (keyboard != null)
+        if (alignToCamera)
         {
-            float rawX = (keyboard.dKey.isPressed ? 1f : 0f) - (keyboard.aKey.isPressed ? 1f : 0f);
-            float rawZ = (keyboard.wKey.isPressed ? 1f : 0f) - (keyboard.sKey.isPressed ? 1f : 0f);
-            direction = new Vector3(rawX, 0f, rawZ);
-
-            if (alignToCamera)
+            Camera cam = inputCamera != null ? inputCamera : Camera.main;
+            if (cam != null)
             {
-                Camera cam = inputCamera != null ? inputCamera : Camera.main;
-                if (cam != null)
+                Vector3 forward = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up);
+                if (forward.sqrMagnitude > 1e-4f)
                 {
-                    Vector3 forward = Vector3.ProjectOnPlane(cam.transform.forward, Vector3.up);
-                    if (forward.sqrMagnitude > 1e-4f)
-                    {
-                        forward.Normalize();
-                        Vector3 right = Vector3.Cross(Vector3.up, forward);
-                        direction = right * rawX + forward * rawZ;
-                    }
+                    forward.Normalize();
+                    Vector3 right = Vector3.Cross(Vector3.up, forward);
+                    direction = right * moveInput.x + forward * moveInput.y;
                 }
             }
-
-            direction = Vector3.ClampMagnitude(direction, 1f);
         }
+
+        direction = Vector3.ClampMagnitude(direction, 1f);
 
         if (controller.isGrounded && verticalSpeed < 0f)
         {
