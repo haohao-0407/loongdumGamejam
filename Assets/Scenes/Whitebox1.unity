@@ -4918,6 +4918,10 @@ PrefabInstance:
       value: vision source
       objectReference: {fileID: 0}
     - target: {fileID: 387596300059036714, guid: 8717b15f6bc60f9458e8a903b5979a3a, type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 387596300059036714, guid: 8717b15f6bc60f9458e8a903b5979a3a, type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
