@@ -15215,7 +15215,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FullBodyReversal
   upperBody: {fileID: 470246694}
-  activationKey: 20
+  activationKey: 19
   snapLowerBodyToGround: 0
   groundProbeRise: 5
   groundMask:
