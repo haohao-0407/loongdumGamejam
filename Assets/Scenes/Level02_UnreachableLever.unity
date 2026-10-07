@@ -2119,11 +2119,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3596885726277fc44b13b378a37771e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Loongdum.SceneFlow.LevelGoal
-  player: {fileID: 0}
-  visionSource: {fileID: 0}
+  player: {fileID: 574789473}
+  visionSource: {fileID: 1100365142}
   reunionDistance: 1.1
   ignoreHeight: 1
-  playerControls: []
+  playerControls:
+  - {fileID: 574789471}
+  - {fileID: 574789466}
   onCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -2342,6 +2344,33 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 8611910432060672475, guid: 4b51cc8e133264145aaeaf5658d0e496, type: 3}
   m_PrefabInstance: {fileID: 570538450}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &574789466 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1002102870237203537, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+  m_PrefabInstance: {fileID: 327259341}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd88ca1d8fe43e4894942431c0d57a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BodyReversal
+--- !u!114 &574789471 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8323756947735057415, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+  m_PrefabInstance: {fileID: 327259341}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b4c1c16b4c44cc45ae56f7d088b6488, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WhiteboxPlayerMovement
+--- !u!4 &574789473 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5253508265972991108, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+  m_PrefabInstance: {fileID: 327259341}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &609072790
 GameObject:
@@ -4234,6 +4263,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3447742079981357586, guid: 03f41cc0e6d9c23488c9fa43103c65e9, type: 3}
   m_PrefabInstance: {fileID: 1093186075}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1100365142 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3563374738574809598, guid: 2f54f1ae0e09d9f4c8ea494d2267bd21, type: 3}
+  m_PrefabInstance: {fileID: 117230232}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d15e33c9f950f04479efe9a3a404fbe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisionSource
 --- !u!1001 &1113081855
 PrefabInstance:
   m_ObjectHideFlags: 0

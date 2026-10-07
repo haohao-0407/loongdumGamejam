@@ -15947,11 +15947,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3596885726277fc44b13b378a37771e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Loongdum.SceneFlow.LevelGoal
-  player: {fileID: 0}
-  visionSource: {fileID: 0}
+  player: {fileID: 1965157108}
+  visionSource: {fileID: 470246694}
   reunionDistance: 1.1
   ignoreHeight: 1
-  playerControls: []
+  playerControls:
+  - {fileID: 1965157107}
+  - {fileID: 1798461137}
   onCompleted:
     m_PersistentCalls:
       m_Calls: []
@@ -15970,6 +15972,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1965157107 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8323756947735057415, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+  m_PrefabInstance: {fileID: 1805044536}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b4c1c16b4c44cc45ae56f7d088b6488, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WhiteboxPlayerMovement
+--- !u!4 &1965157108 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5253508265972991108, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+  m_PrefabInstance: {fileID: 1805044536}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1990189620
 PrefabInstance:
   m_ObjectHideFlags: 0
