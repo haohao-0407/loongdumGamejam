@@ -163,7 +163,7 @@ namespace Loongdum.Levels
             Feedback = Won ? "终于，重新走到一起。"
                 : PlatePressed ? "脚下压住了机关。远处，一束光亮了。"
                 : wasOnPlate ? "松开了。记住刚才亮起的路。"
-                : CanReachLever ? "够得着拉杆了。按 E 拨动。" : "";
+                : CanReachLever ? "够得着拉杆了。按 F 拨动。" : "";
         }
 
         /// <summary>One step in a cardinal direction, to the rules's own grid. The scene does not walk
@@ -176,7 +176,7 @@ namespace Loongdum.Levels
             {
                 char tile = Tile(next);
                 Feedback = tile == 'G' ? "玻璃：光能过去，脚过不去。"
-                    : tile == 'A' ? "拉杆就在手边。按 E 拨动。"
+                    : tile == 'A' ? "拉杆就在手边。按 F 拨动。"
                     : tile == 'p' || tile == 'P' ? "镜面只让视线通过。"
                     : Doors.IndexOf(tile) >= 0 ? "门关着。" : "摸到了一面墙。";
                 return false;

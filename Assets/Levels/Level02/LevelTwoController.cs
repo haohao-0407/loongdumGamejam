@@ -41,6 +41,12 @@ namespace Loongdum.Levels
         /// <summary>The first level's vision source, standing on the fixed upper body. It paints the
         /// lit disc and the darkness around it over the whole camera, as it does in the first level.</summary>
         [SerializeField] private Transform visionSource;
+
+        [Header("音效（留空则不发声）")]
+        [Tooltip("拨动拉杆成功时播放，例如「SFX_UI_BottonClick」。")]
+        [SerializeField] private AudioClip interactClip;
+        [SerializeField, Range(0f, 1f)] private float interactVolume = 1f;
+
         private Renderer[] portalRenderers;
         private VisionSource vision;
         private LevelTwoModel model;
@@ -169,7 +175,7 @@ namespace Loongdum.Levels
                     designerView = !designerView;
                     RefreshPresentation();
                 }
-                if (keyboard.eKey.wasPressedThisFrame) Interact();
+                if (keyboard.fKey.wasPressedThisFrame) Interact();
             }
             FollowLowerBody();
         }
@@ -188,6 +194,8 @@ namespace Loongdum.Levels
         public bool Interact()
         {
             bool changed = model.TryInteract();
+            if (changed)
+                AudioOneShot.Play(interactClip, lowerBody != null ? lowerBody.gameObject : gameObject, interactVolume);
             RefreshPresentation();
             return changed;
         }
@@ -254,7 +262,7 @@ namespace Loongdum.Levels
             GUI.Label(new Rect(36, 64, width - 72, 28), "下半身找上半身", small);
             GUI.Label(new Rect(36, height - 74, width - 72, 28), model.Feedback, text);
             GUI.Label(new Rect(36, height - 40, width - 72, 26),
-                "WASD  移动      E  拨动拉杆      R  重来", small);
+                "WASD  移动      F  拨动拉杆      R  重来", small);
             if (designerView)
                 GUI.Label(new Rect(width - 285, 32, 250, 30), "设计者全图 · F1 返回", text);
             if (model.Won)

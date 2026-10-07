@@ -19,6 +19,13 @@ public sealed class Level03Flow : MonoBehaviour
     public Vector3 lowerSpawn;
     public Vector3 upperSpawn;
 
+    [Header("音效（留空则不发声）")]
+    [Tooltip("按 F 拨动拉杆成功时播放的音效，例如「SFX_UI_BottonClick」。")]
+    [SerializeField] private AudioClip interactClip;
+
+    [Tooltip("交互音效音量。")]
+    [SerializeField, Range(0f, 1f)] private float interactVolume = 1f;
+
     public bool AOpened { get; private set; }
     public bool COpened { get; private set; }
     public bool BObserved { get; private set; }
@@ -104,7 +111,16 @@ public sealed class Level03Flow : MonoBehaviour
         }
     }
 
+    /// <summary>按 F 时调用的交互入口。成功拨到拉杆才发交互音效。</summary>
     public bool Interact()
+    {
+        bool success = TryInteract();
+        if (success)
+            AudioOneShot.Play(interactClip, player != null ? player.gameObject : gameObject, interactVolume);
+        return success;
+    }
+
+    private bool TryInteract()
     {
         if (Completed || !player.isGrounded) return false;
         int nearest = -1;

@@ -9,6 +9,13 @@ public sealed class BodyReversal : MonoBehaviour
     [SerializeField] private VisionSource upperBody;
     [SerializeField] private Key activationKey = Key.F;
 
+    [Header("音效（留空则不发声）")]
+    [Tooltip("按 F 反转成功时播放的音效，例如「SFX_UI_BottonClick」。")]
+    [SerializeField] private AudioClip interactClip;
+
+    [Tooltip("交互音效音量。")]
+    [SerializeField, Range(0f, 1f)] private float interactVolume = 1f;
+
     private CharacterController controller;
     private string feedback;
     private float feedbackUntil;
@@ -66,7 +73,16 @@ public sealed class BodyReversal : MonoBehaviour
             TryReverse();
     }
 
+    /// <summary>按 F 时调用的反转入口。真的换位成功才发交互音效。</summary>
     public bool TryReverse()
+    {
+        bool success = TryReverseCore();
+        if (success)
+            AudioOneShot.Play(interactClip, gameObject, interactVolume);
+        return success;
+    }
+
+    private bool TryReverseCore()
     {
         if (!CanReverse) return false;
 

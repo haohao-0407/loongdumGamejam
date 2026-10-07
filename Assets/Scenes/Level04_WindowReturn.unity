@@ -2142,6 +2142,8 @@ MonoBehaviour:
   activeMarker: {fileID: 2100000, guid: 9b81406554e5e774f8152c19901df97b, type: 2}
   lowerSpawn: {x: 6, y: 1.08, z: -12}
   upperSpawn: {x: 2, y: 0.25, z: 4}
+  interactClip: {fileID: 8300000, guid: 2ecf67f1978237546a4b6d50733bd8fe, type: 3}
+  interactVolume: 1
 --- !u!4 &83957212
 Transform:
   m_ObjectHideFlags: 0
@@ -29342,6 +29344,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BodyReversal
   upperBody: {fileID: 1254802101}
   activationKey: 20
+  interactClip: {fileID: 8300000, guid: 2ecf67f1978237546a4b6d50733bd8fe, type: 3}
+  interactVolume: 1
 --- !u!1 &1031204676
 GameObject:
   m_ObjectHideFlags: 0
