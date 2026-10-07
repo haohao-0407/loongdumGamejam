@@ -123,7 +123,7 @@
                 float luminance = dot(DisplayColor(source.rgb), float3(0.2126, 0.7152, 0.0722));
                 
                 //额，第一个值越小，越多亮的东西不受漫画化影响；第二个值越大，保护越亮的东西
-                float preserveVFX = smoothstep(0.08, 0.90, luminance);
+                float preserveVFX = smoothstep(0.2, 2.90, luminance);
                 preserveVFX = pow(preserveVFX, 0.50);
                 
                 float rawDepth = SampleSceneDepth(uv);
