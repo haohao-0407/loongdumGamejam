@@ -27968,7 +27968,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1411030422}
-  m_Text: "D \u2192 F"
+  m_Text: "D \u2192 E"
   m_OffsetZ: 0
   m_CharacterSize: 0.1
   m_LineSpacing: 1
@@ -37069,6 +37069,10 @@ PrefabInstance:
     - target: {fileID: 7354748787476255000, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
       propertyPath: m_Name
       value: down
+      objectReference: {fileID: 0}
+    - target: {fileID: 1002102870237203537, guid: f8ca9242e593f564f9787fcdb85c77f5, type: 3}
+      propertyPath: activationKey
+      value: 19
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

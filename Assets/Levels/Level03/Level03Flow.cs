@@ -26,7 +26,7 @@ public sealed class Level03Flow : MonoBehaviour
     public bool PlateHeld { get; private set; }
     public bool Completed { get; private set; }
     public int Stage { get; private set; }
-    private string feedback = "找到南翼西北的 F 反转格，进入远处的玻璃房。";
+    private string feedback = "找到南翼西北的 E 反转格，进入远处的玻璃房。";
     private float feedbackUntil;
     private Vector3 lastUpper;
     private WhiteboxPlayerMovement movement;
@@ -75,7 +75,7 @@ public sealed class Level03Flow : MonoBehaviour
             Say(held ? "1 已压下：a 开启。观察光门链是否照到 B。" : "离开 1：a 关闭。已看清的 B 标记会保留。");
         }
 
-        if (keyboard != null && keyboard.fKey.wasPressedThisFrame) Interact();
+        if (keyboard != null && keyboard.eKey.wasPressedThisFrame) Interact();
         // Winning requires walking together, and never merely exchanging positions.
         // Both bodies are solid in Whitebox1. Allow their collision separation
         // and controller skin width, rather than requiring them to overlap.
@@ -100,7 +100,7 @@ public sealed class Level03Flow : MonoBehaviour
         {
             BObserved = true;
             Stage = 4;
-            Say("已看清 B → Z。松开板也不会丢失线索：穿过 X，去 B 按 F。");
+            Say("已看清 B → Z。松开板也不会丢失线索：穿过 X，去 B 按 E。");
         }
     }
 
@@ -139,7 +139,7 @@ public sealed class Level03Flow : MonoBehaviour
         {
             if (!AOpened) { Say("C → D：先接通 A → X 的线路。"); return false; }
             COpened = true; SetDoor(1, true); MarkLever(1); Stage = Mathf.Max(Stage, 2);
-            Say("C 已锁定：D 出口开启。沿走廊走到第二个 F 反转格。");
+            Say("C 已锁定：D 出口开启。沿走廊走到第二个 E 反转格。");
             return true;
         }
         if (nearest == 2 && !BOpened)
@@ -187,7 +187,7 @@ public sealed class Level03Flow : MonoBehaviour
             leverHandles[i].transform.localRotation = Quaternion.identity;
         }
         plateMarker.sharedMaterial = idleMarker;
-        Say("找到南翼西北的 F 反转格，进入远处的玻璃房。");
+        Say("找到南翼西北的 E 反转格，进入远处的玻璃房。");
     }
 
     private void OnGUI()
@@ -203,9 +203,9 @@ public sealed class Level03Flow : MonoBehaviour
         titleStyle.normal.textColor = Color.white;
         GUI.Box(new Rect(12, 12, Mathf.Min(720, Screen.width - 24), 160), "");
         GUI.Label(new Rect(26, 20, 650, 32), "第三关 · 光线门    " + Mathf.Min(Stage + 1, 5) + " / 5", titleStyle);
-        GUI.Label(new Rect(26, 56, 650, 30), "WASD 移动   F 站格反转 / 拨动拉杆   R 重置", bodyStyle);
-        string[] tasks = { "找到西北的反转格；F 进入玻璃房。", "房内先 A → X，再 C → D。",
-            "沿 D 出口走到走廊南端，站格按 F。", "南翼踩 1，观察光门链，辨认 B。", "穿 X，B → Z；穿 Z 与上半身汇合。", "已完成；R 可重新开始。" };
+        GUI.Label(new Rect(26, 56, 650, 30), "WASD 移动   E 站格反转 / 拨动拉杆   R 重置", bodyStyle);
+        string[] tasks = { "找到西北的反转格；E 进入玻璃房。", "房内先 A → X，再 C → D。",
+            "沿 D 出口走到走廊南端，站格按 E。", "南翼踩 1，观察光门链，辨认 B。", "穿 X，B → Z；穿 Z 与上半身汇合。", "已完成；R 可重新开始。" };
         GUI.Label(new Rect(26, 90, 660, 64), Time.time < feedbackUntil ? feedback : tasks[Stage], bodyStyle);
         Vector3 screen = levelCamera.WorldToScreenPoint(player.transform.position + Vector3.up);
         GUI.Label(new Rect(screen.x - 12, Screen.height - screen.y - 25, 35, 35), "▼", titleStyle);
